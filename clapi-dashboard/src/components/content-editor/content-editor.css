@@ -1,0 +1,23 @@
+
+textarea, input[type=text], input[type=number], input[type=date] {
+  width: 80%;
+  padding: 10px;
+  margin: 5px;
+  box-sizing: border-box;
+  border-left: 1px solid #8842d5;
+  border-top: none;
+  border-right: none;
+}
+
+button {
+  width: 80%;
+  padding: 10px;
+  margin: 5px;
+  box-sizing: border-box;
+  border-top: none;
+  border-right: none;
+}
+
+input:focus {
+  outline: none;
+}

@@ -1,0 +1,135 @@
+{
+  "collectionName": "novinky",
+  "config": {
+    "title": {
+      "type": "SimpleText",
+      "config": {
+        "label": "Title",
+        "maxLength": 50
+      }
+    },
+    "title5": {
+      "type": "SimpleText",
+      "config": {
+        "label": "Title 5",
+        "maxLength": 50
+      }
+    },
+    "title2": {
+      "type": "SimpleText",
+      "config": {
+        "label": "Title",
+        "maxLength": 50
+      }
+    },
+    "related": {
+      "type": "DocumentLink",
+      "config": {
+        "label": "Related document"
+      }
+    },
+    "date": {
+      "type": "DatePicker",
+      "config": {
+        "label": "Date picker"
+      }
+    },
+    "booleanPick": {
+      "type": "SelectInput",
+      "config": {
+        "label": "Select one"
+      }
+    },
+    "pickOne": {
+      "type": "RadioInput",
+      "config": {
+        "label": "Pick one"
+      }
+    },
+    "pickMore": {
+      "type": "CheckboxInput",
+      "config": {
+        "label": "Pick More"
+      }
+    },
+    "Color picker": {
+      "type": "ColorPicker",
+      "config": {
+        "label": "Select color"
+      }
+    },
+    "rating": {
+      "type": "NumberInput",
+      "config": {
+        "label": "Rating",
+        "max": 10,
+        "min": 0
+      }
+    },
+    "youtube": {
+      "type": "EmbeddedContent",
+      "config": {
+        "label": "Youtube"
+      }
+    },
+    "geo": {
+      "type": "GeoPicker",
+      "config": {
+        "label": "GEO picker"
+      }
+    },
+    "bool": {
+      "type": "BooleanInput",
+      "config": {
+        "label": "Boolean"
+      }
+    },
+    "mediaTest": {
+      "type": "MediaSelect",
+      "config": {
+        "label": "Test media select"
+      }
+    },
+    "title3": {
+      "type": "SimpleText",
+      "config": {
+        "label": "Title",
+        "maxLength": 50
+      }
+    },
+    "description": {
+      "type": "TextArea",
+      "config": {
+        "label": "Description"
+      }
+    },
+    "freeContent": {
+      "type": "Block",
+      "config": {
+        "label": "Free content"
+      }
+    },
+    "teamMembers": {
+      "type": "Group",
+      "config": {
+        "label": "Team",
+        "fields": {
+          "firstName": {
+            "type": "SimpleText",
+            "config": {
+              "label": "First name",
+              "maxLength": 50
+            }
+          },
+          "lastName": {
+            "type": "SimpleText",
+            "config": {
+              "label": "Last name",
+              "maxLength": 50
+            }
+          }
+        }
+      }
+    }
+  }
+}
