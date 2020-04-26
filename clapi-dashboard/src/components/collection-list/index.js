@@ -23,7 +23,8 @@ function renderList(data, onRowClick) {
                      onClick={() => onRowClick(value)}>
                   <div className={style.listCol}>{value._id}</div>
                   <div className={style.listCol}>{value._id}</div>
-                  <div className={style.listCol}>{value.collectionName}</div>
+                  <div
+                      className={style.listCol}>{value.metadata.collectionName}</div>
                 </div>
             )
           }
@@ -34,10 +35,13 @@ function renderList(data, onRowClick) {
 }
 
 const CollectionList = (props) => {
+  //todo list over all
   return (
-      <DataLoader uri={api.fetchCollection("novinky")}>
-        {data => renderList(data, props.onRowClick)}
-      </DataLoader>
+      <>
+        <DataLoader uri={api.fetchCollection("novinky")}>
+          {data => renderList(data, props.onRowClick)}
+        </DataLoader>
+      </>
   );
 };
 

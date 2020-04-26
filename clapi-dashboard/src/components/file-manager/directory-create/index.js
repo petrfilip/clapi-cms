@@ -6,7 +6,6 @@ import * as api from "./../../../api"
 function submitHandler(callback, currentLocation, newDirectory) {
   // newDirectory && alert("Empty");
   const data = {
-    action: "create-directory",
     location: currentLocation,
     directory: newDirectory
   }

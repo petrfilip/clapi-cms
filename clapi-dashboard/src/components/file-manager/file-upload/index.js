@@ -9,12 +9,11 @@ function onChangeHandler(currentLocation, event, callback) {
   if (files) {
     const data = new FormData();
     data.append("location", currentLocation);
-    data.append("action", "upload-files");
     for (const file of files) {
       data.append('files[]', file, file.name);
     }
 
-    DataManager.saveOrUpdate(api.fetchMediaUpload(), "data", data, callback);
+    DataManager.saveOrUpdate(api.fetchMediaFile(), "data", data, callback);
   }
 }
 

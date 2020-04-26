@@ -3,7 +3,7 @@ import ContentEditor from "../../components/content-editor/content-editor";
 import DataLoader from "../../components/data-loader";
 import * as api from "../../api";
 
-const EditPage = ({collection, id}) => {
+const EditContentPage = ({collection, id}) => {
 
   return (
       <DataLoader skipLoader={true} uri={api.fetchTypeDefinition(collection)}>
@@ -16,7 +16,6 @@ const EditPage = ({collection, id}) => {
 
               if (!data) {
                 data = {
-                  collectionName: collection, //todo will be moved to metadata
                   metadata: {
                     collectionName: collection,
                     typeDefinitionVersion: typeDefinition.sys.version
@@ -35,4 +34,4 @@ const EditPage = ({collection, id}) => {
   )
 };
 
-export default EditPage;
+export default EditContentPage;

@@ -6,7 +6,6 @@ import {route} from "preact-router";
 const LogoutPage = () => {
   UserManager.clearUserDetails();
   route("/login");
-
   return (null);
 };
 

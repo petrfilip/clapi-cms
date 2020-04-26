@@ -10,15 +10,11 @@ import * as api from "../../api";
 import DataLoader from "../data-loader";
 
 function normalizeLocation(location) {
-  // if (location && location.charAt(0) !== "/") {
-  //   return "/" + location
-  // }
   return location || "/";
 }
 
 function detectRouteChange(location, props, setLocation) {
   if (normalizeLocation(location) !== normalizeLocation(props.location)) {
-    // fetchData(normalizeLocation(props.location));
     setLocation(normalizeLocation(props.location));
   }
 }
@@ -26,6 +22,11 @@ function detectRouteChange(location, props, setLocation) {
 function removeLastDirectory(path) {
   const the_arr = path.split('/');
   the_arr.pop();
+
+  if (the_arr.length <= 1) {
+    return '/';
+  }
+
   return (the_arr.join('/'));
 }
 
@@ -90,6 +91,5 @@ FileManager.propTypes = {
   location: PropTypes.string
 }
 
-FileManager.defaultProps
 
 export default FileManager;

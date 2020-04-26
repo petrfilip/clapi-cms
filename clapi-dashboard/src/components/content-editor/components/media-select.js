@@ -6,6 +6,7 @@ import {Mode} from "../../file-manager/file-list";
 import style from "./media-select.css"
 import * as api from "../../../api";
 import DataLoader from "../../data-loader";
+import {FilePreview} from "../../file-manager/file-preview/file-preview";
 
 const MediaSelect = (props) => {
 
@@ -27,11 +28,12 @@ const MediaSelect = (props) => {
                        setModalBody(<FileManager
                            routeAllowed={false}
                            selectedItem={data}
-                           fileListMode={Mode.SELECTION}
+                           fileListMode={Mode.SELECT}
                            onMediaClick={onMediaSelected}/>);
                      }}>Select
                 </div>
-                <div>{data && data.originName}</div>
+
+                <div><FilePreview file={data}/>{data && data.originName}</div>
                 <div onClick={() => onMediaSelected({})}>X</div>
               </>
           )}

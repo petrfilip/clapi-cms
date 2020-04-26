@@ -1,0 +1,17 @@
+# common
+*.iml
+
+# dashboad
+clapi-dashboard/node_modules
+/build
+/*.log
+*.lock
+
+package-lock.json
+
+# backend
+/clapi-backend/vendor/
+/clapi-backend/database/*
+/clapi-backend/public/media-storage/*
+
+

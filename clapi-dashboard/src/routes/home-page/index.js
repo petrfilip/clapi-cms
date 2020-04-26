@@ -6,7 +6,7 @@ import {AppModalContext} from "../../components/modal/AppModalContextProvider";
 import DocumentTypeList from "../../components/document-type-list";
 
 
-const Home = () => {
+const HomePage = () => {
 
   const {setModalBody} = useContext(AppModalContext)
 
@@ -20,4 +20,4 @@ const Home = () => {
   )
 };
 
-export default Home;
+export default HomePage;

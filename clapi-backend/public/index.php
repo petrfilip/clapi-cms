@@ -1,17 +1,27 @@
 <?php
 
+use App\DatabaseManager;
+use App\ErrorUtils;
 use App\Middleware\CorsMiddleware;
 use App\Middleware\JwtMiddleware;
+use App\Utils;
 use Firebase\JWT\JWT;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use SleekDB\SleekDB;
 use Slim\Factory\AppFactory;
-use Slim\Psr7\UploadedFile;
+use Slim\Psr7\Stream;
 
 require __DIR__ . '/../vendor/autoload.php';
 require './../src/Middleware/CorsMiddleware.php';
 require './../src/Middleware/JwtMiddleware.php';
+require './../src/Model/ApplicationError.php';
+require './../src/ErrorUtils.php';
+require './../src/DatabaseManager.php';
+require './../src/Utils.php';
+define("DATABASE_ROOT", __DIR__ . "/../database");
+define("MEDIA_STORAGE", "/media-storage");
+define("MEDIA_STORAGE_ROOT", __DIR__ . MEDIA_STORAGE);
+define("JWT_KEY", "example_key");
 
 
 $app = AppFactory::create();
@@ -19,97 +29,9 @@ $app = AppFactory::create();
 $app->add(JwtMiddleware::class);
 $app->add(CorsMiddleware::class);
 
-
 $app->addBodyParsingMiddleware();
-// The RoutingMiddleware should be added after our CORS middleware so routing is performed first
-$app->addRoutingMiddleware();
 $app->addErrorMiddleware(true, true, true);
-
-
-/**
- * @param $args
- * @return SleekDB
- * @throws Exception
- */
-
-function getMediaDataStore(): SleekDB
-{
-    $dataDir = "./database";
-    return SleekDB::store("media", $dataDir);
-}
-
-function getDataStore($storeName): SleekDB
-{
-    $dataDir = "./database";
-    return SleekDB::store($storeName, $dataDir);
-}
-
-function getSecuredKey()
-{
-    return "example_key";
-}
-
-function getById($collectionStore, $id)
-{
-    $loadedArray = $collectionStore->where("_id", "=", $id)->fetch();
-    if (count($loadedArray)) {
-        return $loadedArray[0];
-    } else {
-        return null;
-    }
-}
-
-function updateById($collectionStore, $data)
-{
-    $isUpdated = $collectionStore->where("_id", "=", $data["_id"])->update($data);
-    if (!$isUpdated) {
-        throw new Exception('Unable to update data.');
-    }
-}
-
-function createAuditVersion($collectionStoreName, $data)
-{
-    unset($data["_id"]);
-    $store = getDataStore($collectionStoreName . "-archiving");
-    $store->insert($data);
-}
-
-function getCurrentDateTime()
-{
-    $date = new DateTime();
-    return $date->format('Y-m-d H:i:s');
-}
-
-function updateVersionedRecord($collectionName, $data, $userId, $createAudit = true)
-{
-    $collectionStore = getDataStore($collectionName);
-    $id = $data["_id"];
-    if (empty($id)) {
-        throw new Exception("Missing ID");
-    }
-
-    $loadVersion = getById($collectionStore, $id);
-
-    $data["sys"]["version"] = $data["sys"]["version"] + 1;
-    $data["sys"]["updated"] = getCurrentDateTime();
-    $data["sys"]["updatedBy"] = $userId;
-    updateById($collectionStore, $data);
-
-    if ($createAudit) {
-        createAuditVersion($collectionName, $loadVersion);
-    }
-    return $data;
-}
-
-function insertNewVersionedRecord($collectionName, $data, $userId)
-{
-    $data["sys"]["version"] = 1;
-    $data["sys"]["created"] = getCurrentDateTime();
-    $data["sys"]["updated"] = getCurrentDateTime();
-    $data["sys"]["createBy"] = $userId;
-    $collectionStore = getDataStore($collectionName);
-    return $collectionStore->insert($data);
-}
+$app->addRoutingMiddleware();
 
 
 $container = $app->getContainer();
@@ -122,11 +44,12 @@ $app->get('/', function (Request $request, Response $response, $args) {
 
 $app->post('/login', function (Request $request, Response $response, $args) {
     $inputJson = $request->getParsedBody();
-    $userStore = getDataStore("user");
+    $userStore = DatabaseManager::getDataStore("user");
 
     // verify credentials
     $loadedUser = $userStore->where("email", "=", $inputJson["email"])->fetch();
     if (!password_verify($inputJson["password"], $loadedUser[0]["password"])) {
+        $response->getBody()->write(json_encode(ErrorUtils::error(ErrorUtils::BAD_LOGIN)));
         return $response->withStatus(404);
     }
 
@@ -140,7 +63,7 @@ $app->post('/login', function (Request $request, Response $response, $args) {
         "iat" => 1356999524,
         "nbf" => 1357000000
     );
-    $jwt = JWT::encode($payload, getSecuredKey()); //todo fix getSecuredKey
+    $jwt = JWT::encode($payload, JWT_KEY);
 
 
     // create output for user
@@ -155,7 +78,7 @@ $app->post('/login', function (Request $request, Response $response, $args) {
 /* add user */
 $app->post('/user', function (Request $request, Response $response, $args) {
     $inputJson = $request->getParsedBody();
-    $userStore = getDataStore("user");
+    $userStore = DatabaseManager::getDataStore("user");
     $userId = $request->getAttribute("userId");
 
 
@@ -163,7 +86,7 @@ $app->post('/user', function (Request $request, Response $response, $args) {
     $user->email = $inputJson["email"];
     $user->password = password_hash($inputJson["password"], PASSWORD_BCRYPT);
 
-    $savedUser = insertNewVersionedRecord("user", $user, $userId);
+    $savedUser = DatabaseManager::insertNewVersionedRecord("user", $user, $userId);
     unset($savedUser["password"]);
     $response->getBody()->write(json_encode($savedUser));
     return $response;
@@ -181,8 +104,8 @@ $app->put('/user', function (Request $request, Response $response, $args) {
 
 /* DOCUMENT API */
 $app->get('/collection/{collection}', function (Request $request, Response $response, $args) {
-    $collectionStore = getDataStore($args["collection"]);
-    $loadedData = $collectionStore->fetch();
+    $params = $request->getQueryParams();
+    $loadedData = DatabaseManager::findBy($args["collection"], $params);
 
     $payload = json_encode($loadedData);
     $response->getBody()->write($payload);
@@ -190,7 +113,7 @@ $app->get('/collection/{collection}', function (Request $request, Response $resp
 });
 
 $app->get('/collection/type-definition/{collectionName}', function (Request $request, Response $response, $args) {
-    $collectionStore = getDataStore("type-definition");
+    $collectionStore = DatabaseManager::getDataStore("type-definition");
 
     $loadedDefinition = $collectionStore->where("collectionName", "=", $args["collectionName"])->fetch();
     if (is_array($loadedDefinition) && count($loadedDefinition)) {
@@ -203,11 +126,11 @@ $app->get('/collection/type-definition/{collectionName}', function (Request $req
 });
 
 $app->get('/collection/{collection}/{id}', function (Request $request, Response $response, $args) {
-    $collectionStore = getDataStore($args["collection"]);
-    $loadedData = $collectionStore->where("_id", "=", $args["id"])->fetch();
+    $collectionStore = DatabaseManager::getDataStore($args["collection"]);
+    $loadedData = DatabaseManager::getById($args["collection"], $args["id"]);
 
     if (is_array($loadedData) && count($loadedData)) {
-        $payload = json_encode($loadedData[0]);
+        $payload = json_encode($loadedData);
         $response->getBody()->write($payload);
         return $response;
     } else {
@@ -217,7 +140,7 @@ $app->get('/collection/{collection}/{id}', function (Request $request, Response 
 
 
 $app->post('/collection/type-definition', function (Request $request, Response $response, $args) {
-    $collectionStore = getDataStore("type-definition");
+    $collectionStore = DatabaseManager::getDataStore("type-definition");
     $data = $request->getParsedBody();
     $collectionName = $data["collectionName"];
 
@@ -225,7 +148,7 @@ $app->post('/collection/type-definition', function (Request $request, Response $
         return $response->withStatus(503);
     } else {
         $userId = $request->getAttribute("userId");
-        $inserted = insertNewVersionedRecord("type-definition", $data, $userId);
+        $inserted = DatabaseManager::insertNewVersionedRecord("type-definition", $data, $userId);
         $response->getBody()->write(json_encode($inserted));
         return $response;
     }
@@ -234,7 +157,7 @@ $app->post('/collection/type-definition', function (Request $request, Response $
 $app->put('/collection/type-definition', function (Request $request, Response $response, $args) {
     $data = $request->getParsedBody();
     $userId = $request->getAttribute("userId");
-    $updated = updateVersionedRecord("type-definition", $data, $userId);
+    $updated = DatabaseManager::updateVersionedRecord("type-definition", $data, $userId);
     $response->getBody()->write(json_encode($updated));
     return $response;
 });
@@ -246,7 +169,7 @@ $app->options('{route:.*}', function (Request $request, Response $response, $arg
 $app->post('/collection/{collection}', function (Request $request, Response $response, $args) use ($app) {
     $data = $request->getParsedBody();
     $userId = $request->getAttribute("userId");
-    $inserted = insertNewVersionedRecord($args["collection"], $data, $userId);
+    $inserted = DatabaseManager::insertNewVersionedRecord($args["collection"], $data, $userId);
     $response->getBody()->write(json_encode($inserted));
     return $response;
 });
@@ -255,7 +178,7 @@ $app->post('/collection/{collection}', function (Request $request, Response $res
 $app->put('/collection/{collection}', function (Request $request, Response $response, $args) {
     $inputJson = $request->getParsedBody();
     $userId = $request->getAttribute("userId");
-    $updated = updateVersionedRecord($args["collection"], $inputJson, $userId);
+    $updated = DatabaseManager::updateVersionedRecord($args["collection"], $inputJson, $userId);
     $response->getBody()->write(json_encode($updated));
     return $response;
 });
@@ -263,14 +186,32 @@ $app->put('/collection/{collection}', function (Request $request, Response $resp
 /* MEDIA API */
 
 /* get file by id*/
-$app->get('/media/{id:[0-9]+}', function (Request $request, Response $response, $args) {
-    $collectionStore = getMediaDataStore();
-    $loadedItem = ($collectionStore
-        ->where("_id", "=", $args["id"])
-        ->fetch());
+$app->get('/media/download/{id:[0-9]+}', function (Request $request, Response $response, $args) {
+    $loadedItem = DatabaseManager::getById("media", $args["id"]);
 
     if (count($loadedItem)) {
-        $payload = json_encode($loadedItem[0]);
+
+        $path = __DIR__ . $loadedItem["publicPath"];
+        $fh = fopen($path, 'rb');
+        $stream = new Stream($fh); // create a stream instance for the response body
+
+        return $response->withBody($stream)
+            ->withHeader('Content-Disposition', 'attachment; ' . $loadedItem["originName"] . ';')
+            ->withHeader('Content-Type', mime_content_type($path))
+            ->withHeader('Content-Length', filesize($path))
+            ->withHeader('Expires', '0')
+            ->withHeader('Cache-Control', 'must-revalidate, post-check=0, pre-check=0');
+    } else {
+        return $response->withStatus(404);
+    }
+});
+
+
+$app->get('/media/{id:[0-9]+}', function (Request $request, Response $response, $args) {
+    $loadedItem = DatabaseManager::getById("media", $args["id"]);
+
+    if (count($loadedItem)) {
+        $payload = json_encode($loadedItem);
         $response->getBody()->write($payload);
         return $response;
     } else {
@@ -280,7 +221,7 @@ $app->get('/media/{id:[0-9]+}', function (Request $request, Response $response, 
 
 /* list directory */
 $app->get('/media/list[/{location:.*}]', function (Request $request, Response $response, $args) {
-    $collectionStore = getMediaDataStore();
+    $collectionStore = DatabaseManager::getMediaDataStore();
     $path = $args["location"];
     if ($path == "" || $path[0] != "/") {
         $path = "/" . $path;
@@ -312,26 +253,36 @@ $app->get('/media/list[/{location:.*}]', function (Request $request, Response $r
  * create new directory
  */
 $app->post('/media/directory', function (Request $request, Response $response, $args) {
-    $collectionStore = getMediaDataStore();
     $inputData = $request->getParsedBody();
     $path = $inputData["location"];
-    if ($path == "" || $path[0] != "/") {
+    if ($path[0] != "/") {
         $path = "/" . $path;
     }
-    //todo remove last slash
-    $slugName = slugify($inputData["directory"]);
+
+    $slugName = Utils::slugify($inputData["directory"]);
     $originName = $inputData["directory"];
-    $fullPath = "media-storage" . $path . DIRECTORY_SEPARATOR . $slugName;
-    if (mkdir($fullPath)) {
-        $media = new stdClass(); //todo MediaApiClass
+
+
+    $relativePath = $path;
+
+    /* avoid two slashes in path*/
+    if (strlen($path) === 1) {
+        $path = "";
+    }
+    $publicPath = MEDIA_STORAGE . $path . DIRECTORY_SEPARATOR . $slugName;
+    $realPathToSave = MEDIA_STORAGE_ROOT . $path . DIRECTORY_SEPARATOR . $slugName;
+
+
+    if (mkdir($realPathToSave)) {
+        $media = new stdClass();
         $media->type = "directory";
         $media->originName = $originName;
         $media->slugName = $slugName;
-        $media->path = $path;
-        $media->fullPath = $fullPath;
-        $saved = $collectionStore->insertMany([$media]); //todo [] is hack with insertMany
-
-        $payload = json_encode($saved[0]);
+        $media->path = $relativePath;
+        $media->fullPath = $publicPath;
+        $userId = $request->getAttribute("userId");
+        $saved = DatabaseManager::insertNewVersionedRecord("media", $media, $userId);
+        $payload = json_encode($saved);
         $response->getBody()->write($payload);
         return $response;
     } else {
@@ -341,78 +292,33 @@ $app->post('/media/directory', function (Request $request, Response $response, $
 
 /* upload files*/
 
-$app->post('/media/upload', function (Request $request, Response $response, $args) {
-    $directory = './media-storage';
-    $collectionStore = getMediaDataStore();
-
+$app->post('/media/file', function (Request $request, Response $response, $args) {
 
     $uploadedFiles = $request->getUploadedFiles();
     if (!count($uploadedFiles)) {
-        return $response->withStatus(404);
+        $response->getBody()->write(json_encode(ErrorUtils::error(ErrorUtils::NO_CONTENT_TO_UPLOAD)));
+        return $response->withStatus(404); //todo fix code
     }
 
     foreach ($uploadedFiles['files'] as $uploadedFile) {
         if ($uploadedFile->getError() === UPLOAD_ERR_OK) {
-            $uploaded[] = moveUploadedFile($_POST["location"], $directory, $uploadedFile);
+            $uploaded[] = Utils::moveUploadedFile($_POST["location"], $uploadedFile);
         }
     }
-    $inserted = $collectionStore->insertMany($uploaded);
+
+    $userId = $request->getAttribute("userId");
+    $inserted = DatabaseManager::insertNewVersionedRecords("media", $uploaded, $userId);
     $response->getBody()->write(json_encode($inserted));
     return $response;
 });
 
-function moveUploadedFile($location, $directory, UploadedFile $uploadedFile)
-{
-    if ($location == "") {
-        $location = "/";
-    }
+$app->put('/media/file', function (Request $request, Response $response, $args) {
+    $inputJson = $request->getParsedBody();
+    $userId = $request->getAttribute("userId");
+    $inserted = DatabaseManager::updateVersionedRecord("media", $inputJson, $userId);
+    $response->getBody()->write(json_encode($inserted));
+    return $response;
+});
 
-    $extension = pathinfo($uploadedFile->getClientFilename(), PATHINFO_EXTENSION);
-    $slugName = pathinfo($uploadedFile->getClientFilename(), PATHINFO_FILENAME);
-    $slugName = slugify($slugName);
-
-    $slugName = sprintf('%s.%0.8s', $slugName, $extension);
-
-    $path = $location . DIRECTORY_SEPARATOR . $slugName;
-    $fullPath = $directory . $path;
-    $uploadedFile->moveTo($fullPath);
-
-    $media = new stdClass();
-    $media->type = "file";
-    $media->originName = $uploadedFile->getClientFilename();
-    $media->slugName = $slugName;
-    $media->path = $location;
-    $media->fullPath = $fullPath;
-    $media->attributes = [
-        'size' => $uploadedFile->getSize(),
-        'type' => $uploadedFile->getClientMediaType()
-    ];
-    return $media;
-}
-
-function slugify($text)
-{
-    // Strip html tags
-    $text = strip_tags($text);
-    // Replace non letter or digits by -
-    $text = preg_replace('~[^\pL\d]+~u', '-', $text);
-    // Transliterate
-    setlocale(LC_ALL, 'en_US.utf8');
-    $text = iconv('utf-8', 'us-ascii//TRANSLIT', $text);
-    // Remove unwanted characters
-    $text = preg_replace('~[^-\w]+~', '', $text);
-    // Trim
-    $text = trim($text, '-');
-    // Remove duplicate -
-    $text = preg_replace('~-+~', '-', $text);
-    // Lowercase
-    $text = strtolower($text);
-    // Check if it is empty
-    if (empty($text)) {
-        return 'n-a';
-    }
-    // Return result
-    return $text;
-}
 
 $app->run();

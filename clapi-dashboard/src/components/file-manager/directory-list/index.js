@@ -19,6 +19,14 @@ function isRoot(location) {
   return location.length === 0 || location.length === 1
 }
 
+function resolvePath(path) {
+  if(path.length > 1 ) {
+    return path + "/";
+  } else {
+    return path;
+  }
+}
+
 const DirectoryList = (props) => {
   console.log(props)
 
@@ -28,7 +36,7 @@ const DirectoryList = (props) => {
             props.onBackDirectoryClick)}
         {props.directories.map((value, index) =>
             (<div onClick={() => {
-              props.onDirectoryClick(value.path + "/" + value.slugName)
+              props.onDirectoryClick(resolvePath(value.path)  + value.slugName)
             }}>
               <div className={style.flexContainerInner}>
                 <div className={style.folderIcon}><img alt={"icon"}

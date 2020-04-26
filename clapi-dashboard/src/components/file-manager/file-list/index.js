@@ -3,9 +3,12 @@ import style from "./style.css"
 import downloadIcon from "./download.svg"
 import {useState} from "preact/hooks";
 import * as api from "../../../api";
+import {FilePreview} from "../file-preview/file-preview";
+import {route} from "preact-router";
 
 export const Mode = {
-  SELECTION: "SELECTION",
+  SELECT: "SELECT",
+  MULTI_SELECT: "MULTI_SELECT",
   EDIT: "EDIT"
 }
 
@@ -24,35 +27,36 @@ function formatBytes(bytes, decimals = 2) {
 }
 
 const FileList = (props) => {
-  const [selected, setSelected] = useState(props.selectedItem || {})
-  const [mode, setMode] = useState(props.fileListMode || Mode.EDIT)
+  const defaultMode = props.fileListMode || Mode.EDIT
+  const defaultSelected = props.selectedItem || (defaultMode
+      === Mode.MULTI_SELECT && []) || {}
+  const [mode, setMode] = useState(defaultMode)
+  const [selected, setSelected] = useState(defaultSelected)
 
   return (
       <div className={style.flexContainer}>
-        {props.files.map((value, index) =>
+        {props.files.map((file, index) =>
             (<div
-                className={mode === Mode.SELECTION && value._id === selected._id
+                className={mode === Mode.SELECT && file._id === selected._id
                 && style.selected}
                 onClick={() => {
-                  mode === Mode.SELECTION && setSelected(value);
-                  props.onMediaClick && props.onMediaClick(value);
+                  mode === Mode.SELECT && setSelected(file);
+                  mode === Mode.MULTI_SELECT && setSelected([...selected, file]);
+                  mode === Mode.EDIT && route("/media/edit/" + file._id)
+                  props.onMediaClick && props.onMediaClick(file);
                 }}>
               <div className={style.flexContainerInner}>
-                <div className={style.bold}>{value.originName}</div>
-                <div className={style.small}>{value.attributes.type}</div>
-                <div className={style.small}>{formatBytes(value.attributes.size,
+                <div className={style.bold}>{file.originName}</div>
+                <div className={style.small}>{file.attributes.type}</div>
+                <div className={style.small}>{formatBytes(file.attributes.size,
                     2)}
                 </div>
                 <div className={style.downloadIcon}>
-                  <img src={downloadIcon}
-                       alt={"download file"}
-                  />
+                  <img src={downloadIcon} alt={"download file"}/>
                 </div>
               </div>
               <div>
-                <img className={style.filePreview}
-                     src={api.apiUrl + value.fullPath}
-                     alt={value.originName}/>
+                <FilePreview file={file}/>
               </div>
             </div>)
         )}

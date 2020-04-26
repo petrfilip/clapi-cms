@@ -25,13 +25,11 @@ final class JwtMiddleware implements MiddlewareInterface
             return $handler->handle($request);
         }
 
-        $key = "example_key";
         $jwt = $request->getHeaders();
-
         $jwt = str_replace('Bearer ', '', $jwt['authorization'][0]);
         $tokenData = null;
         try {
-            $tokenData = JWT::decode($jwt, $key, ['HS256']);
+            $tokenData = JWT::decode($jwt, JWT_KEY, ['HS256']);
         } catch (SignatureInvalidException $e) {
             return new Response(401);
         }

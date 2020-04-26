@@ -10,7 +10,7 @@ import TypeDefinitionList
 import * as api from "../../api";
 import DataLoader from "../../components/data-loader";
 
-const DefinitionEditor = ({typeDefinition}) => {
+const DefinitionEditorPage = ({typeDefinition}) => {
 
   return (typeDefinition === "" ?
           (<><TypeDefinitionList/></>) :
@@ -20,4 +20,4 @@ const DefinitionEditor = ({typeDefinition}) => {
   )
 };
 
-export default DefinitionEditor;
+export default DefinitionEditorPage;

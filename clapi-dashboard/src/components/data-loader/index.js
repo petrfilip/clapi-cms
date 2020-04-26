@@ -4,8 +4,8 @@ import {React} from "preact";
 import Error from "../error";
 import DataManager from "./data-manager";
 
-const DataLoader = ({uri, action, children, forceShowChild = false, skipLoader = false}) => {
-  const [data, loading, error] = DataManager.load(uri, action);
+const DataLoader = ({uri, params, children, forceShowChild = false, skipLoader = false}) => {
+  const [data, loading, error] = DataManager.load(uri, params);
 
   if (uri) {
     if (!skipLoader && loading) {

@@ -13,6 +13,7 @@ const LoginForm = () => {
   const onFormSubmit = () => {
     DataManager.saveOrUpdate(api.fetchLogin(), "json",
         {email, password}, (userInfo) => {
+          userInfo.onsuccess
           console.log(userInfo);
           UserManager.setUserDetails(userInfo);
         })

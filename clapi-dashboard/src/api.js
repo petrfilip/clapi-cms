@@ -1,4 +1,3 @@
-
 export const apiUrl = "http://localhost:8888/";
 const debug = "?XDEBUG_SESSION_START=PHPSTORM"
 
@@ -11,11 +10,16 @@ export const fetchCollectionContent = (collectionName, id) => {
 }
 
 export const fetchTypeDefinition = (collectionName) => {
-  return [apiUrl, "collection/", "type-definition", "/" + collectionName, debug].join("")
+  return [apiUrl, "collection/", "type-definition", "/" + collectionName,
+    debug].join("")
 }
 
-export const fetchMediaUpload = () => {
-  return [apiUrl, "media/", "upload", debug].join("")
+export const fetchDownloadMediaFile = (mediaId) => {
+  return [apiUrl, "media/", "download/", mediaId, debug].join("")
+}
+
+export const fetchMediaFile = () => {
+  return [apiUrl, "media/", "file", debug].join("")
 }
 
 export const fetchMedia = (mediaId) => {
@@ -27,7 +31,7 @@ export const fetchMediaDirectory = () => {
 }
 
 export const fetchMediaList = (location) => {
-  return [apiUrl, "media/list", location, debug].join("")
+  return [apiUrl, "media/list", "/", location, debug].join("")
 }
 
 export const fetchLogin = () => {
