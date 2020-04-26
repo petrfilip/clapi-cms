@@ -108,10 +108,12 @@ export default class DataManager {
   static fetchData = async (uri, params) => {
 
     const headers = new Headers();
-    UserManager.getUserDetails() && headers.set("authorization","Bearer " + UserManager.getUserDetails().token)
+    UserManager.getUserDetails() && headers.set("authorization",
+        "Bearer " + UserManager.getUserDetails().token)
 
     params = {}
-    const convertedQueryParams = (params && queryString.stringify(params)) || "";
+    const convertedQueryParams = (params && queryString.stringify(params))
+        || "";
 
     //todo fix it
     return await fetch(uri + "&" + convertedQueryParams,
@@ -125,17 +127,32 @@ export default class DataManager {
   static fetchBinaryData = async (uri, params) => {
 
     const headers = new Headers();
-    UserManager.getUserDetails() && headers.set("authorization","Bearer " + UserManager.getUserDetails().token)
+    UserManager.getUserDetails() && headers.set("authorization",
+        "Bearer " + UserManager.getUserDetails().token)
 
     params = {}
-    const convertedQueryParams = (params && queryString.stringify(params)) || "";
+    const convertedQueryParams = (params && queryString.stringify(params))
+        || "";
 
     //todo fix it
-    return fetch(uri + "&" + convertedQueryParams,
+    fetch(uri + "&" + convertedQueryParams,
         {headers},
     )
-    .then(function (response) {
-      return response.blob();
+    .then(response => {
+      return response.blob().then(blob => {
+        return {
+          filename: response.headers.get("X-Filename"),
+          raw: blob
+        }
+      })
+    }).then((data) => {
+      const url = window.URL.createObjectURL(new Blob([data.raw]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', data.filename);
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode.removeChild(link);
     })
   }
 

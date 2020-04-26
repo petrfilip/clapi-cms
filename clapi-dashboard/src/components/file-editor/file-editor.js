@@ -19,9 +19,7 @@ function fields(file, setFile) {
         </InputWrapper>
         <button onClick={(e) => {
           e.preventDefault()
-          DataManager.saveOrUpdate(api.fetchMediaFile(), "json", file,
-              (data) => {
-                console.log(data);
+          DataManager.saveOrUpdate(api.fetchMediaFile(), "json", file, (data) => {
                 route("/media" + data.path);
               })
 
@@ -32,7 +30,11 @@ function fields(file, setFile) {
           route("/media" + file.path);
         }}>Back
         </button>
-        <a target={"_blank"} href={api.fetchDownloadMediaFile(file._id)}>Download</a>
+        <button onClick={(e) => {
+          e.preventDefault()
+          DataManager.fetchBinaryData(api.fetchDownloadMediaFile(file._id))
+        }}>Download
+        </button>
       </>
   )
 }

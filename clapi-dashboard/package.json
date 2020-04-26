@@ -10,6 +10,10 @@
     "lint": "eslint src",
     "test": "jest"
   },
+  "alias": {
+    "react": "preact/compat",
+    "react-dom": "preact/compat"
+  },
   "eslintConfig": {
     "extends": "preact",
     "ignorePatterns": [
@@ -26,15 +30,15 @@
     "jest-preset-preact": "^1.0.0",
     "preact-cli": "^3.0.0-rc.6",
     "preact-render-spy": "^1.2.1",
+    "prettier": "2.0.5",
     "sirv-cli": "^0.4.5"
   },
   "dependencies": {
     "axios": "^0.19.2",
+    "pell": "^1.0.6",
     "preact": "^10.3.2",
     "preact-render-to-string": "^5.1.4",
     "preact-router": "^3.2.1",
-    "pell": "^1.0.6",
-    "styled-components": "^5.1.0",
     "query-string": "^6.12.1"
   },
   "jest": {

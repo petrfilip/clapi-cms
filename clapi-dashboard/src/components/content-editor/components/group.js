@@ -34,15 +34,15 @@ const Group = (props) => {
   return (
       <>
         <div className={style.groupWrapper}>
-          {Object.keys(inputObject).map((el, i) =>
-              <div className={style.group} key={i}>
+          {Object.keys(inputObject).map((element, index) =>
+              <div className={style.group} key={index}>
                 <div className={style.actionButtons}>
                   <span>reorder</span>
                   <span>remove</span>
                 </div>
                 {renderInputs(fields,
                     {inputObject, setInputObject, onInputChangeCallback, id},
-                    i)}
+                    index)}
               </div>)}
           <button onClick={() => {
             setInputObject(prevState => [...prevState, {}])

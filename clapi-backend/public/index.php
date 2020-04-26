@@ -196,6 +196,7 @@ $app->get('/media/download/{id:[0-9]+}', function (Request $request, Response $r
         $stream = new Stream($fh); // create a stream instance for the response body
 
         return $response->withBody($stream)
+            ->withHeader('X-Filename', $loadedItem["originName"])
             ->withHeader('Content-Disposition', 'attachment; ' . $loadedItem["originName"] . ';')
             ->withHeader('Content-Type', mime_content_type($path))
             ->withHeader('Content-Length', filesize($path))

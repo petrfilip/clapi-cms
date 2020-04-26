@@ -37,8 +37,7 @@ const FileList = (props) => {
       <div className={style.flexContainer}>
         {props.files.map((file, index) =>
             (<div
-                className={mode === Mode.SELECT && file._id === selected._id
-                && style.selected}
+                className={mode === Mode.SELECT && file._id === selected._id && style.selected}
                 onClick={() => {
                   mode === Mode.SELECT && setSelected(file);
                   mode === Mode.MULTI_SELECT && setSelected([...selected, file]);
