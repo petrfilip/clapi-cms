@@ -1,4 +1,3 @@
-import {React} from "preact";
 import {InputWrapper} from "../file-editor/input-wrapper";
 import {useContext, useState} from "preact/hooks";
 import {AppModalContext} from "../modal/AppModalContextProvider";
@@ -17,6 +16,9 @@ const slugify = (string) => {
   .replace(/^-+/, '') // Trim - from start of text
   .replace(/-+$/, '') // Trim - from end of text
 }
+
+import React from "preact/compat";
+import styled from "styled-components";
 
 const TypeDefinitionInputSettings = (props) => {
 

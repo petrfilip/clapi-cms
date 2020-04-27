@@ -10,10 +10,6 @@
     "lint": "eslint src",
     "test": "jest"
   },
-  "alias": {
-    "react": "preact/compat",
-    "react-dom": "preact/compat"
-  },
   "eslintConfig": {
     "extends": "preact",
     "ignorePatterns": [
@@ -31,15 +27,24 @@
     "preact-cli": "^3.0.0-rc.6",
     "preact-render-spy": "^1.2.1",
     "prettier": "2.0.5",
-    "sirv-cli": "^0.4.5"
+    "sirv-cli": "^0.4.5",
+    "webpack-bundle-analyzer": "^3.6.1"
   },
   "dependencies": {
     "axios": "^0.19.2",
     "pell": "^1.0.6",
-    "preact": "^10.3.2",
+    "preact": "^10.4.0",
     "preact-render-to-string": "^5.1.4",
+    "prop-types": "^15.7.2",
     "preact-router": "^3.2.1",
-    "query-string": "^6.12.1"
+    "query-string": "^6.12.1",
+    "styled-components": "^5.1.0",
+    "styled-flex-component": "^3.0.0",
+    "styled-reset": "^4.1.4"
+  },
+  "alias": {
+    "react": "preact/compat",
+    "react-dom": "preact/compat"
   },
   "jest": {
     "preset": "jest-preset-preact",

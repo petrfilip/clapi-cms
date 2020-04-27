@@ -8,7 +8,7 @@ const FlashMessages = (props) => {
 
   const {removeMessage} = useContext(FlashMessageContext)
 
-  return props.messages.length && <div>
+  return props.messages.length > 0 && <div>
     <div className={style.messageWrapper}>{
       props.messages.map((item, index) =>
           <div onClick={() => removeMessage(index)} className={style[item.type]}>

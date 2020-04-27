@@ -1,16 +1,20 @@
-import {React} from "preact";
-import {useState} from "preact/hooks";
+import {useContext, useEffect, useState} from "preact/hooks";
 import * as api from "../../api";
 import DataManager from "../data-loader/data-manager";
 import TypeDefinitionBuilder from "./type-definition-builder";
 import TypeDefinitionBuilderMenu from "./type-definition-builder-menu";
 
+import React from "preact/compat";
+import styled from "styled-components";
+import TwoColumnsLayout from "../layout/two-columns-layout";
+import {MenuContext} from "../menu/menu-context";
+
 const saveOrUpdate = (data) => {
   DataManager.saveOrUpdate(api.fetchCollection("type-definition"), "json", data)
-
 }
 
 const TypeDefinitionEditor = (props) => {
+  const {setMenuContext} = useContext(MenuContext)
   const [typeDefinition, setTypeDefinition] = useState(
       props.typeDefinition || {});
   const [typeDefinitionConfig, setTypeDefinitionConfig] = useState(
@@ -21,25 +25,24 @@ const TypeDefinitionEditor = (props) => {
         addToObject(typeDefinitionConfig, obj.apiKey, obj.value, obj.position));
   }
 
-  return (<div>
-    <br/>
-    <br/>
-
-    <TypeDefinitionBuilderMenu/>
-
-    <br/>
-
-    <TypeDefinitionBuilder typeDefinitionConfig={typeDefinitionConfig}
-                           onNewDefinition={onNewDefinition}/>
-
-    <br/>
-
-    {JSON.stringify(typeDefinitionConfig, null, 2)}
-    <button onClick={() => {
+  useEffect(() => {
+    setMenuContext(<button onClick={() => {
       typeDefinition.config = typeDefinitionConfig;
       saveOrUpdate(typeDefinition);
     }}>update definition
-    </button>
+    </button>);
+
+    return () => setMenuContext(null);
+  }, []);
+
+  return (<div>
+
+    <TwoColumnsLayout
+        left={<TypeDefinitionBuilder typeDefinitionConfig={typeDefinitionConfig}
+                                     onNewDefinition={onNewDefinition}/>}
+        right={<TypeDefinitionBuilderMenu/>}/>
+
+    {/*{JSON.stringify(typeDefinitionConfig, null, 2)}*/}
   </div>);
 };
 

@@ -8,8 +8,7 @@ import * as api from './../../api'
 import DataLoader from "../data-loader";
 
 function renderList(data, onRowClick) {
-  onRowClick = onRowClick || ((value) => route(
-      `/edit/${value.collectionName}/${value._id}`))
+  onRowClick = onRowClick || ((value) => route(`/edit/${value.metadata.collectionName}/${value._id}`))
   return <>
     <section className={style.listTable}>
       <header className={style.listRow}>

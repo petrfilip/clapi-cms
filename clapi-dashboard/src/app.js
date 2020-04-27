@@ -1,7 +1,7 @@
 import {h, Component, React} from 'preact';
 import {route, Router} from 'preact-router';
 
-import Header from './components/header';
+import Menu from './components/menu';
 
 // Code-splitting is automated for routes
 import HomePage from './routes/home-page';
@@ -18,6 +18,10 @@ import UserManager from "./components/user-manager";
 import LogoutPage from "./routes/logout-page";
 import NotFoundPage from "./routes/not-found-page";
 import MediaPage from "./routes/media-page";
+import PageLayout from "./components/layout/page-layout";
+
+import {createGlobalStyle, ThemeProvider} from 'styled-components'
+import reset from 'styled-reset'
 
 const App = (props) => {
   const [currentUrl, setCurrentUrl] = useState({});
@@ -32,13 +36,12 @@ const App = (props) => {
   /* MODAL CONTEXT */
   const modalContextValue = {
     setModalBody: setModalBody,
-    setIsModalVisible: setIsModalVisible
   };
 
   /* FLASH MESSAGE CONTEXT */
   const addMessage = (message) => {
     setFlashMessages([...flashMessages, message]);
-  }
+  };
 
   const removeMessage = (indexToRemove) => {
     const newMessages = flashMessages.filter(
@@ -55,29 +58,51 @@ const App = (props) => {
     route("/login")
   }
 
+  const theme = {
+    primary: "#0072BB",
+    secondary: "white",
+    lightgray: "#F4F3EE",
+    gray: "#e2e2e2",
+    white: "white"
+  }
+
   return (
-      <div id="app">
-        <LanguageContext.Provider value={"en"}>
+      <LanguageContext.Provider value={"en"}>
+        <GlobalStyle/>
+        <ThemeProvider theme={theme}>
           <FlashMessageContext.Provider value={flashMessageContextValue}>
             <FlashMessages messages={flashMessages}/>
             <AppModalContext.Provider value={modalContextValue}>
-              <Header/>
-              <Router onChange={handleRoute}>
-                <HomePage path="/"/>
-                <LoginPage path="/login"/>
-                <LogoutPage path="/logout"/>
-                <EditContentPage path="/edit/:collection/:id*"/>
-                <MediaPage path="/media/edit/:id"/>
-                <MediaPage path="/media/:location*"/>
-                <DefinitionEditorPage path="/definition-editor/:typeDefinition*"/>
-                <NotFoundPage path="/:notFound*"/>
-              </Router>
+
+              <PageLayout menu={<Menu/>}>
+                <Router onChange={handleRoute}>
+                  <HomePage path="/"/>
+                  <LoginPage path="/login"/>
+                  <LogoutPage path="/logout"/>
+                  <EditContentPage path="/edit/:collection/:id*"/>
+                  <MediaPage path="/media/edit/:id"/>
+                  <MediaPage path="/media/:location*"/>
+                  <DefinitionEditorPage
+                      path="/definition-editor/:typeDefinition*"/>
+                  <NotFoundPage path="/:notFound*"/>
+                </Router>
+              </PageLayout>
+
               <Modal visible={isModalVisible}>{modalBody}</Modal>
             </AppModalContext.Provider>
           </FlashMessageContext.Provider>
-        </LanguageContext.Provider>
-      </div>
+        </ThemeProvider>
+      </LanguageContext.Provider>
   );
 }
+const GlobalStyle = createGlobalStyle`
+   body {
+     margin: 0;
+     padding: 0;
+     overflow: hidden;
+     height: 100%;
+    
+   }
+`
 
 export default App;

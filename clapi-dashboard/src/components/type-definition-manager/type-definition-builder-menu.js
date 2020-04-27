@@ -1,26 +1,39 @@
-import {React} from "preact";
 import {ContentEditorComponents} from "../content-editor/content-editor-components";
-
-const style = {
-  backgroundColor: "lightblue",
-  width: "250px",
-  height: "50px",
-  margin: "5px"
-}
+import React from "preact/compat";
+import styled from "styled-components";
 
 
 const TypeDefinitionBuilderMenu = () => {
 
-  return (<>
+  return (<MenuContainer>
     {Object.keys(ContentEditorComponents).map((componentKey) => {
-    return <div style={style} draggable
-         onDragStart={event => event.dataTransfer.setData("componentKey",
-             componentKey)}
-    > {componentKey} ICON - NAME - DESCRIPTION
-    </div>
+      return <MenuItem draggable
+                       onDragStart={event => event.dataTransfer.setData(
+                           "componentKey",
+                           componentKey)}
+      > {componentKey} ICON - NAME - DESCRIPTION
+      </MenuItem>
     })}
 
-  </>);
+  </MenuContainer>);
 };
+
+const MenuContainer = styled.div`
+  padding: 10px;
+  margin: 10px;
+  overflow: auto;
+  text-align: center;
+  font-size: 16px;
+`
+
+const MenuItem = styled.div`
+  height: 40px;
+  padding: 10px;
+  margin: 10px;
+  overflow: auto;
+  background-color: #e2e2e2;
+  font-size: 16px;
+  border-radius: 2px;
+`
 
 export default TypeDefinitionBuilderMenu;
