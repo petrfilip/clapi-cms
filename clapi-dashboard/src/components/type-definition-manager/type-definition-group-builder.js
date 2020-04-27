@@ -3,9 +3,9 @@ import {AppModalContext} from "../modal/AppModalContextProvider";
 import TypeDefinitionInputSettings from "./type-definition-input-settings";
 import React from "preact/compat";
 import styled from "styled-components";
-import TypeDefinitionGroupBuilder from "./type-definition-group-builder";
 
-function getDropContainer(index, setModalBody, onNewDefinition) {
+function getDropContainer(index, setModalBody, onUpdateDefinition, onNewDefinition) {
+  console.log("index",index)
   return <DropContainer key={index} id={index}
                         onDragOver={event => {
                           event.preventDefault();
@@ -13,63 +13,62 @@ function getDropContainer(index, setModalBody, onNewDefinition) {
                         onDrop={(e) => {
                           const componentKey = e.dataTransfer.getData(
                               "componentKey");
-                          console.log("ondrop: ", e)
                           setModalBody(<TypeDefinitionInputSettings
                               position={index}
-                              onConfirm={onNewDefinition}
+                              onConfirm={(obj) => onNewDefinition(obj, onUpdateDefinition)}
                               componentKey={componentKey}/>)
                         }}>
 
   </DropContainer>;
 }
 
-function getComponentPlaceholder(key, item, index, onRemoveDefinition,
-    setModalBody, onNewDefinition, onUpdateDefinition) {
-  console.log(item)
+function getComponentPlaceholder(item, index, onRemoveDefinition) {
   return <ComponentPlaceholder>
-    PLACEHOLDER NORMAL {key} - {index} - {item.type}
-    {item.type === "Group" &&
-    <TypeDefinitionGroupBuilder // todo dynamic placeholders
-        parent={index}
-        typeDefinitionConfig={{}}
-        onUpdateDefinition={onUpdateDefinition}/>}
+    PLACEHOLDER BUILDER {item} - {index}
     <ActionButtons>
       <ActionButton
-          onClick={() => onRemoveDefinition(key)}>D</ActionButton>
-      <ActionButton onClick={() => setModalBody(<TypeDefinitionInputSettings
-          values={{fieldName: item.config.label, apiKey:key}}
-          position={index}
-          onConfirm={onNewDefinition}
-          componentKey={key}/>)}>S</ActionButton>
+          onClick={() => onRemoveDefinition(item)}>D</ActionButton>
+      <ActionButton>S</ActionButton>
       <ActionButton>O</ActionButton>
     </ActionButtons>
   </ComponentPlaceholder>;
 }
 
-const TypeDefinitionBuilder = ({typeDefinitionConfig, onNewDefinition, onRemoveDefinition, onUpdateDefinition}) => {
+const onNewDefinition = (obj, onUpdateDefinition) => {
+  console.log(obj);
+  const newObj = obj[obj.apiKey] = {
+    type: obj.value.type,
+    config: {
+      label: obj.value.config.label
+    }
+  }
+  console.log(newObj);
+  onUpdateDefinition(newObj);
+};
 
+const onRemoveDefinition = (obj) => {
+  console.log(obj);
+}
+
+const TypeDefinitionGroupBuilder = ({parent, typeDefinitionConfig, onUpdateDefinition}) => {
   const {setModalBody} = useContext(AppModalContext)
 
   return (
       <TypeDefinitionBuilderContainer>
         {Object.keys(typeDefinitionConfig).map((item, index) => {
           return <>
-            {getDropContainer(index, setModalBody, onNewDefinition)}
-            {getComponentPlaceholder(item, typeDefinitionConfig[item], index,
-                onRemoveDefinition,
-                setModalBody, onNewDefinition, onUpdateDefinition)}
-
+            {getDropContainer(index, setModalBody,onUpdateDefinition, onNewDefinition)}
+            {getComponentPlaceholder(item, index, onUpdateDefinition, onRemoveDefinition)}
           </>
         })
         }
-        {getDropContainer(typeDefinitionConfig.length, setModalBody,
-            onNewDefinition)}
+        {getDropContainer(typeDefinitionConfig.length || 0, setModalBody,onUpdateDefinition, onNewDefinition)}
       </TypeDefinitionBuilderContainer>
   );
 };
 
 const TypeDefinitionBuilderContainer = styled.div`
-  width: 90%;
+  width: 50%;
 `
 
 const DropContainer = styled.div`
@@ -85,7 +84,7 @@ const DropContainer = styled.div`
 const ComponentPlaceholder = styled.div`
   justify-content: space-between;
   display: flex;
-  background-color: #e2e2e2;
+  background-color: #888888;
   padding: 10px;
   font-size: 16px;
   border-radius: 2px;
@@ -109,4 +108,4 @@ const ActionButton = styled.span`
   border-radius: 2px;
 `
 
-export default TypeDefinitionBuilder;
+export default TypeDefinitionGroupBuilder;

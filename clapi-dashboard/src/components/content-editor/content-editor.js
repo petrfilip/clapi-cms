@@ -64,7 +64,7 @@ const ContentEditor = (props) => {
       saveOrUpdate(inputObject, setInputObject)
     }}>Save</Button>);
     return () => setMenuContext(null);
-  }, []);
+  }, [inputObject]);
 
   checkVersion(props, inputObject) && setInputObject(props.values);
   return <Center>{renderForm(props, inputObject, setInputObject)}</Center>

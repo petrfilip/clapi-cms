@@ -5,15 +5,16 @@ import Button from "../elementary/button";
 
 const slugify = (string) => {
   const a = 'àáâäæãåāăąçćčđďèéêëēėęěğǵḧîïíīįìłḿñńǹňôöòóœøōõőṕŕřßśšşșťțûüùúūǘůűųẃẍÿýžźż·/_,:;'
-  const b = 'aaaaaaaaaacccddeeeeeeeegghiiiiiilmnnnnoooooooooprrsssssttuuuuuuuuuwxyyzzz------'
+  const b = 'aaaaaaaaaacccddeeeeeeeegghiiiiiilmnnnnoooooooooprrsssssttuuuuuuuuuwxyyzzz______'
   const p = new RegExp(a.split('').join('|'), 'g')
 
+  //todo replace dash (-) with underscore
   return string.toString().toLowerCase()
-  .replace(/\s+/g, '-') // Replace spaces with -
+  .replace(/\s+/g, '_') // Replace spaces with -
   .replace(p, c => b.charAt(a.indexOf(c))) // Replace special characters
-  .replace(/&/g, '-and-') // Replace & with 'and'
+  .replace(/&/g, '_and_') // Replace & with 'and'
   .replace(/[^\w\-]+/g, '') // Remove all non-word characters
-  .replace(/\-\-+/g, '-') // Replace multiple - with single -
+  .replace(/\-\-+/g, '_') // Replace multiple - with single -
   .replace(/^-+/, '') // Trim - from start of text
   .replace(/-+$/, '') // Trim - from end of text
 }
@@ -21,8 +22,8 @@ const slugify = (string) => {
 const TypeDefinitionInputSettings = (props) => {
 
   const {setModalBody} = useContext(AppModalContext)
-  const [fieldName, setFieldName] = useState("");
-  const [apiKey, setApiKey] = useState("");
+  const [fieldName, setFieldName] = useState(props.values && props.values.fieldName || "");
+  const [apiKey, setApiKey] = useState(props.values && props.values.apiKey || "");
 
   return (<div>
 
@@ -51,7 +52,7 @@ const TypeDefinitionInputSettings = (props) => {
         }
       }
 
-      props.onNewDefinition({position, apiKey, value});
+      props.onConfirm({position, apiKey, value});
       setModalBody(null);
     }}>Done
     </Button>

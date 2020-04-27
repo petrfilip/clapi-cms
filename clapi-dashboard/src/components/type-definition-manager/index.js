@@ -24,6 +24,12 @@ const TypeDefinitionEditor = (props) => {
   const onNewDefinition = (obj) => {
     setTypeDefinitionConfig(
         addToObject(typeDefinitionConfig, obj.apiKey, obj.value, obj.position));
+
+  }
+
+  const onUpdateDefinition = (obj) => {
+    console.log(obj)
+
   }
 
   const onRemoveDefinition = (key) => {
@@ -33,25 +39,30 @@ const TypeDefinitionEditor = (props) => {
     setTypeDefinitionConfig(copy);
   }
 
-  useEffect(() => {
-    setMenuContext(<Button onClick={() => {
-      typeDefinition.config = typeDefinitionConfig;
-      saveOrUpdate(typeDefinition);
-    }}>update definition
-    </Button>);
-    return () => setMenuContext(null);
-  }, []);
+  function saveOrUpdateAction() {
+    typeDefinition.config = typeDefinitionConfig;
+    saveOrUpdate(typeDefinition);
+  }
 
-  {/*{JSON.stringify(typeDefinitionConfig, null, 2)}*/}
+  useEffect(() => {
+    setMenuContext(<Button onClick={saveOrUpdateAction}>update
+      definition</Button>);
+    return () => setMenuContext(null);
+  }, [typeDefinitionConfig]);
+
+  {/*{JSON.stringify(typeDefinitionConfig, null, 2)}*/
+  }
 
   return (
 
-    <TwoColumnsLayout
-        left={<TypeDefinitionBuilder typeDefinitionConfig={typeDefinitionConfig}
-                                     onNewDefinition={onNewDefinition}
-                                     onRemoveDefinition={onRemoveDefinition}
-        />}
-        right={<TypeDefinitionBuilderMenu/>}/>
+      <TwoColumnsLayout
+          left={<TypeDefinitionBuilder
+              typeDefinitionConfig={typeDefinitionConfig}
+              onNewDefinition={onNewDefinition}
+              onUpdateDefinition={onUpdateDefinition}
+              onRemoveDefinition={onRemoveDefinition}
+          />}
+          right={<TypeDefinitionBuilderMenu/>}/>
 
   );
 };
