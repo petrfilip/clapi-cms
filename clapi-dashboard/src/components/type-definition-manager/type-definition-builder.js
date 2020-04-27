@@ -4,7 +4,7 @@ import TypeDefinitionInputSettings from "./type-definition-input-settings";
 import React from "preact/compat";
 import styled from "styled-components";
 
-const TypeDefinitionBuilder = ({typeDefinitionConfig, onNewDefinition}) => {
+const TypeDefinitionBuilder = ({typeDefinitionConfig, onNewDefinition, onRemoveDefinition}) => {
 
   const {setModalBody} = useContext(AppModalContext)
 
@@ -30,7 +30,7 @@ const TypeDefinitionBuilder = ({typeDefinitionConfig, onNewDefinition}) => {
             <ComponentPlaceholder>
               PLACEHOLDER {item} - {index}
               <ActionButtons>
-                <ActionButton>D</ActionButton>
+                <ActionButton onClick={()=>onRemoveDefinition(item)}>D</ActionButton>
                 <ActionButton>S</ActionButton>
                 <ActionButton>O</ActionButton>
               </ActionButtons>
