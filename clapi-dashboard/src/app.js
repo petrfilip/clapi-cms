@@ -60,16 +60,17 @@ const App = (props) => {
 
   const theme = {
     primary: "#0072BB",
-    secondary: "white",
+    secondary: "#FFF",
     lightgray: "#F4F3EE",
     gray: "#e2e2e2",
+    darkgray: "#aaa",
     white: "white"
   }
 
   return (
       <LanguageContext.Provider value={"en"}>
-        <GlobalStyle/>
         <ThemeProvider theme={theme}>
+          <GlobalStyle/>
           <FlashMessageContext.Provider value={flashMessageContextValue}>
             <FlashMessages messages={flashMessages}/>
             <AppModalContext.Provider value={modalContextValue}>
@@ -101,6 +102,7 @@ const GlobalStyle = createGlobalStyle`
      padding: 0;
      overflow: hidden;
      height: 100%;
+     background-color: #F4F3EE;
     
    }
 `

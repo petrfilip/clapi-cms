@@ -2,6 +2,7 @@ import {h, React} from "preact";
 import {useEffect, useState} from "preact/hooks";
 import ComponentEditWrapper from "./component-edit-wrapper";
 import style from "./group.css"
+import Button from "../../elementary/button";
 
 function renderInputs(config, editor, groupIndex) {
   return Object.entries(config).map(([key, value], i) => {
@@ -44,10 +45,10 @@ const Group = (props) => {
                     {inputObject, setInputObject, onInputChangeCallback, id},
                     index)}
               </div>)}
-          <button onClick={() => {
+          <Button onClick={() => {
             setInputObject(prevState => [...prevState, {}])
           }}>Add new element
-          </button>
+          </Button>
         </div>
       </>
   )

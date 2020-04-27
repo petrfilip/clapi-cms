@@ -31,7 +31,7 @@ export const fetchMediaDirectory = () => {
 }
 
 export const fetchMediaList = (location) => {
-  return [apiUrl, "media/list", "/", location, debug].join("")
+  return [apiUrl, "media/list", location, debug].join("")
 }
 
 export const fetchLogin = () => {

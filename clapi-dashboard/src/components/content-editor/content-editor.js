@@ -1,9 +1,14 @@
 import {h} from 'preact';
 import ComponentEditWrapper from "./components/component-edit-wrapper";
-import {useState} from "preact/hooks";
+import {useContext, useEffect, useState} from "preact/hooks";
 import {route} from "preact-router";
 import * as api from "../../api";
 import DataManager from "../data-loader/data-manager";
+
+import {Center} from "../layout/center";
+import Button from "../elementary/button";
+import {MenuContext} from "../menu/menu-context";
+import React from "preact/compat";
 
 function renderInputs(config, editor) {
   return Object.entries(config).map(([key, newProps]) => {
@@ -25,7 +30,8 @@ const saveOrUpdate = (data, setInputObject) => {
       "json", data, (out) => {
         setInputObject(out);
         console.log(out);
-        !data._id && out._id && route("/edit/" + data.metadata.collectionName + "/" + out._id)
+        !data._id && out._id && route(
+            "/edit/" + data.metadata.collectionName + "/" + out._id)
       })
 }
 
@@ -36,10 +42,7 @@ function renderForm(props, inputObject, setInputObject) {
       }}>
         <h2>Content Editor</h2>
         {renderInputs(props.config, {inputObject, setInputObject})}
-        <button type="submit" onClick={() => {
-          saveOrUpdate(inputObject, setInputObject)
-        }}>Save
-        </button>
+
         <pre>
           {JSON.stringify(inputObject, null, 2)}
         </pre>
@@ -54,8 +57,17 @@ function checkVersion(props, inputObject) {
 
 const ContentEditor = (props) => {
   const [inputObject, setInputObject] = useState(props.values || {});
+  const {setMenuContext} = useContext(MenuContext);
+
+  useEffect(() => {
+    setMenuContext(<Button type="submit" onClick={() => {
+      saveOrUpdate(inputObject, setInputObject)
+    }}>Save</Button>);
+    return () => setMenuContext(null);
+  }, []);
+
   checkVersion(props, inputObject) && setInputObject(props.values);
-  return renderForm(props, inputObject, setInputObject)
+  return <Center>{renderForm(props, inputObject, setInputObject)}</Center>
 };
 
 export default ContentEditor;

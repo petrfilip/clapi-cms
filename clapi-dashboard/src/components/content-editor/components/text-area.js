@@ -4,7 +4,6 @@ import {useEffect, useState} from "preact/hooks";
 import 'pell/dist/pell.css'
 
 const TextArea = (props) => {
-  const [html, setHtml] = useState();
 
   useEffect(() => {
     init({
@@ -25,8 +24,6 @@ const TextArea = (props) => {
       <div className="App">
         <h3>Editor:</h3>
         <div id="editor" className="pell"/>
-        <h3>HTML Output:</h3>
-        <div id="html-output">{html}</div>
       </div>
 
   )

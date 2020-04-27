@@ -1,12 +1,13 @@
-import {React} from "preact";
 import FileManager from "../../file-manager";
 import {useContext} from "preact/hooks";
 import {AppModalContext} from "../../modal/AppModalContextProvider";
 import {Mode} from "../../file-manager/file-list";
-import style from "./media-select.css"
 import * as api from "../../../api";
 import DataLoader from "../../data-loader";
 import {FilePreview} from "../../file-manager/file-preview/file-preview";
+import React from "preact/compat";
+import styled from "styled-components";
+import Button from "../../elementary/button";
 
 const MediaSelect = (props) => {
 
@@ -17,29 +18,50 @@ const MediaSelect = (props) => {
   const {setModalBody} = useContext(AppModalContext)
 
   return (
-      <div className={style.row}>
+      <ComponentContainer>
         <DataLoader
             forceShowChild={true}
             uri={props.initialValue && api.fetchMedia(props.initialValue)}>
           {data => (
               <>
-                <div className={style.select}
-                     onClick={() => {
-                       setModalBody(<FileManager
-                           routeAllowed={false}
-                           selectedItem={data}
-                           fileListMode={Mode.SELECT}
-                           onMediaClick={onMediaSelected}/>);
-                     }}>Select
-                </div>
+                <Button
+                    onClick={() => {
+                      setModalBody(<FileManager
+                          routeAllowed={false}
+                          selectedItem={data}
+                          fileListMode={Mode.SELECT}
+                          onMediaClick={onMediaSelected}/>);
+                    }}>Select
+                </Button>
 
-                <div><FilePreview file={data}/>{data && data.originName}</div>
-                <div onClick={() => onMediaSelected({})}>X</div>
+                <PreviewContainer><FilePreview file={data}/>{data && data.originName}</PreviewContainer>
+
+                <Button onClick={() => onMediaSelected({})}>Remove</Button>
               </>
           )}
         </DataLoader>
-      </div>
+      </ComponentContainer>
   )
 };
+
+const ComponentContainer = styled.div`
+display: flex;
+
+  & > div {
+    flex: 1;
+   }
+
+ & > div:last-child {
+  margin-left: auto;
+ }
+`
+
+const PreviewContainer = styled.div`
+  display: flex;
+  
+  & > img {
+    height: 50px;
+  }
+`
 
 export default MediaSelect;

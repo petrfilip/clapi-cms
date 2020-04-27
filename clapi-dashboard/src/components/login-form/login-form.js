@@ -4,6 +4,7 @@ import * as api from "../../api";
 import {useState} from "preact/hooks";
 import UserManager from "../user-manager";
 import {route} from "preact-router";
+import Button from "../elementary/button";
 
 const LoginForm = () => {
 
@@ -28,17 +29,17 @@ const LoginForm = () => {
         <h1>Login</h1>
         <input onInput={(e) => setEmail(e.target.value)}/>
         <input onInput={(e) => setPassword(e.target.value)}/>
-        <button onClick={(e) => {
+        <Button onClick={(e) => {
           e.preventDefault();
           onFormSubmit();
         }}>Login
-        </button>
-        <button onClick={(e) => {
+        </Button>
+        <Button onClick={(e) => {
           e.preventDefault();
           UserManager.clearUserDetails();
         }}>
           Logout
-        </button>
+        </Button>
       </form>
   )
 };

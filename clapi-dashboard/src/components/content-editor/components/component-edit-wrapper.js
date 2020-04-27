@@ -1,14 +1,33 @@
 import {h} from 'preact';
-import style from "./component-edit-wrapper.css"
 import {ContentEditorComponents} from "../content-editor-components";
 
+import React from "preact/compat";
+import styled from "styled-components";
+
+
 const ComponentEditWrapper = (props) => (
-    <div>
-      <label className={style.label}>
-        {props.config.label} | <span className={style.apiKey}>{props.id}</span>
-      </label>
+    <ComponentWrapper>
+      <Label>
+        {props.config.label} | <ApiKey>{props.id}</ApiKey>
+      </Label>
       {h(ContentEditorComponents[props.type], props)}
-    </div>
+    </ComponentWrapper>
 );
+
+const ComponentWrapper = styled.div`
+  background-color: white;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  padding: 20px;
+`
+const Label = styled.div`
+  display: block;
+  font-size: 12px;
+  margin-left: 10px;
+  padding: 5px;
+`
+const ApiKey = styled.span`
+  font-size: 10px;
+`
 
 export default ComponentEditWrapper;

@@ -1,9 +1,10 @@
 import React from "preact/compat";
 import styled from "styled-components";
+import {Center} from "./center";
 
 const TwoColumnsLayout = (props) => (
     <Parent className="parent">
-      <Left className="left">{props.left}</Left>
+      <Left className="left"><Center>{props.left}</Center></Left>
       <Right className="right">{props.right}</Right>
     </Parent>
 );

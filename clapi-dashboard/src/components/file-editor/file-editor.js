@@ -6,6 +6,7 @@ import * as api from "../../api";
 import {useState} from "preact/hooks";
 import DataManager from "../data-loader/data-manager";
 import {route} from "preact-router";
+import Button from "../elementary/button";
 
 function fields(file, setFile) {
   return (
@@ -17,24 +18,24 @@ function fields(file, setFile) {
                     setFile(file);
                   }}/>
         </InputWrapper>
-        <button onClick={(e) => {
+        <Button onClick={(e) => {
           e.preventDefault()
           DataManager.saveOrUpdate(api.fetchMediaFile(), "json", file, (data) => {
                 route("/media" + data.path);
               })
 
         }}>Update changes
-        </button>
-        <button onClick={(e) => {
+        </Button>
+        <Button onClick={(e) => {
           e.preventDefault()
           route("/media" + file.path);
         }}>Back
-        </button>
-        <button onClick={(e) => {
+        </Button>
+        <Button onClick={(e) => {
           e.preventDefault()
           DataManager.fetchBinaryData(api.fetchDownloadMediaFile(file._id))
         }}>Download
-        </button>
+        </Button>
       </>
   )
 }

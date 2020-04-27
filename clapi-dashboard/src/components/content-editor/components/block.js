@@ -1,14 +1,15 @@
 import {React} from "preact";
+import Select from "../../elementary/select";
 
 const Block = (props) => (
     <>
       <div>Block</div>
-      <select>
+      <Select>
         <option>Gallery</option>
         <option>Text</option>
         <option>Quote</option>
         <option>Image</option>
-      </select>
+      </Select>
     </>
 );
 

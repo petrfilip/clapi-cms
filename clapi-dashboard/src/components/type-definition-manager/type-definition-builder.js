@@ -4,6 +4,36 @@ import TypeDefinitionInputSettings from "./type-definition-input-settings";
 import React from "preact/compat";
 import styled from "styled-components";
 
+function getDropContainer(index, setModalBody, onNewDefinition) {
+  return <DropContainer key={index} id={index}
+                        onDragOver={event => {
+                          event.preventDefault();
+                        }}
+                        onDrop={(e) => {
+                          const componentKey = e.dataTransfer.getData(
+                              "componentKey");
+                          console.log("ondrop: ", e)
+                          setModalBody(<TypeDefinitionInputSettings
+                              position={index}
+                              onNewDefinition={onNewDefinition}
+                              componentKey={componentKey}/>)
+                        }}>
+
+  </DropContainer>;
+}
+
+function getComponentPlaceholder(item, index, onRemoveDefinition) {
+  return <ComponentPlaceholder>
+    PLACEHOLDER {item} - {index}
+    <ActionButtons>
+      <ActionButton
+          onClick={() => onRemoveDefinition(item)}>D</ActionButton>
+      <ActionButton>S</ActionButton>
+      <ActionButton>O</ActionButton>
+    </ActionButtons>
+  </ComponentPlaceholder>;
+}
+
 const TypeDefinitionBuilder = ({typeDefinitionConfig, onNewDefinition, onRemoveDefinition}) => {
 
   const {setModalBody} = useContext(AppModalContext)
@@ -12,32 +42,12 @@ const TypeDefinitionBuilder = ({typeDefinitionConfig, onNewDefinition, onRemoveD
       <TypeDefinitionBuilderContainer>
         {Object.keys(typeDefinitionConfig).map((item, index) => {
           return <>
-            <DropContainer key={index} id={index}
-                 onDragOver={event => {
-                   event.preventDefault();
-                 }}
-                 onDrop={(e) => {
-                   const componentKey = e.dataTransfer.getData(
-                       "componentKey");
-                   console.log("ondrop: ", e)
-                   setModalBody(<TypeDefinitionInputSettings
-                       position={index}
-                       onNewDefinition={onNewDefinition}
-                       componentKey={componentKey}/>)
-                 }}>
-
-            </DropContainer>
-            <ComponentPlaceholder>
-              PLACEHOLDER {item} - {index}
-              <ActionButtons>
-                <ActionButton onClick={()=>onRemoveDefinition(item)}>D</ActionButton>
-                <ActionButton>S</ActionButton>
-                <ActionButton>O</ActionButton>
-              </ActionButtons>
-            </ComponentPlaceholder>
+            {getDropContainer(index, setModalBody, onNewDefinition)}
+            {getComponentPlaceholder(item, index, onRemoveDefinition)}
           </>
         })
         }
+        {getDropContainer(typeDefinitionConfig.length, setModalBody, onNewDefinition)}
       </TypeDefinitionBuilderContainer>
   );
 };
@@ -46,25 +56,21 @@ const TypeDefinitionBuilderContainer = styled.div`
   width: 90%;
 `
 
-
 const DropContainer = styled.div`
-  width: 100%;
   padding: 10px;
-  margin: 10px;
   overflow: auto;
   text-align: center;
   font-size: 16px;
   background-color: bisque; 
-  
+  margin-top: 5px;
+  margin-bottom: 5px;
 `
 
 const ComponentPlaceholder = styled.div`
-justify-content: space-between;
+  justify-content: space-between;
   display: flex;
   background-color: #e2e2e2;
-  width: 100%;
   padding: 10px;
-  margin: 10px;
   font-size: 16px;
   border-radius: 2px;
 `
@@ -86,6 +92,5 @@ const ActionButton = styled.span`
   font-size: 16px;
   border-radius: 2px;
 `
-
 
 export default TypeDefinitionBuilder;

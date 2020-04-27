@@ -1,45 +1,60 @@
-import {React} from "preact";
-import FileManager from "../../file-manager";
 import {useContext, useEffect, useState} from "preact/hooks";
 import {AppModalContext} from "../../modal/AppModalContextProvider";
-import {Mode} from "../../file-manager/file-list";
-import style from "./media-select.css"
 import CollectionList from "../../collection-list";
 import * as api from "../../../api";
-import DataManager from "../../data-loader/data-manager";
 import DataLoader from "../../data-loader";
+import Button from "../../elementary/button";
+import React from "preact/compat";
+import styled from "styled-components";
 
 const DocumentLink = (props) => {
 
   const onDocumentSelected = (item) => {
-    props.onInputChangeCallback(props.id,
-        {id: item._id, collectionName: item.collectionName});
+    props.onInputChangeCallback(props.id, {id: item._id, collectionName: item.metadata.collectionName});
   }
 
   const {setModalBody} = useContext(AppModalContext)
 
   return (
-      <div className={style.row}>
+      <ComponentContainer>
 
         <DataLoader
-            uri={props.initialValue && props.initialValue.id && api.fetchCollectionContent(props.initialValue.collectionName,
+            uri={props.initialValue && props.initialValue.id
+            && api.fetchCollectionContent(props.initialValue.collectionName,
                 props.initialValue.id)}>
           {data => (
               <>
-                <div className={style.select}
-                     onClick={() => {
-                       setModalBody(<CollectionList
-                           onRowClick={onDocumentSelected}/>);
-                     }}>Select
-                </div>
-                <div>{data && data._id}</div>
-                <div onClick={() => onDocumentSelected({})}>X</div>
+                <Button
+                    onClick={() => {
+                      setModalBody(<CollectionList
+                          onRowClick={onDocumentSelected}/>);
+                    }}>Select
+                </Button>
+                <PreviewContainer>{data && data._id}</PreviewContainer>
+                <Button onClick={() => onDocumentSelected({})}>Remove</Button>
               </>
           )}
         </DataLoader>
-      </div>
+      </ComponentContainer>
 
   )
 };
+
+const ComponentContainer = styled.div`
+display: flex;
+align-items: baseline;
+
+  & > div {
+    flex: 1;
+   }
+
+ & > div:last-child {
+  margin-left: auto;
+ }
+`
+
+const PreviewContainer = styled.div`
+  font-size: 1.5em;
+`
 
 export default DocumentLink;

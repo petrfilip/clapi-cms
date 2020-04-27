@@ -6,11 +6,7 @@ import DataLoader from "../data-loader";
 function renderList(data) {
   return (
       <div>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
+
         {data.map((item, i) => (<div onClick={() =>
             route("/definition-editor/"
                 + item.collectionName)}>{item.collectionName}</div>))}

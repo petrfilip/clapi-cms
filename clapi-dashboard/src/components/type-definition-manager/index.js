@@ -8,6 +8,7 @@ import React from "preact/compat";
 import styled from "styled-components";
 import TwoColumnsLayout from "../layout/two-columns-layout";
 import {MenuContext} from "../menu/menu-context";
+import Button from "../elementary/button";
 
 const saveOrUpdate = (data) => {
   DataManager.saveOrUpdate(api.fetchCollection("type-definition"), "json", data)
@@ -33,16 +34,17 @@ const TypeDefinitionEditor = (props) => {
   }
 
   useEffect(() => {
-    setMenuContext(<button onClick={() => {
+    setMenuContext(<Button onClick={() => {
       typeDefinition.config = typeDefinitionConfig;
       saveOrUpdate(typeDefinition);
     }}>update definition
-    </button>);
-
+    </Button>);
     return () => setMenuContext(null);
   }, []);
 
-  return (<div>
+  {/*{JSON.stringify(typeDefinitionConfig, null, 2)}*/}
+
+  return (
 
     <TwoColumnsLayout
         left={<TypeDefinitionBuilder typeDefinitionConfig={typeDefinitionConfig}
@@ -51,8 +53,7 @@ const TypeDefinitionEditor = (props) => {
         />}
         right={<TypeDefinitionBuilderMenu/>}/>
 
-    {/*{JSON.stringify(typeDefinitionConfig, null, 2)}*/}
-  </div>);
+  );
 };
 
 const addToObject = function (obj, key, value, index) {

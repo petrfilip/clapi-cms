@@ -1,6 +1,7 @@
 import {InputWrapper} from "../file-editor/input-wrapper";
 import {useContext, useState} from "preact/hooks";
 import {AppModalContext} from "../modal/AppModalContextProvider";
+import Button from "../elementary/button";
 
 const slugify = (string) => {
   const a = 'àáâäæãåāăąçćčđďèéêëēėęěğǵḧîïíīįìłḿñńǹňôöòóœøōõőṕŕřßśšşșťțûüùúūǘůűųẃẍÿýžźż·/_,:;'
@@ -16,9 +17,6 @@ const slugify = (string) => {
   .replace(/^-+/, '') // Trim - from start of text
   .replace(/-+$/, '') // Trim - from end of text
 }
-
-import React from "preact/compat";
-import styled from "styled-components";
 
 const TypeDefinitionInputSettings = (props) => {
 
@@ -42,7 +40,7 @@ const TypeDefinitionInputSettings = (props) => {
       <input value={apiKey} onInput={e => setApiKey(slugify(e.target.value))}/>
     </InputWrapper>
 
-    <button onClick={event => {
+    <Button onClick={event => {
       event.preventDefault();
       const position = props.position;
 
@@ -56,7 +54,7 @@ const TypeDefinitionInputSettings = (props) => {
       props.onNewDefinition({position, apiKey, value});
       setModalBody(null);
     }}>Done
-    </button>
+    </Button>
 
 
   </div>);

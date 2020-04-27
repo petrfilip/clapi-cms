@@ -16,7 +16,9 @@ const PageLayout = (props) => {
       <MenuContext.Provider value={menuContextValue}>
         <Parent>
           <Top>{props.menu}</Top>
-          <Content>{props.children}</Content>
+          <Content>
+            {props.children}
+          </Content>
         </Parent>
       </MenuContext.Provider>
   )
@@ -33,10 +35,17 @@ const Top = styled.div`
 `
 
 const Content = styled.div`
-  background: ${props => props.theme.gray}
-  overflow: auto;
+  background-color: ${props => props.theme.lightgray};
+  overflow-x: hidden;
+  overflow-y: auto;
   display: block;
   height: calc(100vh - 60px);
+`
+
+const Center = styled.div`
+  margin-left: auto;
+  margin-right: auto;
+  width: 80%;
 `
 
 export default PageLayout;

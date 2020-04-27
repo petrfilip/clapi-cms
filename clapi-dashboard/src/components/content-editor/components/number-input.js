@@ -1,7 +1,7 @@
-import {React} from "preact";
+import Input from "../../elementary/input";
 
 const NumberInput = (props) => (
-    <input
+    <Input
         value={props.initialValue}
         name={props.id}
         key={props.id}
