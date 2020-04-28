@@ -4,7 +4,7 @@ import {AppModalContext} from "../modal/AppModalContextProvider";
 import Button from "../elementary/button";
 
 const slugify = (string) => {
-  const a = 'àáâäæãåāăąçćčđďèéêëēėęěğǵḧîïíīįìłḿñńǹňôöòóœøōõőṕŕřßśšşșťțûüùúūǘůűųẃẍÿýžźż·/_,:;'
+  const a = 'àáâäæãåāăąçćčđďèéêëēcomponentKeyėęěğǵḧîïíīįìłḿñńǹňôöòóœøōõőṕŕřßśšşșťțûüùúūǘůűųẃẍÿýžźż·/_,:;'
   const b = 'aaaaaaaaaacccddeeeeeeeegghiiiiiilmnnnnoooooooooprrsssssttuuuuuuuuuwxyyzzz______'
   const p = new RegExp(a.split('').join('|'), 'g')
 
@@ -43,7 +43,7 @@ const TypeDefinitionInputSettings = (props) => {
 
     <Button onClick={event => {
       event.preventDefault();
-      const position = props.position;
+      const position = props.values.position;
 
       const value = {
         type: props.componentKey,
@@ -52,7 +52,10 @@ const TypeDefinitionInputSettings = (props) => {
         }
       }
 
-      props.onConfirm({position, apiKey, value});
+      const settings = {position, apiKey, value};
+      console.log("settings",settings);
+
+      props.onConfirm(settings, props.values && props.values.apiKey);
       setModalBody(null);
     }}>Done
     </Button>
