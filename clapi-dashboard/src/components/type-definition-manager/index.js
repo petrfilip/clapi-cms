@@ -5,9 +5,7 @@ import TypeDefinitionBuilder from "./type-definition-builder";
 import TypeDefinitionBuilderMenu from "./type-definition-builder-menu";
 
 import React from "preact/compat";
-import styled from "styled-components";
-import TwoColumnsLayout from "../layout/two-columns-layout";
-import {MenuContext} from "../menu/menu-context";
+import {LayoutContext} from "../menu/layout-context";
 import Button from "../elementary/button";
 import {addToObject, removeFromObject} from "../../utils/object-utils";
 
@@ -16,14 +14,15 @@ const saveOrUpdate = (data) => {
 }
 
 const TypeDefinitionEditor = (props) => {
-  const {setMenuContext} = useContext(MenuContext)
+  const {setMenu, setSidebar,setActionSidebar} = useContext(LayoutContext)
   const [typeDefinition, setTypeDefinition] = useState(
       props.typeDefinition || {});
   const [typeDefinitionConfig, setTypeDefinitionConfig] = useState(
       props.typeDefinition.config || {});
 
   const onNewDefinition = (obj) => {
-    const updatedConfig = addToObject(typeDefinitionConfig, obj.apiKey, obj.value, obj.position)
+    const updatedConfig = addToObject(typeDefinitionConfig, obj.apiKey,
+        obj.value, obj.position)
     setTypeDefinitionConfig(updatedConfig);
   }
 
@@ -43,25 +42,25 @@ const TypeDefinitionEditor = (props) => {
   }
 
   useEffect(() => {
-    setMenuContext(<Button onClick={saveOrUpdateAction}>update
-      definition</Button>);
-    return () => setMenuContext(null);
+    setMenu(<Button onClick={saveOrUpdateAction}>update definition</Button>);
+    setSidebar(<TypeDefinitionBuilderMenu/>)
+
+    return () => {
+      setMenu(null);
+      setSidebar(null);
+      setActionSidebar(null);
+    };
   }, [typeDefinitionConfig]);
 
   {/*{JSON.stringify(typeDefinitionConfig, null, 2)}*/
   }
 
-  return (
-
-      <TwoColumnsLayout
-          left={<TypeDefinitionBuilder
-              typeDefinitionConfig={typeDefinitionConfig}
-              onNewDefinition={onNewDefinition}
-              onUpdateDefinition={onUpdateDefinition}
-              onRemoveDefinition={onRemoveDefinition}
-          />}
-          right={<TypeDefinitionBuilderMenu/>}/>
-
+  return (<TypeDefinitionBuilder
+          typeDefinitionConfig={typeDefinitionConfig}
+          onNewDefinition={onNewDefinition}
+          onUpdateDefinition={onUpdateDefinition}
+          onRemoveDefinition={onRemoveDefinition}
+      />
   );
 };
 

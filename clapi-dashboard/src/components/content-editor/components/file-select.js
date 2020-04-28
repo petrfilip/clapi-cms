@@ -1,6 +1,5 @@
 import FileManager from "../../file-manager";
 import {useContext} from "preact/hooks";
-import {AppModalContext} from "../../modal/AppModalContextProvider";
 import {Mode} from "../../file-manager/file-list";
 import * as api from "../../../api";
 import DataLoader from "../../data-loader";
@@ -10,7 +9,7 @@ import styled from "styled-components";
 import Button from "../../elementary/button";
 import {LayoutContext} from "../../menu/layout-context";
 
-const MediaSelect = (props) => {
+const FileSelect = (props) => {
 
   const onMediaSelected = (item) => {
     props.onInputChangeCallback(props.id, item._id);
@@ -70,4 +69,4 @@ const PreviewContainer = styled.div`
   }
 `
 
-export default MediaSelect;
+export default FileSelect;

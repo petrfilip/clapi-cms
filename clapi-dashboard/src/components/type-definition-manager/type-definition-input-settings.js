@@ -1,29 +1,33 @@
 import {InputWrapper} from "../file-editor/input-wrapper";
-import {useContext, useState} from "preact/hooks";
+import {useContext, useEffect, useState} from "preact/hooks";
 import {AppModalContext} from "../modal/AppModalContextProvider";
 import Button from "../elementary/button";
+import {LayoutContext} from "../menu/layout-context";
+import TypeDefinitionBuilderMenu from "./type-definition-builder-menu";
 
-const slugify = (string) => {
-  const a = 'àáâäæãåāăąçćčđďèéêëēcomponentKeyėęěğǵḧîïíīįìłḿñńǹňôöòóœøōõőṕŕřßśšşșťțûüùúūǘůűųẃẍÿýžźż·/_,:;'
-  const b = 'aaaaaaaaaacccddeeeeeeeegghiiiiiilmnnnnoooooooooprrsssssttuuuuuuuuuwxyyzzz______'
-  const p = new RegExp(a.split('').join('|'), 'g')
-
-  //todo replace dash (-) with underscore
-  return string.toString().toLowerCase()
-  .replace(/\s+/g, '_') // Replace spaces with -
-  .replace(p, c => b.charAt(a.indexOf(c))) // Replace special characters
-  .replace(/&/g, '_and_') // Replace & with 'and'
-  .replace(/[^\w\-]+/g, '') // Remove all non-word characters
-  .replace(/\-\-+/g, '_') // Replace multiple - with single -
-  .replace(/^-+/, '') // Trim - from start of text
-  .replace(/-+$/, '') // Trim - from end of text
+const slugify = (text) => {
+  return text
+  .toString()                     // Cast to string
+  .toLowerCase()                  // Convert the string to lowercase letters
+  .normalize('NFD')       // The normalize() method returns the Unicode Normalization Form of a given string.
+  .trim()                         // Remove whitespace from both sides of a string
+  .replace(/\s+/g, '_')           // Replace spaces with -
+  .replace(/[^\w\-]+/g, '')       // Remove all non-word chars
+  .replace(/\-+/g, '_')        // Replace  - with single _
+  .replace(/\_\_+/g, '_');        // Replace multiple _ with single _
 }
 
 const TypeDefinitionInputSettings = (props) => {
 
-  const {setModalBody} = useContext(AppModalContext)
+  const {setActionSidebar} = useContext(LayoutContext)
   const [fieldName, setFieldName] = useState(props.values && props.values.fieldName || "");
   const [apiKey, setApiKey] = useState(props.values && props.values.apiKey || "");
+
+
+  useEffect(() => {
+    setFieldName(props.values && props.values.fieldName || "");
+    setApiKey(props.values && props.values.apiKey || "");
+  },[props])
 
   return (<div>
 
@@ -56,8 +60,14 @@ const TypeDefinitionInputSettings = (props) => {
       console.log("settings",settings);
 
       props.onConfirm(settings, props.values && props.values.apiKey);
-      setModalBody(null);
+      setActionSidebar(null);
     }}>Done
+    </Button>
+
+    <Button onClick={event => {
+      event.preventDefault();
+      setActionSidebar(null);
+    }}>Cancel
     </Button>
 
 

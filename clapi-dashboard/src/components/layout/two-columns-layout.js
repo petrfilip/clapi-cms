@@ -1,15 +1,18 @@
 import React from "preact/compat";
 import styled from "styled-components";
 import {Center} from "./center";
+import {useContext} from "preact/hooks";
+import {LayoutContext} from "../menu/layout-context";
 
-const TwoColumnsLayout = (props) => (
-    <Parent className="parent">
-      <Left className="left"><Center>{props.left}</Center></Left>
-      <Right className="right">{props.right}</Right>
+const TwoColumnsLayout = ({children}) => {
+  const {sidebar,actionSidebar} = useContext(LayoutContext)
+
+  return (
+    <Parent>
+      <Left><Center>{children}</Center></Left>
+      {actionSidebar && <Right>{actionSidebar}</Right> || sidebar && <Right className="right">{sidebar}</Right>}
     </Parent>
-);
-
-
+)};
 
 const Parent = styled.div`
   display: flex;

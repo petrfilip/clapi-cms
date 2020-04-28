@@ -1,17 +1,17 @@
 import {useContext} from "preact/hooks";
-import {AppModalContext} from "../modal/AppModalContextProvider";
 import TypeDefinitionInputSettings from "./type-definition-input-settings";
 import React from "preact/compat";
 import styled from "styled-components";
 import TypeDefinitionGroupBuilder from "./type-definition-group-builder";
-import {addToObject, removeFromObject} from "../../utils/object-utils";
+import {addToObject} from "../../utils/object-utils";
 import TypeDefinitionDropArea from "./type-definition-drop-area";
+import {LayoutContext} from "../menu/layout-context";
 
-function getDropContainer(index, setModalBody, onNewDefinition) {
+function getDropContainer(index, setActionSidebar, onNewDefinition) {
 
   return <TypeDefinitionDropArea dataTransferKey={"componentKey"}
                                  onDropEvent={(componentKey) => {
-                                   setModalBody(<TypeDefinitionInputSettings
+                                   setActionSidebar(<TypeDefinitionInputSettings
                                        values={{position: index}}
                                        onConfirm={onNewDefinition}
                                        componentKey={componentKey}/>)
@@ -19,28 +19,12 @@ function getDropContainer(index, setModalBody, onNewDefinition) {
 
 }
 
-const onAddNestedDefinition = (parent, fields, child) => {
-  const updatedFields = addToObject(fields, child.apiKey, child.value, child.position)
-  parent.config.fields = Object.assign({}, updatedFields)
-}
-//
-// const onRemoveNestedDefinition = (parent, fields, child, onUpdateDefinition) => {
-//   const updatedFields = removeFromObject(fields, child.apiKey)
-//   parent.config.fields = Object.assign({}, updatedFields)
-//   onUpdateDefinition(parent)
-// }
-
-// getTypeDefinitionBuilderContainer(item.config.fields || {}, setModalBody,
-//     (out) => onAddNestedDefinition(item, item.config.fields || {}, out, onUpdateDefinition),
-//     (out) => onRemoveNestedDefinition(item, item.config.fields || {}, out, onUpdateDefinition),
-//     onUpdateDefinition)
-
-function getActionButtons(onRemoveDefinition, key, setModalBody, index, item,
-    onNewDefinition) {
+function getActionButtons(onRemoveDefinition, key, setActionSidebar, index,
+    item, onNewDefinition) {
   return <ActionButtons>
     <ActionButton
         onClick={() => onRemoveDefinition(key)}>D</ActionButton>
-    <ActionButton onClick={() => setModalBody(<TypeDefinitionInputSettings
+    <ActionButton onClick={() => setActionSidebar(<TypeDefinitionInputSettings
         values={{position: index, fieldName: item.config.label, apiKey: key}}
         position={index}
         onConfirm={onNewDefinition}
@@ -50,7 +34,7 @@ function getActionButtons(onRemoveDefinition, key, setModalBody, index, item,
 }
 
 function getComponentPlaceholder(key, item, index, onRemoveDefinition,
-    setModalBody, onNewDefinition, onUpdateDefinition) {
+    setActionSidebar, onNewDefinition, onUpdateDefinition) {
   return <ComponentPlaceholder>
     {item.type} - {index} - {key}
     {item.type === "Group" &&
@@ -62,35 +46,38 @@ function getComponentPlaceholder(key, item, index, onRemoveDefinition,
         }}/>
 
     }
-    {getActionButtons(onRemoveDefinition, key, setModalBody, index, item, onNewDefinition)}
+    {getActionButtons(onRemoveDefinition, key, setActionSidebar, index, item,
+        onNewDefinition)}
   </ComponentPlaceholder>;
 }
 
-function getTypeDefinitionBuilderContainer(typeDefinitionConfig, setModalBody,
+function getTypeDefinitionBuilderContainer(typeDefinitionConfig,
+    setActionSidebar,
     onNewDefinition, onRemoveDefinition, onUpdateDefinition) {
   return <>
     {Object.keys(typeDefinitionConfig).map((item, index) => {
       return <>
-        {getDropContainer(index, setModalBody, onNewDefinition)}
+        {getDropContainer(index, setActionSidebar, onNewDefinition)}
         {getComponentPlaceholder(item, typeDefinitionConfig[item], index,
             onRemoveDefinition,
-            setModalBody, onNewDefinition, onUpdateDefinition)}
+            setActionSidebar, onNewDefinition, onUpdateDefinition)}
 
       </>
     })
     }
-    {getDropContainer(Object.keys(typeDefinitionConfig).length, setModalBody,
+    {getDropContainer(Object.keys(typeDefinitionConfig).length,
+        setActionSidebar,
         onNewDefinition)}
   </>;
 }
 
 const TypeDefinitionBuilder = ({typeDefinitionConfig, onNewDefinition, onRemoveDefinition, onUpdateDefinition}) => {
-
-  const {setModalBody} = useContext(AppModalContext)
+  const {setActionSidebar} = useContext(LayoutContext)
 
   return (
       <TypeDefinitionBuilderContainer>
-        {getTypeDefinitionBuilderContainer(typeDefinitionConfig, setModalBody,
+        {getTypeDefinitionBuilderContainer(typeDefinitionConfig,
+            setActionSidebar,
             onNewDefinition, onRemoveDefinition, onUpdateDefinition)}
       </TypeDefinitionBuilderContainer>
   );

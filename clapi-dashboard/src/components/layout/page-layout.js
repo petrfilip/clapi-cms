@@ -1,26 +1,53 @@
 import React from "preact/compat";
 import styled from "styled-components";
-import {useState} from "preact/hooks";
-import {MenuContext} from "../menu/menu-context";
+import {useCallback, useEffect, useState} from "preact/hooks";
+import {LayoutContext} from "../menu/layout-context";
+import Menu from "../menu";
+import TwoColumnsLayout from "./two-columns-layout";
 
 const PageLayout = (props) => {
-  const [menuContext, setMenuContext] = useState(null);
+  const [menu, setMenu] = useState(null);
+  const [sidebar, setSidebar] = useState(null);
+  const [actionSidebar, setActionSidebar] = useState(null);
+
+
+  const escFunction = useCallback((event) => {
+    if(event.key === 'Escape') {
+      setActionSidebar(null);
+    }
+  }, []);
+
+  useEffect(() => {
+    document.addEventListener("keydown", escFunction, false);
+    return () => {
+      document.removeEventListener("keydown", escFunction, false);
+    };
+  }, []);
+
+  useEffect(() => {
+    return () => {setActionSidebar(null)};
+  }, [props]);
+
 
   /* MENU CONTEXT */
-  const menuContextValue = {
-    menuContext: menuContext,
-    setMenuContext: setMenuContext
+  const menuValue = {
+    menu,
+    setMenu,
+    sidebar,
+    setSidebar,
+    actionSidebar,
+    setActionSidebar
   };
 
   return (
-      <MenuContext.Provider value={menuContextValue}>
+      <LayoutContext.Provider value={menuValue}>
         <Parent>
-          <Top>{props.menu}</Top>
+          <Top><Menu/></Top>
           <Content>
-            {props.children}
+            <TwoColumnsLayout>{props.children}</TwoColumnsLayout>
           </Content>
         </Parent>
-      </MenuContext.Provider>
+      </LayoutContext.Provider>
   )
 };
 
@@ -42,10 +69,5 @@ const Content = styled.div`
   height: calc(100vh - 60px);
 `
 
-const Center = styled.div`
-  margin-left: auto;
-  margin-right: auto;
-  width: 80%;
-`
 
 export default PageLayout;

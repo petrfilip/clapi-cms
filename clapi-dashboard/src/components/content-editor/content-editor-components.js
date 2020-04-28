@@ -13,6 +13,8 @@ import NumberInput from "./components/number-input";
 import ColorPicker from "./components/color-picker";
 import CheckboxInput from "./components/checkbox-input";
 import RadioInput from "./components/radio-input";
+import ImageSelect from "./components/image-select";
+import FileSelect from "./components/file-select";
 
 export const ContentEditorComponents = {
   SimpleText: SimpleText,
@@ -20,6 +22,8 @@ export const ContentEditorComponents = {
   Block: Block,
   Group: Group,
   MediaSelect: MediaSelect,
+  ImageSelect: ImageSelect,
+  FileSelect: FileSelect,
   DocumentLink: DocumentLink,
   DatePicker: DatePicker,
   GeoPicker: GeoPicker,

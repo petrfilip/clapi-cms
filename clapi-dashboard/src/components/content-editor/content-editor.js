@@ -7,7 +7,7 @@ import DataManager from "../data-loader/data-manager";
 
 import {Center} from "../layout/center";
 import Button from "../elementary/button";
-import {MenuContext} from "../menu/menu-context";
+import {LayoutContext} from "../menu/layout-context";
 import React from "preact/compat";
 
 function renderInputs(config, editor) {
@@ -43,9 +43,7 @@ function renderForm(props, inputObject, setInputObject) {
         <h2>Content Editor</h2>
         {renderInputs(props.config, {inputObject, setInputObject})}
 
-        <pre>
-          {JSON.stringify(inputObject, null, 2)}
-        </pre>
+
       </form>
   );
 }
@@ -57,13 +55,16 @@ function checkVersion(props, inputObject) {
 
 const ContentEditor = (props) => {
   const [inputObject, setInputObject] = useState(props.values || {});
-  const {setMenuContext} = useContext(MenuContext);
+  const {setMenu, setSidebar, setActionSidebar} = useContext(LayoutContext);
 
   useEffect(() => {
-    setMenuContext(<Button type="submit" onClick={() => {
+    setMenu(<Button type="submit" onClick={() => {
       saveOrUpdate(inputObject, setInputObject)
     }}>Save</Button>);
-    return () => setMenuContext(null);
+    setSidebar(<pre>
+          {JSON.stringify(inputObject, null, 2)}
+        </pre>);
+    return () => {setMenu(null); setSidebar(null); setActionSidebar(null);};
   }, [inputObject]);
 
   checkVersion(props, inputObject) && setInputObject(props.values);

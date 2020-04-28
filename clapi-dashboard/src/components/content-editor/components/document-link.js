@@ -6,6 +6,7 @@ import DataLoader from "../../data-loader";
 import Button from "../../elementary/button";
 import React from "preact/compat";
 import styled from "styled-components";
+import {LayoutContext} from "../../menu/layout-context";
 
 const DocumentLink = (props) => {
 
@@ -13,7 +14,7 @@ const DocumentLink = (props) => {
     props.onInputChangeCallback(props.id, {id: item._id, collectionName: item.metadata.collectionName});
   }
 
-  const {setModalBody} = useContext(AppModalContext)
+  const {setActionSidebar} = useContext(LayoutContext)
 
   return (
       <ComponentContainer>
@@ -26,7 +27,7 @@ const DocumentLink = (props) => {
               <>
                 <Button
                     onClick={() => {
-                      setModalBody(<CollectionList
+                      setActionSidebar(<CollectionList
                           onRowClick={onDocumentSelected}/>);
                     }}>Select
                 </Button>

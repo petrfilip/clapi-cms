@@ -5,12 +5,13 @@ import React from "preact/compat";
 import styled from "styled-components";
 import {addToObject, removeFromObject} from "../../utils/object-utils";
 import TypeDefinitionDropArea from "./type-definition-drop-area";
+import {LayoutContext} from "../menu/layout-context";
 
-function getDropContainer(typeDefinitionConfig, index, setModalBody,
+function getDropContainer(typeDefinitionConfig, index, setActionSidebar,
     onUpdateConfig) {
   return <TypeDefinitionDropArea dataTransferKey={"componentKey"}
                                  onDropEvent={(componentKey) => {
-                                   setModalBody(<TypeDefinitionInputSettings
+                                   setActionSidebar(<TypeDefinitionInputSettings
                                        values={{position: index}}
                                        onConfirm={(obj) => onNewDefinition(
                                            typeDefinitionConfig, obj,
@@ -34,14 +35,14 @@ function getDropContainer(typeDefinitionConfig, index, setModalBody,
 // }
 
 function getComponentPlaceholder(typeDefinitionConfig, key, item, index,
-    setModalBody,
+    setActionSidebar,
     onUpdateDefinition) {
   return <ComponentPlaceholder>
     PLACEHOLDER NORMAL {key} - {index} - {item.type}
     {item.type === "Group" &&
     getTypeDefinitionBuilderContainer(
         item.config.fields || {},
-        setModalBody,
+        setActionSidebar,
         onUpdateDefinition)
     }
     <ActionButtons>
@@ -49,7 +50,7 @@ function getComponentPlaceholder(typeDefinitionConfig, key, item, index,
           onClick={() => onRemoveDefinition(typeDefinitionConfig, key,
               onUpdateDefinition)}>D</ActionButton>
       <ActionButton
-          onClick={() => setModalBody(<TypeDefinitionInputSettings
+          onClick={() => setActionSidebar(<TypeDefinitionInputSettings
               values={{
                 position: index,
                 fieldName: item.config.label,
@@ -62,21 +63,21 @@ function getComponentPlaceholder(typeDefinitionConfig, key, item, index,
   </ComponentPlaceholder>;
 }
 
-function getTypeDefinitionBuilderContainer(typeDefinitionConfig, setModalBody,
+function getTypeDefinitionBuilderContainer(typeDefinitionConfig, setActionSidebar,
     onUpdateDefinition) {
   return <>
     {Object.keys(typeDefinitionConfig).map((item, index) => {
       return <>
-        {getDropContainer(typeDefinitionConfig, index, setModalBody,
+        {getDropContainer(typeDefinitionConfig, index, setActionSidebar,
             onUpdateDefinition)}
         {getComponentPlaceholder(typeDefinitionConfig, item,
             typeDefinitionConfig[item], index,
-            setModalBody, onUpdateDefinition)}
+            setActionSidebar, onUpdateDefinition)}
 
       </>
     })
     }
-    {getDropContainer(Object.keys(typeDefinitionConfig).length, setModalBody)}
+    {getDropContainer(Object.keys(typeDefinitionConfig).length, setActionSidebar)}
   </>;
 }
 
@@ -92,12 +93,12 @@ const onRemoveDefinition = (config, key, onUpdateDefinition) => {
 }
 
 const TypeDefinitionGroupBuilder = ({typeDefinitionConfig, onUpdateDefinition}) => {
+  const {setActionSidebar} = useContext(LayoutContext)
 
-  const {setModalBody} = useContext(AppModalContext)
 
   return (
       <TypeDefinitionGroupBuilderContainer>
-        {getTypeDefinitionBuilderContainer(typeDefinitionConfig, setModalBody,
+        {getTypeDefinitionBuilderContainer(typeDefinitionConfig, setActionSidebar,
             onUpdateDefinition)}
       </TypeDefinitionGroupBuilderContainer>
   );

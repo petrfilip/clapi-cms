@@ -5,16 +5,17 @@ import {useContext} from "preact/hooks";
 import {AppModalContext} from "../../components/modal/AppModalContextProvider";
 import DocumentTypeList from "../../components/document-type-list";
 import Button from "../../components/elementary/button";
+import {LayoutContext} from "../../components/menu/layout-context";
 
 
 const HomePage = () => {
 
-  const {setModalBody} = useContext(AppModalContext)
+  const {setActionSidebar} = useContext(LayoutContext)
 
   return (
       <div className={style.home}>
         <Button onClick={()=> {
-          setModalBody(<DocumentTypeList/>)
+          setActionSidebar(<DocumentTypeList/>)
         }}>Create new</Button>
         <CollectionList/>
       </div>

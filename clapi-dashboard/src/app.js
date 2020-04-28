@@ -1,8 +1,6 @@
 import {h, Component, React} from 'preact';
 import {route, Router} from 'preact-router';
 
-import Menu from './components/menu';
-
 // Code-splitting is automated for routes
 import HomePage from './routes/home-page';
 import EditContentPage from "./routes/edit-content-page";
@@ -75,7 +73,7 @@ const App = (props) => {
             <FlashMessages messages={flashMessages}/>
             <AppModalContext.Provider value={modalContextValue}>
 
-              <PageLayout menu={<Menu/>}>
+              <PageLayout>
                 <Router onChange={handleRoute}>
                   <HomePage path="/"/>
                   <LoginPage path="/login"/>

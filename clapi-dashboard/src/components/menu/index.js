@@ -5,8 +5,7 @@ import UserManager from "../user-manager";
 import React from "preact/compat";
 import styled from "styled-components";
 import {useContext} from "preact/hooks";
-import {AppModalContext} from "../modal/AppModalContextProvider";
-import {MenuContext} from "./menu-context";
+import {LayoutContext} from "./layout-context";
 import {route} from "preact-router";
 
 function getNavForLoggedUser() {
@@ -20,18 +19,18 @@ function getNavForLoggedUser() {
 }
 
 const Menu = () => {
-  const {menuContext} = useContext(MenuContext)
+  const {menu} = useContext(LayoutContext)
 
-  const menuContextWithBackButton = (<>
+  const menuWithBackButton = (<>
     <a onClick={()=> route("/")}>Home</a>
-    {menuContext}
+    {menu}
     </>)
 
   return (
       <Header>
-        <Title>Preact App</Title>
+        <Title>Clapi CMS </Title>
         <Navigation>
-          {menuContext && menuContextWithBackButton ||
+          {menu && menuWithBackButton ||
           (UserManager.getUserDetails() && getNavForLoggedUser())}
         </Navigation>
       </Header>
