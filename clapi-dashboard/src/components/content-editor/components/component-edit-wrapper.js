@@ -4,7 +4,6 @@ import {ContentEditorComponents} from "../content-editor-components";
 import React from "preact/compat";
 import styled from "styled-components";
 
-
 const ComponentEditWrapper = (props) => (
     <ComponentWrapper>
       <Label>

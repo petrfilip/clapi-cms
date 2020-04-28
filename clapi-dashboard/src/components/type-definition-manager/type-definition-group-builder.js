@@ -104,13 +104,15 @@ const TypeDefinitionGroupBuilder = ({typeDefinitionConfig, onUpdateDefinition}) 
 };
 
 const TypeDefinitionGroupBuilderContainer = styled.div`
+  background-color: ${props => props.theme.lightgray};
+  padding: 10px;
   width: 90%;
 `
 
 const ComponentPlaceholder = styled.div`
   justify-content: space-between;
   display: flex;
-  background-color: #e2e2e2;
+  background-color: white;
   padding: 10px;
   font-size: 16px;
   border-radius: 2px;
@@ -118,8 +120,8 @@ const ComponentPlaceholder = styled.div`
 
 const ActionButtons = styled.div`
   background: white;
-  padding: 10px;
-  margin: 10px;
+  padding: 4px;
+  margin: 5px;
   border-radius: 2px;
   border: 1px solid black;
   
@@ -127,10 +129,9 @@ const ActionButtons = styled.div`
 
 const ActionButton = styled.span`
   width: 10px;
-  padding: 5px;
-  margin: 5px;
+  margin: 4px;
   text-align: center;
-  font-size: 16px;
+  font-size: 10px;
   border-radius: 2px;
 `
 

@@ -52,7 +52,7 @@ function getActionButtons(onRemoveDefinition, key, setModalBody, index, item,
 function getComponentPlaceholder(key, item, index, onRemoveDefinition,
     setModalBody, onNewDefinition, onUpdateDefinition) {
   return <ComponentPlaceholder>
-    PLACEHOLDER NORMAL {key} - {index} - {item.type}
+    {item.type} - {index} - {key}
     {item.type === "Group" &&
     <TypeDefinitionGroupBuilder
         typeDefinitionConfig={item.config.fields || {}}
@@ -103,16 +103,16 @@ const TypeDefinitionBuilderContainer = styled.div`
 const ComponentPlaceholder = styled.div`
   justify-content: space-between;
   display: flex;
-  background-color: #e2e2e2;
+  background-color: white;
   padding: 10px;
-  font-size: 16px;
+  font-size: 12px;
   border-radius: 2px;
 `
 
 const ActionButtons = styled.div`
   background: white;
-  padding: 10px;
-  margin: 10px;
+  padding: 4px;
+  margin: 5px;
   border-radius: 2px;
   border: 1px solid black;
   
@@ -120,10 +120,9 @@ const ActionButtons = styled.div`
 
 const ActionButton = styled.span`
   width: 10px;
-  padding: 5px;
-  margin: 5px;
+  margin: 4px;
   text-align: center;
-  font-size: 16px;
+  font-size: 10px;
   border-radius: 2px;
 `
 
