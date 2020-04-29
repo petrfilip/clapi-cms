@@ -9,14 +9,18 @@ import styled from 'styled-components'
 function renderInputs(config, editor, groupIndex) {
     return Object.entries(config).map(([key, value], i) => {
         value.onInputChangeCallback = (id, value) => {
+            console.log(value)
             editor.setInputObject((currentState) => {
-                currentState[groupIndex] = currentState[groupIndex] || {}
+                currentState[groupIndex] = currentState[groupIndex] || []
                 currentState[groupIndex][id] = value
-                return { ...currentState }
+                return [...currentState]
             })
             editor.onInputChangeCallback(editor.id, editor.inputObject)
         }
-        value.initialValue = editor.inputObject && editor.inputObject[groupIndex] && editor.inputObject[groupIndex][key]
+        value.initialValue =
+            editor.inputObject &&
+            editor.inputObject[groupIndex] &&
+            editor.inputObject[groupIndex][key]
         value.id = key
         return h(ComponentEditWrapper, value)
     })
@@ -25,6 +29,10 @@ function renderInputs(config, editor, groupIndex) {
 const Group = (props) => {
     const [inputObject, setInputObject] = useState(props.initialValue || [])
     //props.initialValue && setInputObject(props.initialValue)
+
+    function remove(arrayData, index) {
+        console.log(arrayData, index)
+    }
 
     useEffect(() => {
         setInputObject(props.initialValue || [])
@@ -37,10 +45,33 @@ const Group = (props) => {
             {Object.keys(inputObject).map((element, index) => (
                 <GroupItem key={index}>
                     <ActionButtons>
-                        <span>reorder</span>
-                        <span>remove</span>
+                        <ActionButton>O</ActionButton>
+                        <ActionButton
+                            onClick={() =>
+                                setInputObject((prevState) => {
+                                    console.log(prevState)
+                                    return prevState.filter(function (
+                                        value,
+                                        idx
+                                    ) {
+                                        return idx !== index
+                                    })
+                                })
+                            }
+                        >
+                            R
+                        </ActionButton>
                     </ActionButtons>
-                    {renderInputs(fields, { inputObject, setInputObject, onInputChangeCallback, id }, index)}
+                    {renderInputs(
+                        fields,
+                        {
+                            inputObject,
+                            setInputObject,
+                            onInputChangeCallback,
+                            id,
+                        },
+                        index
+                    )}
                 </GroupItem>
             ))}
             <Button
@@ -68,11 +99,18 @@ const GroupItem = styled.div`
 const ActionButtons = styled.div`
     float: right;
     background-color: white;
-    width: 100px;
     text-align: right;
     padding: 5px;
     border-radius: 3px;
     border: 1px solid red;
+`
+
+const ActionButton = styled.span`
+    width: 10px;
+    margin: 4px;
+    text-align: center;
+    font-size: 10px;
+    border-radius: 2px;
 `
 
 export default Group
