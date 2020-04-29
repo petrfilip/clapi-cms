@@ -12,7 +12,13 @@ export default class DataManager {
      * @param headers
      * @param data
      */
-    static saveOrUpdate = (uri, contentType, dataToSave, onSuccessCallback, onFailCallback) => {
+    static saveOrUpdate = (
+        uri,
+        contentType,
+        dataToSave,
+        onSuccessCallback,
+        onFailCallback
+    ) => {
         if (typeof dataToSave == 'string' || dataToSave instanceof String) {
             dataToSave = JSON.parse(dataToSave)
         }
@@ -20,14 +26,16 @@ export default class DataManager {
         async function saveOrUpdate() {
             if (uri) {
                 try {
-                    const request = contentType === 'json' ? jsonRequest : dataRequest
+                    const request =
+                        contentType === 'json' ? jsonRequest : dataRequest
                     const feedbackData = await request(uri)
                     onSuccessCallback && onSuccessCallback(feedbackData)
                     return feedbackData
                 } catch (e) {
                     const feedbackData = await e
                     console.log(feedbackData)
-                    ;(onFailCallback && onFailCallback(feedbackData)) || alert(JSON.stringify(feedbackData))
+                    ;(onFailCallback && onFailCallback(feedbackData)) ||
+                        alert(JSON.stringify(feedbackData))
                 }
             }
         }
@@ -35,7 +43,11 @@ export default class DataManager {
         async function jsonRequest(uri) {
             const headers = new Headers()
             headers.set('Content-Type', 'application/json')
-            UserManager.getUserDetails() && headers.set('authorization', 'Bearer ' + UserManager.getUserDetails().token)
+            UserManager.getUserDetails() &&
+                headers.set(
+                    'authorization',
+                    'Bearer ' + UserManager.getUserDetails().token
+                )
 
             return await fetch(uri, {
                 headers,
@@ -52,7 +64,11 @@ export default class DataManager {
 
         async function dataRequest(uri) {
             const headers = new Headers()
-            UserManager.getUserDetails() && headers.set('authorization', 'Bearer ' + UserManager.getUserDetails().token)
+            UserManager.getUserDetails() &&
+                headers.set(
+                    'authorization',
+                    'Bearer ' + UserManager.getUserDetails().token
+                )
 
             return await fetch(uri, {
                 headers,
@@ -96,23 +112,35 @@ export default class DataManager {
 
     static fetchData = async (uri, params) => {
         const headers = new Headers()
-        UserManager.getUserDetails() && headers.set('authorization', 'Bearer ' + UserManager.getUserDetails().token)
+        UserManager.getUserDetails() &&
+            headers.set(
+                'authorization',
+                'Bearer ' + UserManager.getUserDetails().token
+            )
 
         params = {}
-        const convertedQueryParams = (params && queryString.stringify(params)) || ''
+        const convertedQueryParams =
+            (params && queryString.stringify(params)) || ''
 
         //todo fix it
-        return await fetch(uri + '&' + convertedQueryParams, { headers }).then(function (response) {
-            return response.json()
-        })
+        return await fetch(uri + '&' + convertedQueryParams, { headers }).then(
+            function (response) {
+                return response.json()
+            }
+        )
     }
 
     static fetchBinaryData = async (uri, params) => {
         const headers = new Headers()
-        UserManager.getUserDetails() && headers.set('authorization', 'Bearer ' + UserManager.getUserDetails().token)
+        UserManager.getUserDetails() &&
+            headers.set(
+                'authorization',
+                'Bearer ' + UserManager.getUserDetails().token
+            )
 
         params = {}
-        const convertedQueryParams = (params && queryString.stringify(params)) || ''
+        const convertedQueryParams =
+            (params && queryString.stringify(params)) || ''
 
         //todo fix it
         fetch(uri + '&' + convertedQueryParams, { headers })

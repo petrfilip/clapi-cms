@@ -7,7 +7,8 @@ import DirectoryCreate from './directory-create'
 import { route } from 'preact-router'
 import PropTypes from 'prop-types'
 import * as api from '../../api'
-import DataLoader from '../data-loader'
+import DataManager from '../data-loader/data-manager'
+import Loader from '../loader'
 
 function normalizeLocation(location) {
     return location || '/'
@@ -32,7 +33,9 @@ function removeLastDirectory(path) {
 
 const FileManager = (props) => {
     const [location, setLocation] = useState(normalizeLocation(props.location))
-    let loadedData = {}
+    const [data, loading, error, setData] = DataManager.load(
+        api.fetchMediaList(location)
+    )
 
     const onDirectoryClick = (location) => {
         location = normalizeLocation(location)
@@ -48,22 +51,23 @@ const FileManager = (props) => {
     }
 
     const onNewDirectory = (directory) => {
-        loadedData.directories.push(directory)
-        console.log('onNewDir', loadedData)
+        const addedDir = Object.assign({}, data)
+        addedDir.directories.push(directory)
+        setData(addedDir)
     }
 
     const onNewFile = (files) => {
-        const addedFilesData = Object.assign({}, loadedData)
+        const addedFilesData = Object.assign({}, data)
         files.map((item) => {
             addedFilesData.files.push(item)
         })
-        loadedData = addedFilesData
-        console.log('onNewFile', loadedData)
+        setData(addedFilesData)
     }
 
     useEffect(() => {
         console.log('location changed')
-        props.routeAllowed && detectRouteChange(location, props.location, setLocation)
+        props.routeAllowed &&
+            detectRouteChange(location, props.location, setLocation)
         return () => {
             console.log('location finished')
         }
@@ -72,20 +76,28 @@ const FileManager = (props) => {
     return (
         <div>
             <h2>Current location: {location}</h2>
-            <DirectoryCreate callback={onNewDirectory} currentLocation={location} />
+            <DirectoryCreate
+                callback={onNewDirectory}
+                currentLocation={location}
+            />
             <FileUpload callback={onNewFile} currentLocation={location} />
-            <DataLoader uri={api.fetchMediaList(location)}>
-                {(data) => {
-                    loadedData = data
-                    return (
-                        <>
-                            <DirectoryList currentLocation={location} onBackDirectoryClick={onBackDirectoryClick} onDirectoryClick={onDirectoryClick} directories={loadedData.directories || []} />
-                            <hr />
-                            <FileList selectedItem={props.selectedItem} fileListMode={props.fileListMode} onMediaClick={props.onMediaClick} files={loadedData.files || []} />
-                        </>
-                    )
-                }}
-            </DataLoader>
+            {(loading && <Loader />) || (
+                <>
+                    <DirectoryList
+                        currentLocation={location}
+                        onBackDirectoryClick={onBackDirectoryClick}
+                        onDirectoryClick={onDirectoryClick}
+                        directories={(data && data.directories) || []}
+                    />
+                    <hr />
+                    <FileList
+                        selectedItem={props.selectedItem}
+                        fileListMode={props.fileListMode}
+                        onMediaClick={props.onMediaClick}
+                        files={(data && data.files) || []}
+                    />
+                </>
+            )}
         </div>
     )
 }
