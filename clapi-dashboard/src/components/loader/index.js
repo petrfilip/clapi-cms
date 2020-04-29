@@ -1,8 +1,6 @@
-import style from './style.css';
-import {React} from "preact";
+import style from './style.css'
+import { React } from 'preact'
 
-const Loader = () => (
-    <div className={style.loader}></div>
-);
+const Loader = () => <div className={style.loader}></div>
 
-export default Loader;
+export default Loader

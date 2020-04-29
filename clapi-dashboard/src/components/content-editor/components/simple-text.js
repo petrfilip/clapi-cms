@@ -1,16 +1,15 @@
-import {React} from "preact";
-import Input from "../../elementary/input";
+import { React } from 'preact'
+import Input from '../../elementary/input'
 
 const SimpleText = (props) => (
     <Input
         value={props.initialValue}
         name={props.id}
         key={props.id}
-        type={"text"}
+        type={'text'}
         maxLength={props.config.maxLength || 999}
-        onInput={(event) => props.onInputChangeCallback(props.id,
-            event.target.value)}
+        onInput={(event) => props.onInputChangeCallback(props.id, event.target.value)}
     />
-);
+)
 
-export default SimpleText;
+export default SimpleText

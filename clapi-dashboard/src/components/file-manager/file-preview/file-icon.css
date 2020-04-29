@@ -1,60 +1,60 @@
 .file {
-  position: relative;
-  display: block;
-  width: 150px;
-  height: 190px;
-  border-radius: 10px;
-  background: #ccc;
-  color: #888;
-  font: bold 40px/210px Verdana;
-  text-align: center;
-  text-transform: uppercase;
+    position: relative;
+    display: block;
+    width: 150px;
+    height: 190px;
+    border-radius: 10px;
+    background: #ccc;
+    color: #888;
+    font: bold 40px/210px Verdana;
+    text-align: center;
+    text-transform: uppercase;
 }
 .file:before {
-  content: " ";
-  position: absolute;
-  top: 0;
-  right: 0;
-  display: block;
-  width: 60px;
-  height: 60px;
-  border-bottom-left-radius: 10px;
-  background: #aaa;
+    content: ' ';
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: block;
+    width: 60px;
+    height: 60px;
+    border-bottom-left-radius: 10px;
+    background: #aaa;
 }
 .file:after {
-  content: " ";
-  position: absolute;
-  top: 0;
-  right: 0;
-  display: block;
-  width: 0;
-  height: 0;
-  border-style: solid;
-  border-width: 0 60px 60px 0;
-  /* change #fff to color of your background. This doesn't work on non-solid backgrounds, but it's a trade-off for compatibility's sake. If you don't care about that, then you can get rid of this psuedo-element and use angled background gradients fading to transparent instead. */
-  border-color: transparent #fff transparent transparent;
+    content: ' ';
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: block;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 0 60px 60px 0;
+    /* change #fff to color of your background. This doesn't work on non-solid backgrounds, but it's a trade-off for compatibility's sake. If you don't care about that, then you can get rid of this psuedo-element and use angled background gradients fading to transparent instead. */
+    border-color: transparent #fff transparent transparent;
 }
 
 a.file {
-  text-indent: 180px;
-  text-decoration: none;
-  overflow: visible;
-  white-space: nowrap;
+    text-indent: 180px;
+    text-decoration: none;
+    overflow: visible;
+    white-space: nowrap;
 }
 
 a.file:before {
-  content: attr(data-extension);
-  text-indent: -90px;
-  /* IE8 hack, I really suggest using Paul Irish's conditional HTML classes instead: http://www.paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither */
-  text-indent: -55px\9;
+    content: attr(data-extension);
+    text-indent: -90px;
+    /* IE8 hack, I really suggest using Paul Irish's conditional HTML classes instead: http://www.paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither */
+    text-indent: -55px\9;
 }
 
 /* other styles, not needed for file icon */
 body {
-  background: #fff;
-  font: 14px/1.2 Verdana;
-  color: #333;
+    background: #fff;
+    font: 14px/1.2 Verdana;
+    color: #333;
 }
 footer {
-  font-size: 0.8em;
+    font-size: 0.8em;
 }

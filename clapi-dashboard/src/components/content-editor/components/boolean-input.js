@@ -1,7 +1,5 @@
-import {React} from "preact";
+import { React } from 'preact'
 
-const BooleanInput = (props) => (
-    <h2>Boolean Input - TODO</h2>
-);
+const BooleanInput = (props) => <h2>Boolean Input - TODO</h2>
 
-export default BooleanInput;
+export default BooleanInput

@@ -1,66 +1,66 @@
 .flexContainer {
-  display: flex;
-  flex-wrap: wrap;
+    display: flex;
+    flex-wrap: wrap;
 }
 
 .flexContainer > div {
-  border-radius: 2px;
-  border: 1px solid #c7c5c5;
-  background-color: white;
-  width: 230px;
-  height: 250px;
-  margin: 5px;
-  text-align: center;
-  cursor: pointer;
+    border-radius: 2px;
+    border: 1px solid #c7c5c5;
+    background-color: white;
+    width: 230px;
+    height: 250px;
+    margin: 5px;
+    text-align: center;
+    cursor: pointer;
 }
 
 .flexContainer .filePreview {
-  object-fit: cover;
-  width: 228px;
-  height: 190px;
-  overflow: hidden;
+    object-fit: cover;
+    width: 228px;
+    height: 190px;
+    overflow: hidden;
 }
 
-.flexContainer .selected img  {
-  opacity: 0.7;
+.flexContainer .selected img {
+    opacity: 0.7;
 }
 
 .flexContainer .selected {
-  background-color: rgba(199, 197, 197, 0.25);
+    background-color: rgba(199, 197, 197, 0.25);
 }
 
 .flexContainer > div:hover {
-  background-color: rgba(199, 197, 197, 0.25);
-  transition-duration: 0.4s;
+    background-color: rgba(199, 197, 197, 0.25);
+    transition-duration: 0.4s;
 }
 
 .flexContainer img:hover {
-  opacity: 0.7;
-  transition-duration: 0.4s;
+    opacity: 0.7;
+    transition-duration: 0.4s;
 }
 
 .bold {
-  font-weight: bold;
+    font-weight: bold;
 }
 
 .small {
-  font-size: 10px;
+    font-size: 10px;
 }
 
 .downloadIcon {
-  width: 20px;
-  height: 20px;
+    width: 20px;
+    height: 20px;
 }
 
 .flexContainerInner {
-  display: flex;
-  flex-wrap: wrap;
+    display: flex;
+    flex-wrap: wrap;
 }
 
 .flexContainerInner > div {
-  line-height: normal;
-  border-radius: 2px;
-  margin: 5px;
-  text-align: center;
-  cursor: pointer;
+    line-height: normal;
+    border-radius: 2px;
+    margin: 5px;
+    text-align: center;
+    cursor: pointer;
 }

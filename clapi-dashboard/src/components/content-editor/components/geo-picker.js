@@ -1,7 +1,5 @@
-import {React} from "preact";
+import { React } from 'preact'
 
-const GeoPicker = (props) => (
-    <h2>GEO Picker - TODO</h2>
-);
+const GeoPicker = (props) => <h2>GEO Picker - TODO</h2>
 
-export default GeoPicker;
+export default GeoPicker

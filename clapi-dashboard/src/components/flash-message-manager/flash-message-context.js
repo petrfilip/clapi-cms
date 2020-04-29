@@ -1,4 +1,3 @@
-import {createContext} from "preact";
+import { createContext } from 'preact'
 
-export const FlashMessageContext = createContext(null);
-
+export const FlashMessageContext = createContext(null)

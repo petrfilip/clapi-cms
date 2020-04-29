@@ -1,10 +1,8 @@
-import {React} from "preact";
+import { React } from 'preact'
 
 export const InputWrapper = (props) => (
     <div>
-      <label>
-        {props.label}
-      </label>
-      {props.children}
+        <label>{props.label}</label>
+        {props.children}
     </div>
-);
+)

@@ -1,4 +1,3 @@
-import {createContext} from "preact";
+import { createContext } from 'preact'
 
-export const AppModalContext = createContext(null);
-
+export const AppModalContext = createContext(null)

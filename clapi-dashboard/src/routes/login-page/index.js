@@ -1,8 +1,8 @@
-import {React} from "preact";
-import LoginForm from "../../components/login-form/login-form";
+import { React } from 'preact'
+import LoginForm from '../../components/login-form/login-form'
 
 const LoginPage = () => {
-	return (<LoginForm />)
-};
+    return <LoginForm />
+}
 
-export default LoginPage;
+export default LoginPage

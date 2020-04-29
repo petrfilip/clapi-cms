@@ -1,7 +1,5 @@
-import {React} from "preact";
+import { React } from 'preact'
 
-const RadioInput = (props) => (
-    <h2>Radio Input - TODO</h2>
-);
+const RadioInput = (props) => <h2>Radio Input - TODO</h2>
 
-export default RadioInput;
+export default RadioInput

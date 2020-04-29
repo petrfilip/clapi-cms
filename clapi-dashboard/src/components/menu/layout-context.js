@@ -1,4 +1,3 @@
-import {createContext} from "preact";
+import { createContext } from 'preact'
 
-export const LayoutContext = createContext(null);
-
+export const LayoutContext = createContext(null)

@@ -1,4 +1,3 @@
-import {createContext} from "preact";
+import { createContext } from 'preact'
 
-export const LanguageContext = createContext(null);
-
+export const LanguageContext = createContext(null)

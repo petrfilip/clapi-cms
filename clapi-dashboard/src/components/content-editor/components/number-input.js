@@ -1,16 +1,15 @@
-import Input from "../../elementary/input";
+import Input from '../../elementary/input'
 
 const NumberInput = (props) => (
     <Input
         value={props.initialValue}
         name={props.id}
         key={props.id}
-        type={"number"}
+        type={'number'}
         min={props.config.min}
         max={props.config.max}
-        onInput={(event) => props.onInputChangeCallback(props.id,
-            event.target.value)}
+        onInput={(event) => props.onInputChangeCallback(props.id, event.target.value)}
     />
-);
+)
 
-export default NumberInput;
+export default NumberInput
