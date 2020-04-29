@@ -14,7 +14,7 @@ const saveOrUpdate = (data) => {
 }
 
 const TypeDefinitionEditor = (props) => {
-  const {setMenu, setSidebar,setActionSidebar} = useContext(LayoutContext)
+  const {setMenu, setSidebar, setActionSidebar} = useContext(LayoutContext)
   const [typeDefinition, setTypeDefinition] = useState(
       props.typeDefinition || {});
   const [typeDefinitionConfig, setTypeDefinitionConfig] = useState(
@@ -43,14 +43,20 @@ const TypeDefinitionEditor = (props) => {
 
   useEffect(() => {
     setMenu(<Button onClick={saveOrUpdateAction}>update definition</Button>);
-    setSidebar(<TypeDefinitionBuilderMenu/>)
 
     return () => {
       setMenu(null);
+    };
+  }, [typeDefinitionConfig]);
+
+  useEffect(() => {
+    setSidebar(<TypeDefinitionBuilderMenu/>)
+
+    return () => {
       setSidebar(null);
       setActionSidebar(null);
     };
-  }, [typeDefinitionConfig]);
+  }, []);
 
   {/*{JSON.stringify(typeDefinitionConfig, null, 2)}*/
   }

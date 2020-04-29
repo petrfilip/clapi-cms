@@ -35,29 +35,31 @@ const FileList = (props) => {
 
   return (
       <div className={style.flexContainer}>
-        {props.files.map((file, index) =>
-            (<div
-                className={mode === Mode.SELECT && file._id === selected._id && style.selected}
-                onClick={() => {
-                  mode === Mode.SELECT && setSelected(file);
-                  mode === Mode.MULTI_SELECT && setSelected([...selected, file]);
-                  mode === Mode.EDIT && route("/media/edit/" + file._id)
-                  props.onMediaClick && props.onMediaClick(file);
-                }}>
-              <div className={style.flexContainerInner}>
-                <div className={style.bold}>{file.originName}</div>
-                <div className={style.small}>{file.attributes.type}</div>
-                <div className={style.small}>{formatBytes(file.attributes.size,
-                    2)}
+        {props.files.map((file, index) => {
+              return (<div
+                  className={mode === Mode.SELECT && file._id === selected._id
+                  && style.selected}
+                  onClick={() => {
+                    mode === Mode.SELECT && setSelected(file);
+                    mode === Mode.MULTI_SELECT && setSelected([...selected, file]);
+                    mode === Mode.EDIT && route("/media/edit/" + file._id)
+                    props.onMediaClick && props.onMediaClick(file);
+                  }}>
+                <div className={style.flexContainerInner}>
+                  <div className={style.bold}>{file.originName}</div>
+                  <div className={style.small}>{file.attributes.type}</div>
+                  <div className={style.small}>{formatBytes(file.attributes.size,
+                      2)}
+                  </div>
+                  <div className={style.downloadIcon}>
+                    <img src={downloadIcon} alt={"download file"}/>
+                  </div>
                 </div>
-                <div className={style.downloadIcon}>
-                  <img src={downloadIcon} alt={"download file"}/>
+                <div>
+                  <FilePreview file={file}/>
                 </div>
-              </div>
-              <div>
-                <FilePreview file={file}/>
-              </div>
-            </div>)
+              </div>)
+            }
         )}
       </div>
   );

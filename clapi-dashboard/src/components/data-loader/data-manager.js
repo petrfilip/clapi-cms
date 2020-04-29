@@ -102,7 +102,7 @@ export default class DataManager {
     useEffect(() => {
       loadData();
     }, [uri, params]);
-    return [data, loading, error];
+    return [data, loading, error, setData, setLoading, setError];
   }
 
   static fetchData = async (uri, params) => {

@@ -28,7 +28,6 @@ function resolvePath(path) {
 }
 
 const DirectoryList = (props) => {
-  console.log(props)
 
   return (
       <div className={style.flexContainer}>

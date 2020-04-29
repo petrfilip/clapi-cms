@@ -26,7 +26,7 @@ const PageLayout = (props) => {
 
   useEffect(() => {
     return () => {setActionSidebar(null)};
-  }, [props]);
+  }, []);
 
 
   /* MENU CONTEXT */
