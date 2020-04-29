@@ -23,7 +23,7 @@ export const addToObject = function (obj, key, value, index) {
   }
 
   // If no index, add to the end
-  if (!index && key && value) {
+  if ((!index || i === index) && key && value) {
     temp[key] = value;
   }
 

@@ -1,5 +1,4 @@
 import {useContext} from "preact/hooks";
-import {AppModalContext} from "../modal/AppModalContextProvider";
 import TypeDefinitionInputSettings from "./type-definition-input-settings";
 import React from "preact/compat";
 import styled from "styled-components";
@@ -19,20 +18,6 @@ function getDropContainer(typeDefinitionConfig, index, setActionSidebar,
                                        componentKey={componentKey}/>)
                                  }}/>
 }
-
-// const onAddNestedDefinition = (parent, fields, child, onUpdateDefinition) => {
-//   const updatedFields = addToObject(fields, child.apiKey, child.value,
-//       child.position)
-//   parent.config.fields = Object.assign({}, updatedFields)
-//   // onUpdateDefinition(parent)
-// }
-//
-// const onRemoveNestedDefinition = (parent, fields, child,
-//     onUpdateDefinition) => {
-//   const updatedFields = removeFromObject(fields, child.apiKey)
-//   parent.config.fields = Object.assign({}, updatedFields)
-//   onUpdateDefinition(parent)
-// }
 
 function getComponentPlaceholder(typeDefinitionConfig, key, item, index,
     setActionSidebar,
@@ -63,7 +48,8 @@ function getComponentPlaceholder(typeDefinitionConfig, key, item, index,
   </ComponentPlaceholder>;
 }
 
-function getTypeDefinitionBuilderContainer(typeDefinitionConfig, setActionSidebar,
+function getTypeDefinitionBuilderContainer(typeDefinitionConfig,
+    setActionSidebar,
     onUpdateDefinition) {
   return <>
     {Object.keys(typeDefinitionConfig).map((item, index) => {
@@ -77,7 +63,10 @@ function getTypeDefinitionBuilderContainer(typeDefinitionConfig, setActionSideba
       </>
     })
     }
-    {getDropContainer(Object.keys(typeDefinitionConfig).length, setActionSidebar)}
+    {getDropContainer(typeDefinitionConfig,
+        Object.keys(typeDefinitionConfig).length,
+        setActionSidebar,
+        onUpdateDefinition)}
   </>;
 }
 
@@ -95,10 +84,10 @@ const onRemoveDefinition = (config, key, onUpdateDefinition) => {
 const TypeDefinitionGroupBuilder = ({typeDefinitionConfig, onUpdateDefinition}) => {
   const {setActionSidebar} = useContext(LayoutContext)
 
-
   return (
       <TypeDefinitionGroupBuilderContainer>
-        {getTypeDefinitionBuilderContainer(typeDefinitionConfig, setActionSidebar,
+        {getTypeDefinitionBuilderContainer(typeDefinitionConfig,
+            setActionSidebar,
             onUpdateDefinition)}
       </TypeDefinitionGroupBuilderContainer>
   );
