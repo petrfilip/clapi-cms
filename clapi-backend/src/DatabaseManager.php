@@ -22,29 +22,38 @@ final class DatabaseManager
     {
         $collectionStore = DatabaseManager::getDataStore($collectionName);
 
-        //todo
-//        if ($params["where"]) {
-//            foreach ($params["where"] as $where) {
-//                $collectionStore->where($where["key"], $where["operator"], $where["value"]);
-//            }
-//        }
-//
-//        if ($params["search"]) {
-//            foreach ($params["search"] as $search) {
-//                $collectionStore->search($search["key"], $search["value"]);
-//            }
-//        }
-//
-//        if ($params["offset"]) {
-//            $collectionStore->skip($params["offset"]);
-//        }
-//        if ($params["limit"]) {
-//            $collectionStore->limit($params["limit"]);
-//        }
-//        if ($params["orderBy"]) {
-//            $order = empty($params["order"]) ? "asc" : $params["order"];
-//            $collectionStore->orderBy($order, $params["orderBy"]);
-//        }
+        foreach ($params as $condition) {
+
+            switch ($condition["type"]) {
+                case "where":
+                    $collectionStore->where($condition["key"], $condition["operator"], $condition["value"]);
+                    break;
+                case "orWhere":
+                    $collectionStore->orWhere($condition["key"], $condition["operator"], $condition["value"]);
+                    break;
+                case "in":
+                    $collectionStore->in($condition["key"], $condition["value"]);
+                    break;
+                case "notIn":
+                    $collectionStore->notIn($condition["key"], $condition["value"]);
+                    break;
+                case "search":
+                    $collectionStore->search($condition["key"], $condition["value"]);
+                    break;
+                case "offset":
+                    $collectionStore->skip($condition["value"]);
+                    break;
+                case "limit":
+                    $collectionStore->limit($condition["value"]);
+                    break;
+                case "orderBy":
+                    $order = empty($condition["order"]) ? "asc" : $condition["order"];
+                    $collectionStore->orderBy($order, $condition["value"]);
+                    break;
+            }
+
+        }
+
         return $collectionStore->fetch();
     }
 
@@ -61,7 +70,8 @@ final class DatabaseManager
         return $collectionStore->fetch();
     }
 
-    static public function createWhere($key, $operator, $value) {
+    static public function createWhere($key, $operator, $value)
+    {
         $where["key"] = $key;
         $where["operator"] = $operator;
         $where["value"] = $value;
@@ -117,7 +127,7 @@ final class DatabaseManager
 
     static public function insertNewVersionedRecord($collectionName, $data, $userId)
     {
-        $data = (array) $data;
+        $data = (array)$data;
         $data["sys"]["version"] = 1;
         $data["sys"]["created"] = Utils::getCurrentDateTime();
         $data["sys"]["updated"] = Utils::getCurrentDateTime();
@@ -130,7 +140,7 @@ final class DatabaseManager
     {
         $now = Utils::getCurrentDateTime();
         foreach ($data as $item) {
-            $item = (array) $item;
+            $item = (array)$item;
             $item["sys"]["version"] = 1;
             $item["sys"]["created"] = $now;
             $item["sys"]["updated"] = $now;

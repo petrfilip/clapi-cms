@@ -8,7 +8,15 @@ export const FilePreview = ({ file }) => {
         return
     }
 
-    const hasPreview = file.attributes.type.substring(0, 5) === 'image' // todo more complicated when pdf converts to image
+    const hasPreview = file.attributes.mimeType.substring(0, 5) === 'image' // todo more complicated when pdf converts to image
 
-    return hasPreview ? <img className={style.filePreview} src={api.apiUrl + file.publicPath} alt={file.originName} /> : <FileIcon file={file} />
+    return hasPreview ? (
+        <img
+            className={style.filePreview}
+            src={api.apiUrl + file.publicPath}
+            alt={file.originName}
+        />
+    ) : (
+        <FileIcon file={file} />
+    )
 }

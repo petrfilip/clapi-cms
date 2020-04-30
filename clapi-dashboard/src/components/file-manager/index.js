@@ -34,7 +34,8 @@ function removeLastDirectory(path) {
 const FileManager = (props) => {
     const [location, setLocation] = useState(normalizeLocation(props.location))
     const [data, loading, error, setData] = DataManager.load(
-        api.fetchMediaList(location)
+        api.fetchMediaList(location),
+        props.params
     )
 
     const onDirectoryClick = (location) => {

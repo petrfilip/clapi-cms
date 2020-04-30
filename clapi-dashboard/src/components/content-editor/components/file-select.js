@@ -18,12 +18,23 @@ const FileSelect = (props) => {
 
     return (
         <ComponentContainer>
-            <DataLoader forceShowChild={true} uri={props.initialValue && api.fetchMedia(props.initialValue)}>
+            <DataLoader
+                forceShowChild={true}
+                uri={props.initialValue && api.fetchMedia(props.initialValue)}
+            >
                 {(data) => (
                     <>
                         <Button
                             onClick={() => {
-                                setActionSidebar(<FileManager routeAllowed={false} selectedItem={data} fileListMode={Mode.SELECT} onMediaClick={onMediaSelected} />)
+                                setActionSidebar(
+                                    <FileManager
+                                        routeAllowed={false}
+                                        selectedItem={data}
+                                        fileListMode={Mode.SELECT}
+                                        onMediaClick={onMediaSelected}
+                                        params={[{}]}
+                                    />
+                                )
                             }}
                         >
                             Select
@@ -34,7 +45,9 @@ const FileSelect = (props) => {
                             {data && data.originName}
                         </PreviewContainer>
 
-                        <Button onClick={() => onMediaSelected({})}>Remove</Button>
+                        <Button onClick={() => onMediaSelected({})}>
+                            Remove
+                        </Button>
                     </>
                 )}
             </DataLoader>

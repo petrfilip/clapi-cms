@@ -18,6 +18,7 @@ require './../src/Model/ApplicationError.php';
 require './../src/ErrorUtils.php';
 require './../src/DatabaseManager.php';
 require './../src/Utils.php';
+require './../src/MIME.php';
 define("DATABASE_ROOT", __DIR__ . "/../database");
 define("MEDIA_STORAGE", "/media-storage");
 define("MEDIA_STORAGE_ROOT", __DIR__ . MEDIA_STORAGE);
@@ -222,15 +223,31 @@ $app->get('/media/{id:[0-9]+}', function (Request $request, Response $response, 
 
 /* list directory */
 $app->get('/media/list[/{location:.*}]', function (Request $request, Response $response, $args) {
-    $collectionStore = DatabaseManager::getMediaDataStore();
     $path = $args["location"];
     if ($path == "" || $path[0] != "/") {
         $path = "/" . $path;
     }
-    $allItems = ($collectionStore
-        ->where("path", "=", $path)
-//        ->orderBy('asc', 'originName')
-        ->fetch());
+    $params = $request->getQueryParams();
+    if ($params == null) {
+        $params = [];
+    }
+
+    if ($params["where"] == null) {
+        $params["where"] = [];
+    }
+
+    if ($params["orWhere"] == null) {
+        $params["orWhere"] = [];
+    }
+
+    $pathCondition = ["key" => "path", "operator" => "=", "value" => $path];
+    array_push($params["where"], $pathCondition);
+
+    $fileType = ["key" => "attributes.fileType", "operator" => "=", "value" => $path];
+    array_push($params["orWhere"], $fileType);
+
+
+    $allItems = DatabaseManager::findBy("media", $params);
 
     $directories = array_filter($allItems, function ($v) {
         return $v["type"] === 'directory';

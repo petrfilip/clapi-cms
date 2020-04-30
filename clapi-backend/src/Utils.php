@@ -3,6 +3,7 @@
 namespace App;
 
 use DateTime;
+use MIME;
 use Slim\Psr7\UploadedFile;
 use stdClass;
 
@@ -66,10 +67,10 @@ final class Utils
         $media->publicPath = $publicPath;
         $media->attributes = [
             'size' => $uploadedFile->getSize(),
-            'type' => $uploadedFile->getClientMediaType()
+            'mimeType' => $uploadedFile->getClientMediaType(),
+            'fileType' => MIME::group($uploadedFile->getClientMediaType())
         ];
         return $media;
     }
-
 
 }

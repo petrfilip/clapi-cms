@@ -118,7 +118,7 @@ export default class DataManager {
                 'Bearer ' + UserManager.getUserDetails().token
             )
 
-        params = {}
+        params = params || {}
         const convertedQueryParams =
             (params && queryString.stringify(params)) || ''
 

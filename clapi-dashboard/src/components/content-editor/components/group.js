@@ -45,7 +45,7 @@ const Group = (props) => {
             {Object.keys(inputObject).map((element, index) => (
                 <GroupItem key={index}>
                     <ActionButtons>
-                        <ActionButton>O</ActionButton>
+                        <ActionButton>S</ActionButton>
                         <ActionButton
                             onClick={() =>
                                 setInputObject((prevState) => {
