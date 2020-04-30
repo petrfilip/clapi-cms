@@ -10,25 +10,44 @@ import { LayoutContext } from '../../menu/layout-context'
 
 const DocumentLink = (props) => {
     const onDocumentSelected = (item) => {
-        props.onInputChangeCallback(props.id, { id: item._id, collectionName: item.metadata.collectionName })
+        console.log(item)
+        props.onInputChangeCallback(props.id, {
+            id: item._id,
+            collectionName: item.metadata.collectionName,
+        })
     }
 
     const { setActionSidebar } = useContext(LayoutContext)
 
     return (
         <ComponentContainer>
-            <DataLoader uri={props.initialValue && props.initialValue.id && api.fetchCollectionContent(props.initialValue.collectionName, props.initialValue.id)}>
+            <DataLoader
+                uri={
+                    props.initialValue &&
+                    props.initialValue.id &&
+                    api.fetchCollectionContent(
+                        props.initialValue.collectionName,
+                        props.initialValue.id
+                    )
+                }
+            >
                 {(data) => (
                     <>
                         <Button
                             onClick={() => {
-                                setActionSidebar(<CollectionList onRowClick={onDocumentSelected} />)
+                                setActionSidebar(
+                                    <CollectionList
+                                        onRowClick={onDocumentSelected}
+                                    />
+                                )
                             }}
                         >
                             Select
                         </Button>
                         <PreviewContainer>{data && data._id}</PreviewContainer>
-                        <Button onClick={() => onDocumentSelected({})}>Remove</Button>
+                        <Button onClick={() => onDocumentSelected({})}>
+                            Remove
+                        </Button>
                     </>
                 )}
             </DataLoader>

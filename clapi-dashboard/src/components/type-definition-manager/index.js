@@ -10,16 +10,29 @@ import Button from '../elementary/button'
 import { addToObject, removeFromObject } from '../../utils/object-utils'
 
 const saveOrUpdate = (data) => {
-    DataManager.saveOrUpdate(api.fetchCollection('type-definition'), 'json', data)
+    DataManager.saveOrUpdate(
+        api.fetchCollection('type-definition'),
+        'json',
+        data
+    )
 }
 
 const TypeDefinitionEditor = (props) => {
     const { setMenu, setSidebar, setActionSidebar } = useContext(LayoutContext)
-    const [typeDefinition, setTypeDefinition] = useState(props.typeDefinition || {})
-    const [typeDefinitionConfig, setTypeDefinitionConfig] = useState(props.typeDefinition.config || {})
+    const [typeDefinition, setTypeDefinition] = useState(
+        props.typeDefinition || {}
+    )
+    const [typeDefinitionConfig, setTypeDefinitionConfig] = useState(
+        props.typeDefinition.config || {}
+    )
 
     const onNewDefinition = (obj) => {
-        const updatedConfig = addToObject(typeDefinitionConfig, obj.apiKey, obj.value, obj.position)
+        const updatedConfig = addToObject(
+            typeDefinitionConfig,
+            obj.apiKey,
+            obj.value,
+            obj.position
+        )
         setTypeDefinitionConfig(updatedConfig)
     }
 
@@ -55,11 +68,14 @@ const TypeDefinitionEditor = (props) => {
         }
     }, [])
 
-    {
-        /*{JSON.stringify(typeDefinitionConfig, null, 2)}*/
-    }
-
-    return <TypeDefinitionBuilder typeDefinitionConfig={typeDefinitionConfig} onNewDefinition={onNewDefinition} onUpdateDefinition={onUpdateDefinition} onRemoveDefinition={onRemoveDefinition} />
+    return (
+        <TypeDefinitionBuilder
+            typeDefinitionConfig={typeDefinitionConfig}
+            onNewDefinition={onNewDefinition}
+            onUpdateDefinition={onUpdateDefinition}
+            onRemoveDefinition={onRemoveDefinition}
+        />
+    )
 }
 
 export default TypeDefinitionEditor

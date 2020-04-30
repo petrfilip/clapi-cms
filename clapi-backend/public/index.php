@@ -232,19 +232,17 @@ $app->get('/media/list[/{location:.*}]', function (Request $request, Response $r
         $params = [];
     }
 
-    if ($params["where"] == null) {
-        $params["where"] = [];
-    }
+    $pathCondition = ["type" => "where", "key" => "path", "operator" => "=", "value" => $path];
+    array_push($params, $pathCondition);
 
-    if ($params["orWhere"] == null) {
-        $params["orWhere"] = [];
-    }
 
-    $pathCondition = ["key" => "path", "operator" => "=", "value" => $path];
-    array_push($params["where"], $pathCondition);
-
-    $fileType = ["key" => "attributes.fileType", "operator" => "=", "value" => $path];
-    array_push($params["orWhere"], $fileType);
+    //todo contribute to sleekDB - to make
+//    $collectionStore->where($fieldName, $condition, $value)
+//        ->or([
+//            self::createWhere($key, $operator, $value),
+//            self::createWhere($key, $operator, $value),
+//        ])
+//        ->or([self::createWhere($key, $operator, $value)]);
 
 
     $allItems = DatabaseManager::findBy("media", $params);
