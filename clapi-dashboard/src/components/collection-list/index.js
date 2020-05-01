@@ -14,7 +14,7 @@ const headers = [
 const CollectionList = (props) => {
     console.log(props)
     const onRowClick = (rowItem) =>
-        props.onRowClick(rowItem) ||
+        (props.onRowClick && props.onRowClick(rowItem)) ||
         route(`/edit/${rowItem.metadata.collectionName}/${rowItem._id}`)
 
     return (

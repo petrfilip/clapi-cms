@@ -1,5 +1,4 @@
-import { useContext, useEffect, useState } from 'preact/hooks'
-import { AppModalContext } from '../../modal/AppModalContextProvider'
+import { useContext } from 'preact/hooks'
 import CollectionList from '../../collection-list'
 import * as api from '../../../api'
 import DataLoader from '../../data-loader'
@@ -10,7 +9,6 @@ import { LayoutContext } from '../../menu/layout-context'
 
 const DocumentLink = (props) => {
     const onDocumentSelected = (item) => {
-        console.log(item)
         props.onInputChangeCallback(props.id, {
             id: item._id,
             collectionName: item.metadata.collectionName,

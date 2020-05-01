@@ -16,22 +16,29 @@ import RadioInput from './components/radio-input'
 import ImageSelect from './components/image-select'
 import FileSelect from './components/file-select'
 
+const placeholder = {
+    type: 'SimpleText',
+    config: {
+        label: 'Placeholder',
+    },
+}
+
 export const ContentEditorComponents = {
-    SimpleText: SimpleText,
-    TextArea: TextArea,
-    Block: Block,
-    Group: Group,
-    MediaSelect: MediaSelect,
-    ImageSelect: ImageSelect,
-    FileSelect: FileSelect,
-    DocumentLink: DocumentLink,
-    DatePicker: DatePicker,
-    GeoPicker: GeoPicker,
-    BooleanInput: BooleanInput,
-    SelectInput: SelectInput,
-    NumberInput: NumberInput,
-    ColorPicker: ColorPicker,
-    CheckboxInput: CheckboxInput,
-    RadioInput: RadioInput,
-    EmbeddedContent: EmbeddedContent,
+    SimpleText: { component: SimpleText, config: { placeholder } },
+    TextArea: { component: TextArea, config: { placeholder } },
+    Block: { component: Block, config: { placeholder } },
+    Group: { component: Group, config: { placeholder } },
+    MediaSelect: { component: MediaSelect, config: { placeholder } },
+    ImageSelect: { component: ImageSelect, config: { placeholder } },
+    FileSelect: { component: FileSelect, config: { placeholder } },
+    DocumentLink: { component: DocumentLink, config: { placeholder } },
+    DatePicker: { component: DatePicker, config: { placeholder } },
+    GeoPicker: { component: GeoPicker, config: { placeholder } },
+    BooleanInput: { component: BooleanInput, config: { placeholder } },
+    SelectInput: { component: SelectInput, config: { placeholder } },
+    NumberInput: { component: NumberInput, config: { placeholder } },
+    ColorPicker: { component: ColorPicker, config: { placeholder } },
+    CheckboxInput: { component: CheckboxInput, config: { placeholder } },
+    RadioInput: { component: RadioInput, config: { placeholder } },
+    EmbeddedContent: { component: EmbeddedContent, config: { placeholder } },
 }

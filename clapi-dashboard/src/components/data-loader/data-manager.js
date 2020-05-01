@@ -1,7 +1,4 @@
-import { useContext, useEffect, useState } from 'preact/hooks'
-import * as api from '../../api'
-import { AppModalContext } from '../modal/AppModalContextProvider'
-import { FlashMessageContext } from '../flash-message-manager/flash-message-context'
+import { useEffect, useState } from 'preact/hooks'
 import UserManager from '../user-manager'
 import queryString from 'querystring'
 

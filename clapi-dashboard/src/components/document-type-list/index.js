@@ -2,32 +2,31 @@ import { h, React } from 'preact'
 import { route } from 'preact-router'
 import * as api from '../../api'
 import DataLoader from '../data-loader'
-import { useContext, useEffect } from 'preact/hooks'
 import { LayoutContext } from '../menu/layout-context'
+import Table from '../table'
+import { useContext } from 'preact/hooks'
 
-function renderList(data) {
+const onRowClick = (item) => {
+    route('/edit/' + item.collectionName + '/')
+}
+
+const headers = [{ key: 'collectionName', title: 'Collection' }]
+
+const DocumentTypeList = () => {
     const { setActionSidebar } = useContext(LayoutContext)
 
     return (
-        <div>
-            {data.map((item, i) => (
-                <div
-                    onClick={() => {
-                        setActionSidebar(null)
-                        route('/edit/' + item.collectionName + '/')
-                    }}
-                >
-                    {item.collectionName}
-                </div>
-            ))}
-        </div>
-    )
-}
-
-const DocumentTypeList = () => {
-    return (
         <DataLoader uri={api.fetchCollection('type-definition')}>
-            {(data) => renderList(data)}
+            {(data) => (
+                <Table
+                    headers={headers}
+                    rows={data}
+                    onRowClick={(rowItem) => {
+                        onRowClick(rowItem)
+                        setActionSidebar(null)
+                    }}
+                />
+            )}
         </DataLoader>
     )
 }
