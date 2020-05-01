@@ -5,7 +5,7 @@ import styled from 'styled-components'
 import TypeDefinitionGroupBuilder from './type-definition-group-builder'
 import { addToObject } from '../../utils/object-utils'
 import TypeDefinitionDropArea from './type-definition-drop-area'
-import { LayoutContext } from '../menu/layout-context'
+import { LayoutContext } from '../layout/layout-context'
 
 function getDropContainer(index, setActionSidebar, onNewDefinition) {
   return (

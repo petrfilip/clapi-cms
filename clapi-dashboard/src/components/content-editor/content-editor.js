@@ -5,7 +5,7 @@ import DataManager from '../data-loader/data-manager'
 
 import { Center } from '../layout/center'
 import Button from '../elementary/button'
-import { LayoutContext } from '../menu/layout-context'
+import { LayoutContext } from '../layout/layout-context'
 import React from 'preact/compat'
 import { renderInputs } from './render-utils'
 
