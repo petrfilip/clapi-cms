@@ -1,0 +1,105 @@
+import React from 'preact/compat'
+import styled from 'styled-components'
+import TypeDefinitionGroupBuilder from './type-definition-group-builder'
+import { useContext, useEffect, useState } from 'preact/hooks'
+import Button from '../elementary/button'
+import { LayoutContext } from '../layout/layout-context'
+import TypeDefinitionSnippetSettingsForm from './type-definition-snippet-settings-form'
+import Switch from '../elementary/switch'
+
+const TypeDefinitionBuilderBlockComponent = ({ initialData, onUpdateCallback }) => {
+  const [isContentAllowed, setIsContentAllowed] = useState(true)
+  const [config, setConfig] = useState(initialData || [])
+  const [currentSnippet, setCurrentSnippet] = useState(config[0] || {})
+  const { setActionSidebar } = useContext(LayoutContext)
+
+  useEffect(() => {
+    onUpdateCallback && onUpdateCallback(config)
+  }, [config])
+
+  return (
+    <>
+      <h3>Content</h3>
+      <Switch
+        initialValue={isContentAllowed}
+        onInput={(e) => {
+          setIsContentAllowed(e.target.checked)
+        }}
+      />
+      {isContentAllowed && (
+        <ComponentWrapper>
+          <Button
+            onClick={() => {
+              setCurrentSnippet(null)
+              setActionSidebar(
+                <TypeDefinitionSnippetSettingsForm
+                  onDoneButtonClick={(data) => {
+                    const newSnippet = {
+                      metadata: {
+                        snippetName: data.snippetName,
+                        snippetKey: data.snippetKey,
+                      },
+                      config: {},
+                    }
+                    setConfig([...config, newSnippet])
+                    setCurrentSnippet(newSnippet)
+                    setActionSidebar(null)
+                  }}
+                />
+              )
+            }}
+          >
+            Add
+          </Button>
+          {config.map((item) => {
+            return (
+              <>
+                <Button onClick={() => setCurrentSnippet(item)}>{item.metadata.snippetName}</Button>
+                <span
+                  onClick={() => {
+                    setCurrentSnippet(item)
+                    setActionSidebar(
+                      <TypeDefinitionSnippetSettingsForm
+                        value={item.metadata}
+                        onDoneButtonClick={(data) => {
+                          //todo implements update logic
+                        }}
+                      />
+                    )
+                  }}
+                >
+                  Edit
+                </span>
+              </>
+            )
+          })}
+          {currentSnippet && (
+            <TypeDefinitionGroupBuilder
+              typeDefinitionConfig={currentSnippet.config || {}}
+              onUpdateDefinition={(data) => {
+                currentSnippet.config = data
+                setConfig(
+                  config.map((obj) =>
+                    obj.metadata.snippetKey === currentSnippet.metadata.snippetKey ? currentSnippet : obj
+                  )
+                )
+              }}
+            />
+          )}
+        </ComponentWrapper>
+      )}
+    </>
+  )
+}
+
+const ComponentWrapper = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+`
+
+const ItemWrapper = styled.div`
+  width: 20%;
+  min-width: 120px;
+`
+
+export default TypeDefinitionBuilderBlockComponent

@@ -1,19 +1,35 @@
 import React from 'preact/compat'
 import styled from 'styled-components'
+//todo will be replaced with react-select
 
-const Select = (props) => {
-    return <StyledSelect {...props} />
+const Select = ({ options, onInput }) => {
+  return (
+    <StyledSelect onInput={onInput}>
+      {options.map((option) => {
+        return <option value={option.value}>{option.label}</option>
+      })}
+    </StyledSelect>
+  )
 }
 
 const StyledSelect = styled.select`
+  width: 97%;
+  height: 35px;
+  background: white;
+  color: gray;
+  padding-left: 5px;
+  font-size: 14px;
+  border: none;
+  margin-left: 10px;
+
+  option {
     color: black;
-    padding: 5px 32px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    border: 1px solid ${(props) => props.theme.darkgray};
-    margin: 5px;
+    background: white;
+    display: flex;
+    white-space: pre;
+    min-height: 20px;
+    padding: 0px 2px 1px;
+  }
 `
 
 export default Select

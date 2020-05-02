@@ -8,7 +8,6 @@ const TypeDefinitionBuilderComponentList = () => {
       {Object.keys(ContentEditorComponents).map((componentKey) => {
         return (
           <MenuItem draggable onDragStart={(event) => event.dataTransfer.setData('componentKey', componentKey)}>
-            {' '}
             {componentKey} ICON - NAME - DESCRIPTION
           </MenuItem>
         )

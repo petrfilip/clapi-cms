@@ -32,6 +32,10 @@ const TypeDefinitionEditor = (props) => {
     setTypeDefinitionConfig(add)
   }
 
+  const onUpdateContent = (contentData) => {
+    setTypeDefinitionConfig({ ...typeDefinitionConfig, content: contentData })
+  }
+
   const onRemoveDefinition = (key) => {
     setTypeDefinitionConfig(removeFromObject(typeDefinitionConfig, key))
   }
@@ -69,6 +73,7 @@ const TypeDefinitionEditor = (props) => {
       onNewDefinition={onNewDefinition}
       onUpdateDefinition={onUpdateDefinition}
       onRemoveDefinition={onRemoveDefinition}
+      onUpdateContent={onUpdateContent}
     />
   )
 }

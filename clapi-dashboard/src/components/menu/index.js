@@ -20,6 +20,9 @@ function getNavForLoggedUser() {
       <Link activeClassName={style.active} href="/definition-editor">
         Definition editor
       </Link>
+      <Link activeClassName={style.active} href="/snippets">
+        Snippets
+      </Link>
       <Link activeClassName={style.active} href="/logout">
         Logout
       </Link>

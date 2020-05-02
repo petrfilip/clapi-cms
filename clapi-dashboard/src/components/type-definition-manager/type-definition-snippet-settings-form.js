@@ -14,45 +14,35 @@ import { slugify } from '../../utils/string-utils'
 import { route } from 'preact-router'
 import DataManager from '../data-loader/data-manager'
 
-const TypeDefinitionCreateForm = ({ typeDefinition }) => {
-  const [collectionName, setCollectionName] = useState('')
+const TypeDefinitionSnippetSettingsForm = ({ value = {}, onDoneButtonClick }) => {
+  const [snippetName, setSnippetName] = useState(value.snippetName || '')
+  const [snippetKey, setSnippetKey] = useState(value.snippetKey || '')
+  const [snippetIcon, setSnippetIcon] = useState(value.snippetIcon || '')
   const { setActionSidebar } = useContext(LayoutContext)
 
   return (
     <>
+      //todo menu [create new, use existing]
+      <h2>Snippet settings</h2>
       <ComponentEditWrapper
         id={'collectionName'}
-        label={'Collection name'}
+        label={'Snippet name'}
         type={'SimpleText'}
-        initialValue={collectionName}
-        onInput={(e) => setCollectionName(e.target.value)}
+        initialValue={snippetName}
+        onInput={(e) => setSnippetName(e.target.value)}
       />
-
       <ComponentEditWrapper
         id={'apiKey'}
-        label={'Collection name key'}
+        label={'Snippet key'}
         type={'SimpleText'}
-        initialValue={slugify(collectionName)}
+        initialValue={slugify(snippetName)}
         disabled
       />
-      <Button
-        onClick={() => {
-          DataManager.saveOrUpdate(
-            api.fetchCollection('type-definition'),
-            'json',
-            { collectionName: slugify(collectionName) },
-            (data) => {
-              console.log(data)
-              setActionSidebar(null)
-              route('/definition-editor/' + slugify(collectionName))
-            }
-          )
-        }}
-      >
+      <Button onClick={() => onDoneButtonClick({ snippetName, snippetKey: slugify(snippetName), snippetIcon })}>
         Create
       </Button>
     </>
   )
 }
 
-export default TypeDefinitionCreateForm
+export default TypeDefinitionSnippetSettingsForm

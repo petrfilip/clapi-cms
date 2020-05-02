@@ -3,9 +3,9 @@ import TypeDefinitionInputSettings from './type-definition-input-settings'
 import React from 'preact/compat'
 import styled from 'styled-components'
 import TypeDefinitionGroupBuilder from './type-definition-group-builder'
-import { addToObject } from '../../utils/object-utils'
 import TypeDefinitionDropArea from './type-definition-drop-area'
 import { LayoutContext } from '../layout/layout-context'
+import TypeDefinitionBuilderBlockComponent from './type-definition-builder-block-component'
 
 function getDropContainer(index, setActionSidebar, onNewDefinition) {
   return (
@@ -78,11 +78,18 @@ function getTypeDefinitionBuilderContainer(
   setActionSidebar,
   onNewDefinition,
   onRemoveDefinition,
-  onUpdateDefinition
+  onUpdateDefinition,
+  onUpdateContent
 ) {
+  //const configToRender = Object.assign({}, typeDefinitionConfig)
+  //delete configToRender.content
+  const configToRender = typeDefinitionConfig
   return (
     <>
-      {Object.keys(typeDefinitionConfig).map((item, index) => {
+      {Object.keys(configToRender).map((item, index) => {
+        if (!configToRender[item].type) {
+          return
+        }
         return (
           <>
             {getDropContainer(index, setActionSidebar, onNewDefinition)}
@@ -99,11 +106,23 @@ function getTypeDefinitionBuilderContainer(
         )
       })}
       {getDropContainer(Object.keys(typeDefinitionConfig).length, setActionSidebar, onNewDefinition)}
+      <TypeDefinitionBuilderBlockComponent
+        initialData={typeDefinitionConfig.content || []}
+        onUpdateCallback={(newContent) => {
+          onUpdateContent(newContent)
+        }}
+      />
     </>
   )
 }
 
-const TypeDefinitionBuilder = ({ typeDefinitionConfig, onNewDefinition, onRemoveDefinition, onUpdateDefinition }) => {
+const TypeDefinitionBuilder = ({
+  typeDefinitionConfig,
+  onNewDefinition,
+  onRemoveDefinition,
+  onUpdateDefinition,
+  onUpdateContent,
+}) => {
   const { setActionSidebar } = useContext(LayoutContext)
 
   return (
@@ -113,7 +132,8 @@ const TypeDefinitionBuilder = ({ typeDefinitionConfig, onNewDefinition, onRemove
         setActionSidebar,
         onNewDefinition,
         onRemoveDefinition,
-        onUpdateDefinition
+        onUpdateDefinition,
+        onUpdateContent
       )}
     </TypeDefinitionBuilderContainer>
   )

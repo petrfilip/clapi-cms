@@ -4,19 +4,12 @@ import { useContext } from 'preact/hooks'
 import { LayoutContext } from '../layout/layout-context'
 import CollectionVersionList from '../collection-version-list/collection-version-list'
 
-const TypeDefinitionBuilderActionMenu = ({ collectionName, objectToString }) => {
+const ContentEditorTabMenu = ({ collectionName, objectToString }) => {
   const { setActionSidebar } = useContext(LayoutContext)
 
   return (
     <Header>
       <Navigation>
-        <StyledButton
-          onClick={() => {
-            setActionSidebar(<pre>{JSON.stringify(objectToString, null, 2)}</pre>)
-          }}
-        >
-          Snippets
-        </StyledButton>
         <StyledButton
           onClick={() => {
             setActionSidebar(<CollectionVersionList collectionName={collectionName} />)
@@ -57,4 +50,4 @@ const StyledButton = styled.div`
   padding: 10px;
 `
 
-export default TypeDefinitionBuilderActionMenu
+export default ContentEditorTabMenu

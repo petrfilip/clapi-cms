@@ -17,28 +17,35 @@ import ImageSelect from './components/image-select'
 import FileSelect from './components/file-select'
 
 const placeholder = {
-    type: 'SimpleText',
-    config: {
-        label: 'Placeholder',
-    },
+  type: 'SimpleText',
+  config: {
+    label: 'Placeholder',
+  },
+}
+
+const isRequired = {
+  type: 'CheckboxInput',
+  config: {
+    label: 'Is required',
+  },
 }
 
 export const ContentEditorComponents = {
-    SimpleText: { component: SimpleText, config: { placeholder } },
-    TextArea: { component: TextArea, config: { placeholder } },
-    Block: { component: Block, config: { placeholder } },
-    Group: { component: Group, config: { placeholder } },
-    MediaSelect: { component: MediaSelect, config: { placeholder } },
-    ImageSelect: { component: ImageSelect, config: { placeholder } },
-    FileSelect: { component: FileSelect, config: { placeholder } },
-    DocumentLink: { component: DocumentLink, config: { placeholder } },
-    DatePicker: { component: DatePicker, config: { placeholder } },
-    GeoPicker: { component: GeoPicker, config: { placeholder } },
-    BooleanInput: { component: BooleanInput, config: { placeholder } },
-    SelectInput: { component: SelectInput, config: { placeholder } },
-    NumberInput: { component: NumberInput, config: { placeholder } },
-    ColorPicker: { component: ColorPicker, config: { placeholder } },
-    CheckboxInput: { component: CheckboxInput, config: { placeholder } },
-    RadioInput: { component: RadioInput, config: { placeholder } },
-    EmbeddedContent: { component: EmbeddedContent, config: { placeholder } },
+  SimpleText: { component: SimpleText, config: { placeholder, isRequired } },
+  TextArea: { component: TextArea, config: { placeholder, isRequired } },
+  Block: { component: Block, config: { placeholder, isRequired } },
+  Group: { component: Group, config: { placeholder, isRequired } },
+  MediaSelect: { component: MediaSelect, config: { placeholder, isRequired } },
+  ImageSelect: { component: ImageSelect, config: { placeholder, isRequired } },
+  FileSelect: { component: FileSelect, config: { placeholder, isRequired } },
+  DocumentLink: { component: DocumentLink, config: { placeholder, isRequired } },
+  DatePicker: { component: DatePicker, config: { placeholder, isRequired } },
+  GeoPicker: { component: GeoPicker, config: { placeholder, isRequired } },
+  BooleanInput: { component: BooleanInput, config: { placeholder, isRequired } },
+  SelectInput: { component: SelectInput, config: { placeholder, isRequired } },
+  NumberInput: { component: NumberInput, config: { placeholder, isRequired } },
+  ColorPicker: { component: ColorPicker, config: { placeholder, isRequired } },
+  CheckboxInput: { component: CheckboxInput, config: { placeholder, isRequired } },
+  RadioInput: { component: RadioInput, config: { placeholder, isRequired } },
+  EmbeddedContent: { component: EmbeddedContent, config: { placeholder, isRequired } },
 }

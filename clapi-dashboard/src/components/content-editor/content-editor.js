@@ -8,6 +8,7 @@ import Button from '../elementary/button'
 import { LayoutContext } from '../layout/layout-context'
 import React from 'preact/compat'
 import { renderInputs } from './render-utils'
+import ContentEditorChoices from './content-editor-choices'
 
 const saveOrUpdate = (data, setInputObject) => {
   DataManager.saveOrUpdate(api.fetchCollection(data.metadata.collectionName), 'json', data, (out) => {
@@ -18,6 +19,12 @@ const saveOrUpdate = (data, setInputObject) => {
 }
 
 function renderForm(props, inputObject, setInputObject) {
+  function onContentChange(data) {
+    const copyObject = Object.assign({}, inputObject)
+    copyObject.content = data
+    setInputObject(copyObject)
+  }
+
   return (
     <form
       onSubmit={(event) => {
@@ -26,6 +33,11 @@ function renderForm(props, inputObject, setInputObject) {
     >
       <h2>Content Editor</h2>
       {renderInputs(props.config, { inputObject, setInputObject })}
+      <ContentEditorChoices
+        initialData={inputObject.content}
+        config={props.config.content || []}
+        onChangeCallback={onContentChange}
+      />
     </form>
   )
 }
