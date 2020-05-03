@@ -17,7 +17,7 @@ const ComponentEditContentWrapper = ({ options, config, item, onTypeChange, onCh
       <Select
         options={options}
         onInput={(e) => {
-          setInputObject(null)
+          setInputObject({})
           onTypeChange(e.target.value)
         }}
       />

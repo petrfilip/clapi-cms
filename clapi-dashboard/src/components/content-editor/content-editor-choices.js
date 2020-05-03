@@ -28,7 +28,6 @@ const ContentEditorChoices = ({ initialData, config, onChangeCallback }) => {
     <>
       <h2>Content</h2>
       {content.map((item, index) => {
-        console.log(item)
         return (
           <ComponentEditContentWrapper
             config={config}
