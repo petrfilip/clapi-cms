@@ -5,9 +5,12 @@ use App\ErrorUtils;
 use App\Middleware\CorsMiddleware;
 use App\Middleware\JwtMiddleware;
 use App\Utils;
+use Fetzi\ServerTiming\ServerTimingMiddleware;
+use Fetzi\ServerTiming\ServerTimings;
 use Firebase\JWT\JWT;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use DI\ContainerBuilder;
 use Slim\Factory\AppFactory;
 use Slim\Psr7\Stream;
 
@@ -24,11 +27,14 @@ define("MEDIA_STORAGE", "/media-storage");
 define("MEDIA_STORAGE_ROOT", __DIR__ . MEDIA_STORAGE);
 define("JWT_KEY", "example_key");
 
+$containerBuilder = new ContainerBuilder();
+AppFactory::setContainer($containerBuilder->build());
 
 $app = AppFactory::create();
 
 $app->add(JwtMiddleware::class);
 $app->add(CorsMiddleware::class);
+
 
 $app->addBodyParsingMiddleware();
 $app->addErrorMiddleware(true, true, true);
@@ -36,6 +42,8 @@ $app->addRoutingMiddleware();
 
 
 $container = $app->getContainer();
+$app->add(new ServerTimingMiddleware($container->get(ServerTimings::class)));
+
 
 
 $app->get('/', function (Request $request, Response $response, $args) {
@@ -106,7 +114,10 @@ $app->put('/user', function (Request $request, Response $response, $args) {
 /* DOCUMENT API */
 $app->get('/collection/{collection}', function (Request $request, Response $response, $args) {
     $params = $request->getQueryParams();
+    $timingFetchCollection = $this->get("Fetzi\ServerTiming\ServerTimings")->create('fetchData');
+    $timingFetchCollection->start();
     $loadedData = DatabaseManager::findBy($args["collection"], $params);
+    $timingFetchCollection->stop();
 
     $payload = json_encode($loadedData);
     $response->getBody()->write($payload);

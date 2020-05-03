@@ -4,6 +4,8 @@
     "rakibtg/sleekdb": "1.5.0",
     "slim/slim": "4.5.0",
     "slim/psr7": "1.0.0",
-    "firebase/php-jwt": "5.2.0"
+    "firebase/php-jwt": "5.2.0",
+    "fetzi/server-timing": "1.0.0",
+    "php-di/php-di": "6.1.0"
   }
 }
