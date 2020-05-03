@@ -24,6 +24,10 @@ final class DatabaseManager
 
         foreach ($params as $condition) {
 
+            if (!is_array($condition)) {
+                continue;
+            }
+
             switch ($condition["type"]) {
                 case "where":
                     $collectionStore->where($condition["key"], $condition["operator"], $condition["value"]);

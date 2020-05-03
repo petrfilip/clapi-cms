@@ -7,26 +7,29 @@ import React from 'preact/compat'
 import Table from '../table'
 
 const headers = [
-    { key: '_id', title: 'ID' },
-    { key: 'metadata.collectionName', title: 'Collection' },
+  { key: '_id', title: 'ID' },
+  { key: 'metadata.collectionName', title: 'Collection' },
 ]
 
 const CollectionList = (props) => {
-    console.log(props)
-    const onRowClick = (rowItem) =>
-        (props.onRowClick && props.onRowClick(rowItem)) ||
-        route(`/edit/${rowItem.metadata.collectionName}/${rowItem._id}`)
+  const onRowClick = (rowItem) =>
+    (props.onRowClick && props.onRowClick(rowItem)) || route(`/edit/${rowItem.metadata.collectionName}/${rowItem._id}`)
 
-    return (
-        <DataLoader uri={api.fetchCollection('novinky')}>
-            {(data) => (
-                <Table headers={headers} rows={data} onRowClick={onRowClick} />
-            )}
-        </DataLoader>
-    )
+  return (
+    <DataLoader uri={api.fetchCollection('type-definition')}>
+      {(typeDefinitions) => {
+        console.log(typeDefinitions)
+        return typeDefinitions.map((typeDefinition) => (
+          <DataLoader uri={api.fetchCollection(typeDefinition.collectionName)}>
+            {(data) => <Table headers={headers} rows={data} onRowClick={onRowClick} />}
+          </DataLoader>
+        ))
+      }}
+    </DataLoader>
+  )
 }
 
 CollectionList.propType = {
-    onRowClick: PropTypes.func,
+  onRowClick: PropTypes.func,
 }
 export default CollectionList

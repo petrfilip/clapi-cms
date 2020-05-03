@@ -114,10 +114,10 @@ $app->put('/user', function (Request $request, Response $response, $args) {
 /* DOCUMENT API */
 $app->get('/collection/{collection}', function (Request $request, Response $response, $args) {
     $params = $request->getQueryParams();
-    $timingFetchCollection = $this->get("Fetzi\ServerTiming\ServerTimings")->create('fetchData');
-    $timingFetchCollection->start();
+//    $timingFetchCollection = $this->get("Fetzi\ServerTiming\ServerTimings")->create('fetchData');
+//    $timingFetchCollection->start();
     $loadedData = DatabaseManager::findBy($args["collection"], $params);
-    $timingFetchCollection->stop();
+//    $timingFetchCollection->stop();
 
     $payload = json_encode($loadedData);
     $response->getBody()->write($payload);
