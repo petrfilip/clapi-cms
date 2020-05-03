@@ -127,7 +127,7 @@ $app->get('/collection/{collection}', function (Request $request, Response $resp
 $app->get('/collection/type-definition/{collectionName}', function (Request $request, Response $response, $args) {
     $collectionStore = DatabaseManager::getDataStore("type-definition");
 
-    $loadedDefinition = $collectionStore->where("collectionName", "=", $args["collectionName"])->fetch();
+    $loadedDefinition = $collectionStore->where("metadata.collectionName", "=", $args["collectionName"])->fetch();
     if (is_array($loadedDefinition) && count($loadedDefinition)) {
         $payload = json_encode($loadedDefinition[0]);
         $response->getBody()->write($payload);
@@ -156,7 +156,7 @@ $app->post('/collection/type-definition', function (Request $request, Response $
     $data = $request->getParsedBody();
     $collectionName = $data["collectionName"];
 
-    if (count($collectionStore->where("collectionName", "=", $collectionName)->fetch())) {
+    if (count($collectionStore->where("metadata.collectionName", "=", $collectionName)->fetch())) {
         return $response->withStatus(503);
     } else {
         $userId = $request->getAttribute("userId");

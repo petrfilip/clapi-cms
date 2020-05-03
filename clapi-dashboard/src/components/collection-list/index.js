@@ -20,7 +20,7 @@ const CollectionList = (props) => {
       {(typeDefinitions) => {
         console.log(typeDefinitions)
         return typeDefinitions.map((typeDefinition) => (
-          <DataLoader uri={api.fetchCollection(typeDefinition.collectionName)}>
+          <DataLoader uri={api.fetchCollection(typeDefinition.metadata.collectionName)}>
             {(data) => <Table headers={headers} rows={data} onRowClick={onRowClick} />}
           </DataLoader>
         ))

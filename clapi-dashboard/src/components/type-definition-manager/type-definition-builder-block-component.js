@@ -7,6 +7,83 @@ import { LayoutContext } from '../layout/layout-context'
 import TypeDefinitionSnippetSettingsForm from './type-definition-snippet-settings-form'
 import Switch from '../elementary/switch'
 
+function newContentTypeButton(setCurrentSnippet, setActionSidebar, setConfig, config) {
+  return (
+    <Button
+      onClick={() => {
+        setCurrentSnippet(null)
+        setActionSidebar(
+          <TypeDefinitionSnippetSettingsForm
+            onDoneButtonClick={(data) => {
+              const newSnippet = {
+                metadata: {
+                  snippetName: data.snippetName,
+                  snippetKey: data.snippetKey,
+                },
+                config: {},
+              }
+              setConfig([...config, newSnippet])
+              setCurrentSnippet(newSnippet)
+              setActionSidebar(null)
+            }}
+          />
+        )
+      }}
+    >
+      Add
+    </Button>
+  )
+}
+
+function contentTypeListButtons(config, setCurrentSnippet, setActionSidebar) {
+  return (
+    <>
+      {config.map((item) => {
+        return (
+          <>
+            <Button onClick={() => setCurrentSnippet(item)}>{item.metadata.snippetName}</Button>
+            <span
+              onClick={() => {
+                setCurrentSnippet(item)
+                setActionSidebar(
+                  <TypeDefinitionSnippetSettingsForm
+                    value={item.metadata}
+                    onDoneButtonClick={(data) => {
+                      //todo implements update logic
+                    }}
+                  />
+                )
+              }}
+            >
+              Edit
+            </span>
+          </>
+        )
+      })}
+    </>
+  )
+}
+
+function renderContentTypeBuilder(currentSnippet, setConfig, config) {
+  return (
+    <>
+      {currentSnippet && (
+        <TypeDefinitionGroupBuilder
+          typeDefinitionConfig={currentSnippet.config || {}}
+          onUpdateDefinition={(data) => {
+            currentSnippet.config = data
+            setConfig(
+              config.map((obj) =>
+                obj.metadata.snippetKey === currentSnippet.metadata.snippetKey ? currentSnippet : obj
+              )
+            )
+          }}
+        />
+      )}
+    </>
+  )
+}
+
 const TypeDefinitionBuilderBlockComponent = ({ initialData, onUpdateCallback }) => {
   const [isContentAllowed, setIsContentAllowed] = useState(true)
   const [config, setConfig] = useState(initialData || [])
@@ -28,64 +105,9 @@ const TypeDefinitionBuilderBlockComponent = ({ initialData, onUpdateCallback }) 
       />
       {isContentAllowed && (
         <ComponentWrapper>
-          <Button
-            onClick={() => {
-              setCurrentSnippet(null)
-              setActionSidebar(
-                <TypeDefinitionSnippetSettingsForm
-                  onDoneButtonClick={(data) => {
-                    const newSnippet = {
-                      metadata: {
-                        snippetName: data.snippetName,
-                        snippetKey: data.snippetKey,
-                      },
-                      config: {},
-                    }
-                    setConfig([...config, newSnippet])
-                    setCurrentSnippet(newSnippet)
-                    setActionSidebar(null)
-                  }}
-                />
-              )
-            }}
-          >
-            Add
-          </Button>
-          {config.map((item) => {
-            return (
-              <>
-                <Button onClick={() => setCurrentSnippet(item)}>{item.metadata.snippetName}</Button>
-                <span
-                  onClick={() => {
-                    setCurrentSnippet(item)
-                    setActionSidebar(
-                      <TypeDefinitionSnippetSettingsForm
-                        value={item.metadata}
-                        onDoneButtonClick={(data) => {
-                          //todo implements update logic
-                        }}
-                      />
-                    )
-                  }}
-                >
-                  Edit
-                </span>
-              </>
-            )
-          })}
-          {currentSnippet && (
-            <TypeDefinitionGroupBuilder
-              typeDefinitionConfig={currentSnippet.config || {}}
-              onUpdateDefinition={(data) => {
-                currentSnippet.config = data
-                setConfig(
-                  config.map((obj) =>
-                    obj.metadata.snippetKey === currentSnippet.metadata.snippetKey ? currentSnippet : obj
-                  )
-                )
-              }}
-            />
-          )}
+          {newContentTypeButton(setCurrentSnippet, setActionSidebar, setConfig, config)}
+          {contentTypeListButtons(config, setCurrentSnippet, setActionSidebar)}
+          {renderContentTypeBuilder(currentSnippet, setConfig, config)}
         </ComponentWrapper>
       )}
     </>

@@ -31,7 +31,7 @@ function renderForm(props, inputObject, setInputObject) {
         event.preventDefault()
       }}
     >
-      <h2>Content Editor</h2>
+      <h2>{inputObject.metadata.collectionName}</h2>
       {renderInputs(props.config, { inputObject, setInputObject })}
       <ContentEditorChoices
         initialData={inputObject.content}

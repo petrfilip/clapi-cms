@@ -7,10 +7,10 @@ import Table from '../table'
 import { useContext } from 'preact/hooks'
 
 const onRowClick = (item) => {
-  route('/edit/' + item.collectionName + '/')
+  route('/edit/' + item.metadata.collectionName + '/')
 }
 
-const headers = [{ key: 'collectionName', title: 'Collection' }]
+const headers = [{ key: 'metadata.collectionName', title: 'Collection' }]
 
 const DocumentTypeList = () => {
   const { setActionSidebar } = useContext(LayoutContext)

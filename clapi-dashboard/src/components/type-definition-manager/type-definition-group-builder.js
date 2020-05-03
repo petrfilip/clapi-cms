@@ -23,33 +23,47 @@ function getDropContainer(typeDefinitionConfig, index, setActionSidebar, onUpdat
   )
 }
 
+function getActionButtons(typeDefinitionConfig, key, onUpdateDefinition, setActionSidebar, index, item) {
+  return (
+    <ActionButtons>
+      <ActionButton onClick={() => onRemoveDefinition(typeDefinitionConfig, key, onUpdateDefinition)}>D</ActionButton>
+      <ActionButton
+        onClick={() =>
+          setActionSidebar(
+            <TypeDefinitionInputSettings
+              values={{
+                position: index,
+                fieldName: item.config.label,
+                apiKey: key,
+              }}
+              position={index}
+              onConfirm={onNewDefinition}
+              componentKey={item.type}
+            />
+          )
+        }
+      >
+        S
+      </ActionButton>
+    </ActionButtons>
+  )
+}
+
 function getComponentPlaceholder(typeDefinitionConfig, key, item, index, setActionSidebar, onUpdateDefinition) {
+  const onUpdate = (originConfig, obj) => {
+    originConfig[key].config.fields = obj
+    onUpdateDefinition(originConfig)
+  }
   return (
     <ComponentPlaceholder>
       PLACEHOLDER NORMAL {key} - {index} - {item.type}
       {item.type === 'Group' &&
-        getTypeDefinitionBuilderContainer(item.config.fields || {}, setActionSidebar, onUpdateDefinition)}
-      <ActionButtons>
-        <ActionButton onClick={() => onRemoveDefinition(typeDefinitionConfig, key, onUpdateDefinition)}>D</ActionButton>
-        <ActionButton
-          onClick={() =>
-            setActionSidebar(
-              <TypeDefinitionInputSettings
-                values={{
-                  position: index,
-                  fieldName: item.config.label,
-                  apiKey: key,
-                }}
-                position={index}
-                onConfirm={onNewDefinition}
-                componentKey={item.type}
-              />
-            )
-          }
-        >
-          S
-        </ActionButton>
-      </ActionButtons>
+        getTypeDefinitionBuilderContainer(item.config.fields || {}, setActionSidebar, (obj) =>
+          onUpdate(typeDefinitionConfig, obj)
+        )}
+      {/*{item.type === 'Group' &&*/}
+      {/*  getTypeDefinitionNestedBuilderContainer(typeDefinitionConfig, key, setActionSidebar, onUpdateDefinition)}*/}
+      {getActionButtons(typeDefinitionConfig, key, onUpdateDefinition, setActionSidebar, index, item)}
     </ComponentPlaceholder>
   )
 }
@@ -110,9 +124,9 @@ const TypeDefinitionGroupBuilderContainer = styled.div`
 
 const ComponentPlaceholder = styled.div`
   justify-content: space-between;
-  display: flex;
   background-color: white;
   padding: 10px;
+  margin: 10px;
   font-size: 16px;
   border-radius: 2px;
 `

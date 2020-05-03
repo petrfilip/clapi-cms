@@ -37,16 +37,12 @@ const TypeDefinitionCreateForm = ({ typeDefinition }) => {
       />
       <Button
         onClick={() => {
-          DataManager.saveOrUpdate(
-            api.fetchCollection('type-definition'),
-            'json',
-            { collectionName: slugify(collectionName) },
-            (data) => {
-              console.log(data)
-              setActionSidebar(null)
-              route('/definition-editor/' + slugify(collectionName))
-            }
-          )
+          const toSave = { metadata: { collectionName: slugify(collectionName) } }
+          DataManager.saveOrUpdate(api.fetchCollection('type-definition'), 'json', toSave, (data) => {
+            console.log(data)
+            setActionSidebar(null)
+            route('/definition-editor/' + slugify(collectionName))
+          })
         }}
       >
         Create
