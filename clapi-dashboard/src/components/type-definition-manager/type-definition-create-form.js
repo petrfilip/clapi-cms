@@ -37,7 +37,10 @@ const TypeDefinitionCreateForm = ({ typeDefinition }) => {
       />
       <Button
         onClick={() => {
-          const toSave = { metadata: { collectionName: slugify(collectionName) } }
+          const toSave = {
+            metadata: { collectionName: slugify(collectionName) },
+            data: { main: { name: 'Main', config: {} } },
+          }
           DataManager.saveOrUpdate(api.fetchCollection('type-definition'), 'json', toSave, (data) => {
             console.log(data)
             setActionSidebar(null)

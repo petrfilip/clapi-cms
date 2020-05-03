@@ -14,13 +14,16 @@ const ComponentEditContentWrapper = ({ options, config, item, onTypeChange, onCh
 
   return (
     <ComponentWrapper>
-      <Select
-        options={options}
-        onInput={(e) => {
-          setInputObject({})
-          onTypeChange(e.target.value)
-        }}
-      />
+      {(options.length > 1 && (
+        <Select
+          options={options}
+          onInput={(e) => {
+            setInputObject({})
+            onTypeChange(e.target.value)
+          }}
+        />
+      )) ||
+        options[0].label}
       <InputWrapper>{renderInputs(itemConfiguration, { inputObject, setInputObject })}</InputWrapper>
     </ComponentWrapper>
   )

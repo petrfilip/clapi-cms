@@ -9,6 +9,7 @@ import { LayoutContext } from '../layout/layout-context'
 import Button from '../elementary/button'
 import { addToObject, removeFromObject } from '../../utils/object-utils'
 import TypeDefinitionBuilderActionMenu from './type-definition-builder-action-menu'
+import TypeDefinitionBuilderTabMenu from './type-definition-builder-tab-menu'
 
 const saveOrUpdate = (data, setTypeDefinition) => {
   DataManager.saveOrUpdate(api.fetchCollection('type-definition'), 'json', data, (callbackData) => {
@@ -19,7 +20,13 @@ const saveOrUpdate = (data, setTypeDefinition) => {
 const TypeDefinitionEditor = (props) => {
   const { setMenu, setSidebar, setActionSidebar } = useContext(LayoutContext)
   const [typeDefinition, setTypeDefinition] = useState(props.typeDefinition || {})
-  const [typeDefinitionConfig, setTypeDefinitionConfig] = useState(props.typeDefinition.config || {})
+  const [currentConfigTab, setCurrentConfigTab] = useState('main')
+  const [typeDefinitionConfig, setTypeDefinitionConfig] = useState(
+    (props.typeDefinition.data &&
+      props.typeDefinition.data[currentConfigTab] &&
+      props.typeDefinition.data[currentConfigTab].config) ||
+      {}
+  )
 
   const onNewDefinition = (obj) => {
     const updatedConfig = addToObject(typeDefinitionConfig, obj.apiKey, obj.value, obj.position)
@@ -41,13 +48,14 @@ const TypeDefinitionEditor = (props) => {
   }
 
   function saveOrUpdateAction() {
-    typeDefinition.config = typeDefinitionConfig
+    // typeDefinition.config = typeDefinitionConfig
     saveOrUpdate(typeDefinition, setTypeDefinition)
   }
 
   useEffect(() => {
     setMenu(<Button onClick={saveOrUpdateAction}>update definition</Button>)
-
+    typeDefinition.data[currentConfigTab].config = typeDefinitionConfig
+    setTypeDefinition(typeDefinition)
     return () => {
       setMenu(null)
     }
@@ -68,13 +76,16 @@ const TypeDefinitionEditor = (props) => {
   }, [])
 
   return (
-    <TypeDefinitionBuilder
-      typeDefinitionConfig={typeDefinitionConfig}
-      onNewDefinition={onNewDefinition}
-      onUpdateDefinition={onUpdateDefinition}
-      onRemoveDefinition={onRemoveDefinition}
-      onUpdateContent={onUpdateContent}
-    />
+    <>
+      <TypeDefinitionBuilderTabMenu />
+      <TypeDefinitionBuilder
+        typeDefinitionConfig={typeDefinitionConfig}
+        onNewDefinition={onNewDefinition}
+        onUpdateDefinition={onUpdateDefinition}
+        onRemoveDefinition={onRemoveDefinition}
+        onUpdateContent={onUpdateContent}
+      />
+    </>
   )
 }
 

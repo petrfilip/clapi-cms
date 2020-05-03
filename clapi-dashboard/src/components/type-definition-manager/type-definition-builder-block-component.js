@@ -87,7 +87,7 @@ function renderContentTypeBuilder(currentSnippet, setConfig, config) {
 const TypeDefinitionBuilderBlockComponent = ({ initialData, onUpdateCallback }) => {
   const [isContentAllowed, setIsContentAllowed] = useState(true)
   const [config, setConfig] = useState(initialData || [])
-  const [currentSnippet, setCurrentSnippet] = useState(config[0] || {})
+  const [currentSnippet, setCurrentSnippet] = useState(config[0] || null)
   const { setActionSidebar } = useContext(LayoutContext)
 
   useEffect(() => {

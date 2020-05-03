@@ -9,6 +9,7 @@ import { LayoutContext } from '../layout/layout-context'
 import React from 'preact/compat'
 import { renderInputs } from './render-utils'
 import ContentEditorChoices from './content-editor-choices'
+import ContentEditorContentTabMenu from './content-editor-content-tab-menu'
 
 const saveOrUpdate = (data, setInputObject) => {
   DataManager.saveOrUpdate(api.fetchCollection(data.metadata.collectionName), 'json', data, (out) => {
@@ -31,7 +32,7 @@ function renderForm(props, inputObject, setInputObject) {
         event.preventDefault()
       }}
     >
-      <h2>{inputObject.metadata.collectionName}</h2>
+      {/*<h2>{inputObject.metadata.collectionName}</h2>*/}
       {renderInputs(props.config, { inputObject, setInputObject })}
       <ContentEditorChoices
         initialData={inputObject.content}
@@ -48,6 +49,8 @@ function checkVersion(props, inputObject) {
 
 const ContentEditor = (props) => {
   const [inputObject, setInputObject] = useState(props.values || {})
+  const [currentConfigTab, setCurrentConfigTab] = useState('main')
+
   const { setMenu, setSidebar, setActionSidebar } = useContext(LayoutContext)
 
   useEffect(() => {
@@ -69,8 +72,23 @@ const ContentEditor = (props) => {
     }
   }, [inputObject])
 
-  checkVersion(props, inputObject) && setInputObject(props.values)
-  return <Center>{renderForm(props, inputObject, setInputObject)}</Center>
+  // checkVersion(props, inputObject) && setInputObject(props.values) //todo make it works
+
+  const onUpdate = (newData) => {
+    if (typeof newData === 'function') {
+      //todo need to be improved
+      inputObject.data[currentConfigTab] = newData(inputObject.data[currentConfigTab])
+    } else {
+      inputObject.data[currentConfigTab] = newData
+    }
+    setInputObject(Object.assign({}, inputObject))
+  }
+  return (
+    <>
+      <ContentEditorContentTabMenu />
+      <Center>{renderForm(props.config[currentConfigTab], inputObject.data[currentConfigTab], onUpdate)}</Center>
+    </>
+  )
 }
 
 export default ContentEditor
