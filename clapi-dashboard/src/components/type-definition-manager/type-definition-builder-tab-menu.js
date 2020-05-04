@@ -1,29 +1,31 @@
 import React from 'preact/compat'
 import styled from 'styled-components'
-import { useContext } from 'preact/hooks'
-import { LayoutContext } from '../layout/layout-context'
-import CollectionVersionList from '../collection-version-list/collection-version-list'
+import Input from '../elementary/input'
+import { useState } from 'preact/hooks'
 
-const TypeDefinitionBuilderTabMenu = ({ collectionName, objectToString }) => {
-  const { setActionSidebar } = useContext(LayoutContext)
+const TypeDefinitionBuilderTabMenu = ({ tabs, currentActiveTab, onTabClick, onNewTab }) => {
+  const [newTab, setNewTab] = useState(null)
 
   return (
     <Header>
       <Navigation>
-        <StyledButton
-          onClick={() => {
-            setActionSidebar(<pre>{JSON.stringify(objectToString, null, 2)}</pre>)
-          }}
-        >
-          Main
-        </StyledButton>
-        <StyledButton
-          onClick={() => {
-            setActionSidebar(<CollectionVersionList collectionName={collectionName} />)
-          }}
-        >
-          +
-        </StyledButton>
+        {tabs.map((item) => {
+          return <StyledButton onClick={() => onTabClick(item.key)}>{item.label}</StyledButton>
+        })}
+        {onNewTab && (
+          <>
+            <StyledButton
+              disabled={newTab}
+              onClick={() => {
+                onNewTab(newTab)
+                setNewTab(null)
+              }}
+            >
+              +
+            </StyledButton>
+            <Input value={newTab} onInput={(e) => setNewTab(e.target.value)} />
+          </>
+        )}
       </Navigation>
     </Header>
   )

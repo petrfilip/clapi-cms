@@ -86,13 +86,12 @@ function renderContentTypeBuilder(currentSnippet, setConfig, config) {
 
 const TypeDefinitionBuilderBlockComponent = ({ initialData, onUpdateCallback }) => {
   const [isContentAllowed, setIsContentAllowed] = useState(true)
-  const [config, setConfig] = useState(initialData || [])
-  const [currentSnippet, setCurrentSnippet] = useState(config[0] || null)
+  const [currentSnippet, setCurrentSnippet] = useState(initialData[0] || null)
   const { setActionSidebar } = useContext(LayoutContext)
 
   useEffect(() => {
-    onUpdateCallback && onUpdateCallback(config)
-  }, [config])
+    setCurrentSnippet(initialData[0] || null)
+  }, [initialData])
 
   return (
     <>
@@ -105,9 +104,9 @@ const TypeDefinitionBuilderBlockComponent = ({ initialData, onUpdateCallback }) 
       />
       {isContentAllowed && (
         <ComponentWrapper>
-          {newContentTypeButton(setCurrentSnippet, setActionSidebar, setConfig, config)}
-          {contentTypeListButtons(config, setCurrentSnippet, setActionSidebar)}
-          {renderContentTypeBuilder(currentSnippet, setConfig, config)}
+          {newContentTypeButton(setCurrentSnippet, setActionSidebar, onUpdateCallback, initialData)}
+          {contentTypeListButtons(initialData, setCurrentSnippet, setActionSidebar)}
+          {renderContentTypeBuilder(currentSnippet, onUpdateCallback, initialData)}
         </ComponentWrapper>
       )}
     </>

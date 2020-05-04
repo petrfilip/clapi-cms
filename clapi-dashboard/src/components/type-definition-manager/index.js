@@ -10,6 +10,7 @@ import Button from '../elementary/button'
 import { addToObject, removeFromObject } from '../../utils/object-utils'
 import TypeDefinitionBuilderActionMenu from './type-definition-builder-action-menu'
 import TypeDefinitionBuilderTabMenu from './type-definition-builder-tab-menu'
+import { slugify } from '../../utils/string-utils'
 
 const saveOrUpdate = (data, setTypeDefinition) => {
   DataManager.saveOrUpdate(api.fetchCollection('type-definition'), 'json', data, (callbackData) => {
@@ -62,6 +63,13 @@ const TypeDefinitionEditor = (props) => {
   }, [typeDefinitionConfig])
 
   useEffect(() => {
+    setTypeDefinitionConfig(props.typeDefinition.data[currentConfigTab].config)
+    return () => {
+      setMenu(null)
+    }
+  }, [currentConfigTab])
+
+  useEffect(() => {
     setSidebar(
       <>
         <TypeDefinitionBuilderActionMenu objectToString={typeDefinition} collectionName={'type-definition'} />
@@ -75,9 +83,29 @@ const TypeDefinitionEditor = (props) => {
     }
   }, [])
 
+  const onTabClick = (tabKey) => {
+    setCurrentConfigTab(tabKey)
+  }
+  const onNewTab = (newTab) => {
+    typeDefinition.data[slugify(newTab)] = { name: newTab, config: {} }
+    setTypeDefinition(typeDefinition)
+    setCurrentConfigTab(slugify(newTab))
+  }
+
+  const getTabs = () => {
+    return Object.keys(typeDefinition.data).map((item) => {
+      return { key: item, label: typeDefinition.data[item].name }
+    })
+  }
+
   return (
     <>
-      <TypeDefinitionBuilderTabMenu />
+      <TypeDefinitionBuilderTabMenu
+        currentActiveTab={currentConfigTab}
+        tabs={getTabs()}
+        onTabClick={onTabClick}
+        onNewTab={onNewTab}
+      />
       <TypeDefinitionBuilder
         typeDefinitionConfig={typeDefinitionConfig}
         onNewDefinition={onNewDefinition}

@@ -1,33 +1,39 @@
 import React from 'preact/compat'
-import { useState } from 'preact/hooks'
 import Button from '../elementary/button'
 import ComponentEditContentWrapper from './component-edit-content-wrapper'
 
 const ContentEditorChoices = ({ initialData, config, onChangeCallback }) => {
-  const [content, setContent] = useState(initialData || [])
-
   const options = config.map((item) => {
     return { label: item.metadata.snippetName, value: item.metadata.snippetKey }
   })
 
   const onContentChangeCallback = (index, value) => {
-    const newContent = [...content]
-    newContent[index].value = value
-    setContent(newContent)
-    onChangeCallback(newContent)
+    if (typeof value === 'function') {
+      //todo need to be improved
+      initialData[index].value = Object.assign({}, initialData[index].value, value(initialData[index][value] || {}))
+    } else {
+      initialData[index].value = value
+    }
+
+    onChangeCallback(initialData)
   }
 
   const onInputTypeChangeCallback = (index, value) => {
-    const newContent = [...content]
+    const newContent = [...initialData]
     newContent[index] = { type: value, value: {} }
-    setContent(newContent)
+    onChangeCallback(newContent)
+  }
+
+  const onAddBlockCallback = (value) => {
+    const newContent = [...initialData]
+    newContent.push({ type: value, value: {} })
     onChangeCallback(newContent)
   }
 
   return (
     <>
       <h2>Content</h2>
-      {content.map((item, index) => {
+      {initialData.map((item, index) => {
         return (
           <ComponentEditContentWrapper
             config={config}
@@ -41,7 +47,7 @@ const ContentEditorChoices = ({ initialData, config, onChangeCallback }) => {
 
       <Button
         onClick={() => {
-          setContent((prevState) => [...prevState, { type: config[0].metadata.snippetKey, value: {} }])
+          onAddBlockCallback(config[0].metadata.snippetKey)
         }}
       >
         Add block

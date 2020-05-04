@@ -2,15 +2,9 @@ import React from 'preact/compat'
 import styled from 'styled-components'
 import Select from '../elementary/select'
 import { renderInputs } from './render-utils'
-import { useEffect, useState } from 'preact/hooks'
 
 const ComponentEditContentWrapper = ({ options, config, item, onTypeChange, onChangeCallback }) => {
   const itemConfiguration = config && config.find((it) => it.metadata.snippetKey === item.type).config
-  const [inputObject, setInputObject] = useState(item.value || {})
-
-  useEffect(() => {
-    onChangeCallback(inputObject)
-  }, [inputObject])
 
   return (
     <ComponentWrapper>
@@ -18,13 +12,15 @@ const ComponentEditContentWrapper = ({ options, config, item, onTypeChange, onCh
         <Select
           options={options}
           onInput={(e) => {
-            setInputObject({})
+            onChangeCallback({})
             onTypeChange(e.target.value)
           }}
         />
       )) ||
         options[0].label}
-      <InputWrapper>{renderInputs(itemConfiguration, { inputObject, setInputObject })}</InputWrapper>
+      <InputWrapper>
+        {renderInputs(itemConfiguration, { inputObject: item.value || {}, setInputObject: onChangeCallback })}
+      </InputWrapper>
     </ComponentWrapper>
   )
 }

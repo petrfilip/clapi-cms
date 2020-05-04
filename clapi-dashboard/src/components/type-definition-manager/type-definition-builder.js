@@ -126,18 +126,16 @@ const TypeDefinitionBuilder = ({
   const { setActionSidebar } = useContext(LayoutContext)
 
   return (
-    <>
-      <TypeDefinitionBuilderContainer>
-        {getTypeDefinitionBuilderContainer(
-          typeDefinitionConfig,
-          setActionSidebar,
-          onNewDefinition,
-          onRemoveDefinition,
-          onUpdateDefinition,
-          onUpdateContent
-        )}
-      </TypeDefinitionBuilderContainer>
-    </>
+    <TypeDefinitionBuilderContainer>
+      {getTypeDefinitionBuilderContainer(
+        typeDefinitionConfig,
+        setActionSidebar,
+        onNewDefinition,
+        onRemoveDefinition,
+        onUpdateDefinition,
+        onUpdateContent
+      )}
+    </TypeDefinitionBuilderContainer>
   )
 }
 

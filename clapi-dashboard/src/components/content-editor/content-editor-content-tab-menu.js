@@ -4,13 +4,13 @@ import { useContext } from 'preact/hooks'
 import { LayoutContext } from '../layout/layout-context'
 import CollectionVersionList from '../collection-version-list/collection-version-list'
 
-const ContentEditorContentTabMenu = () => {
+const ContentEditorContentTabMenu = ({ tabs, onTabClick }) => {
   return (
     <Header>
       <Navigation>
-        <StyledButton>Main</StyledButton>
-        <StyledButton>SEO</StyledButton>
-        <StyledButton>Rich Snippets</StyledButton>
+        {tabs.map((item) => {
+          return <StyledButton onClick={() => onTabClick(item.key)}>{item.label}</StyledButton>
+        })}
       </Navigation>
     </Header>
   )

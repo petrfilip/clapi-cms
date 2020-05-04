@@ -35,11 +35,13 @@ function renderForm(props, inputObject, setInputObject) {
     >
       {/*<h2>{inputObject.metadata.collectionName}</h2>*/}
       {renderInputs(props.config, { inputObject, setInputObject })}
-      <ContentEditorChoices
-        initialData={inputObject.content}
-        config={props.config.content || []}
-        onChangeCallback={onContentChange}
-      />
+      {props.config.content && props.config.content.length && (
+        <ContentEditorChoices
+          initialData={inputObject.content || []}
+          config={props.config.content || []}
+          onChangeCallback={onContentChange}
+        />
+      )}
     </form>
   )
 }
@@ -79,23 +81,39 @@ const ContentEditor = (props) => {
       setSidebar(null)
       setActionSidebar(null)
     }
-  }, [inputObject])
+  }, [inputObject, currentConfigTab])
 
   // checkVersion(props, inputObject) && setInputObject(props.values) //todo make it works
 
   const onUpdate = (newData) => {
     if (typeof newData === 'function') {
       //todo need to be improved
-      inputObject.data[currentConfigTab] = newData(inputObject.data[currentConfigTab])
+      inputObject.data[currentConfigTab] = newData(inputObject.data[currentConfigTab] || {})
     } else {
       inputObject.data[currentConfigTab] = newData
     }
     setInputObject(Object.assign({}, inputObject))
   }
+  const onTabClick = (tabKey) => {
+    console.log(tabKey)
+    setCurrentConfigTab(tabKey)
+  }
+  const getTabs = () => {
+    return Object.keys(props.config).map((item) => {
+      return { key: item, label: props.config[item].name }
+    })
+  }
+
+  const config = props.config[currentConfigTab]
+  const data = inputObject.data[currentConfigTab]
+
+  if (!data.content) {
+    data.content = []
+  }
   return (
     <>
-      <ContentEditorContentTabMenu />
-      <Center>{renderForm(props.config[currentConfigTab], inputObject.data[currentConfigTab], onUpdate)}</Center>
+      <ContentEditorContentTabMenu tabs={getTabs()} onTabClick={onTabClick} />
+      <Center>{renderForm(config, data, onUpdate)}</Center>
     </>
   )
 }
