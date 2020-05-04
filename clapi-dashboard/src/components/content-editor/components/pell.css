@@ -4,7 +4,7 @@
 
 .pellContent {
   box-sizing: border-box;
-  height: 100px;
+  min-height: 100px;
   outline: 0;
   overflow-y: auto;
   padding: 10px; }

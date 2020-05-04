@@ -9,7 +9,6 @@ function generateRandomString() {
 
 const TextArea = (props) => {
   const editorId = generateRandomString() + '-editor'
-  console.log(props)
   useEffect(() => {
     const pell = init({
       element: document.getElementById(editorId),
@@ -19,6 +18,8 @@ const TextArea = (props) => {
         'bold',
         'underline',
         'italic',
+        'olist',
+        'ulist',
         {
           name: 'link',
           result: (val) => {
@@ -33,8 +34,7 @@ const TextArea = (props) => {
         selected: css.pellButtonSelected,
       },
     })
-    pell.content.innerHTML = props.initialValue
-    console.log(pell)
+    pell.content.innerHTML = props.initialValue || ''
   }, [])
 
   return (

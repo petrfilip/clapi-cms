@@ -20,76 +20,78 @@ import PageLayout from './components/layout/page-layout'
 
 import { createGlobalStyle, ThemeProvider } from 'styled-components'
 import reset from 'styled-reset'
+import SettingsPage from './routes/settings-page/settings-page'
 
 const App = (props) => {
-    const [currentUrl, setCurrentUrl] = useState({})
-    const [isModalVisible, setIsModalVisible] = useState(true)
-    const [modalBody, setModalBody] = useState()
-    const [flashMessages, setFlashMessages] = useState([])
+  const [currentUrl, setCurrentUrl] = useState({})
+  const [isModalVisible, setIsModalVisible] = useState(true)
+  const [modalBody, setModalBody] = useState()
+  const [flashMessages, setFlashMessages] = useState([])
 
-    const handleRoute = (e) => {
-        setCurrentUrl(e.url)
-    }
+  const handleRoute = (e) => {
+    setCurrentUrl(e.url)
+  }
 
-    /* MODAL CONTEXT */
-    const modalContextValue = {
-        setModalBody: setModalBody,
-    }
+  /* MODAL CONTEXT */
+  const modalContextValue = {
+    setModalBody: setModalBody,
+  }
 
-    /* FLASH MESSAGE CONTEXT */
-    const addMessage = (message) => {
-        setFlashMessages([...flashMessages, message])
-    }
+  /* FLASH MESSAGE CONTEXT */
+  const addMessage = (message) => {
+    setFlashMessages([...flashMessages, message])
+  }
 
-    const removeMessage = (indexToRemove) => {
-        const newMessages = flashMessages.filter((item, messageIndex) => messageIndex !== indexToRemove)
-        setFlashMessages(newMessages)
-    }
+  const removeMessage = (indexToRemove) => {
+    const newMessages = flashMessages.filter((item, messageIndex) => messageIndex !== indexToRemove)
+    setFlashMessages(newMessages)
+  }
 
-    const flashMessageContextValue = {
-        addMessage: addMessage,
-        removeMessage: removeMessage,
-    }
+  const flashMessageContextValue = {
+    addMessage: addMessage,
+    removeMessage: removeMessage,
+  }
 
-    if (!UserManager.getUserDetails()) {
-        route('/login')
-    }
+  if (!UserManager.getUserDetails()) {
+    route('/login')
+  }
 
-    const theme = {
-        primary: '#0072BB',
-        secondary: '#FFF',
-        lightgray: '#F4F3EE',
-        gray: '#e2e2e2',
-        darkgray: '#aaa',
-        white: 'white',
-    }
+  const theme = {
+    primary: '#0072BB',
+    secondary: '#FFF',
+    lightgray: '#F4F3EE',
+    gray: '#e2e2e2',
+    darkgray: '#aaa',
+    white: 'white',
+  }
 
-    return (
-        <LanguageContext.Provider value={'en'}>
-            <ThemeProvider theme={theme}>
-                <GlobalStyle />
-                <FlashMessageContext.Provider value={flashMessageContextValue}>
-                    <FlashMessages messages={flashMessages} />
-                    <AppModalContext.Provider value={modalContextValue}>
-                        <PageLayout>
-                            <Router onChange={handleRoute}>
-                                <HomePage path="/" />
-                                <LoginPage path="/login" />
-                                <LogoutPage path="/logout" />
-                                <EditContentPage path="/edit/:collection/:id*" />
-                                <MediaPage path="/media/edit/:id" />
-                                <MediaPage path="/media/:location*" />
-                                <DefinitionEditorPage path="/definition-editor/:typeDefinition*" />
-                                <NotFoundPage path="/:notFound*" />
-                            </Router>
-                        </PageLayout>
+  return (
+    <LanguageContext.Provider value={'en'}>
+      <ThemeProvider theme={theme}>
+        <GlobalStyle />
+        <FlashMessageContext.Provider value={flashMessageContextValue}>
+          <FlashMessages messages={flashMessages} />
+          <AppModalContext.Provider value={modalContextValue}>
+            <PageLayout>
+              <Router onChange={handleRoute}>
+                <HomePage path="/" />
+                <LoginPage path="/login" />
+                <LogoutPage path="/logout" />
+                <EditContentPage path="/edit/:collection/:id*" />
+                <MediaPage path="/media/edit/:id" />
+                <MediaPage path="/media/:location*" />
+                <DefinitionEditorPage path="/definition-editor/:typeDefinition*" />
+                <SettingsPage path="/settings" />
+                <NotFoundPage path="/:notFound*" />
+              </Router>
+            </PageLayout>
 
-                        <Modal visible={isModalVisible}>{modalBody}</Modal>
-                    </AppModalContext.Provider>
-                </FlashMessageContext.Provider>
-            </ThemeProvider>
-        </LanguageContext.Provider>
-    )
+            <Modal visible={isModalVisible}>{modalBody}</Modal>
+          </AppModalContext.Provider>
+        </FlashMessageContext.Provider>
+      </ThemeProvider>
+    </LanguageContext.Provider>
+  )
 }
 const GlobalStyle = createGlobalStyle`
    body {
@@ -98,6 +100,7 @@ const GlobalStyle = createGlobalStyle`
      overflow: hidden;
      height: 100%;
      background-color: #F4F3EE;
+     font-family: "Roboto", sans-serif;
     
    }
 `

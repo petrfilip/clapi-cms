@@ -38,9 +38,7 @@ const ImageSelect = (props) => {
 
             <PreviewContainer>
               <FilePreview file={data} />
-              {data && data.originName}
             </PreviewContainer>
-
             <Button onClick={() => onMediaSelected({})}>Remove</Button>
           </>
         )}
@@ -51,7 +49,8 @@ const ImageSelect = (props) => {
 
 const ComponentContainer = styled.div`
   display: flex;
-  align-items: center;
+  align-items: flex-start;
+  height: 100px;
 
   & > div {
     flex: 1;
@@ -66,10 +65,13 @@ const PreviewContainer = styled.div`
   display: flex;
   align-items: center;
 
-  font-size: 1.5em;
+  font-size: 1em;
 
   & > img {
-    height: 50px;
+    object-fit: cover;
+    height: 100px;
+    width: 100%;
+    max-width: 300px;
   }
 `
 

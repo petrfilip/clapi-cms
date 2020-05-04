@@ -10,6 +10,7 @@ import React from 'preact/compat'
 import { renderInputs } from './render-utils'
 import ContentEditorChoices from './content-editor-choices'
 import ContentEditorContentTabMenu from './content-editor-content-tab-menu'
+import ContentEditorTabMenu from './content-editor-tab-menu'
 
 const saveOrUpdate = (data, setInputObject) => {
   DataManager.saveOrUpdate(api.fetchCollection(data.metadata.collectionName), 'json', data, (out) => {
@@ -64,7 +65,15 @@ const ContentEditor = (props) => {
         Save
       </Button>
     )
-    setSidebar(<pre>{JSON.stringify(inputObject, null, 2)}</pre>)
+    setSidebar(
+      <>
+        <ContentEditorTabMenu
+          collectionName={inputObject.metadata.collectionName}
+          objectToString={inputObject.data[currentConfigTab]}
+        />
+        <pre>{JSON.stringify(inputObject, null, 2)}</pre>
+      </>
+    )
     return () => {
       setMenu(null)
       setSidebar(null)

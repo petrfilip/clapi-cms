@@ -6,7 +6,6 @@ import TypeDefinitionGroupBuilder from './type-definition-group-builder'
 import TypeDefinitionDropArea from './type-definition-drop-area'
 import { LayoutContext } from '../layout/layout-context'
 import TypeDefinitionBuilderBlockComponent from './type-definition-builder-block-component'
-import TypeDefinitionBuilderTabMenu from './type-definition-builder-tab-menu'
 
 function getDropContainer(index, setActionSidebar, onNewDefinition) {
   return (
