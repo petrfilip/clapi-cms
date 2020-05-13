@@ -16,7 +16,7 @@ const saveOrUpdate = (data, setInputObject) => {
   DataManager.saveOrUpdate(api.fetchCollection(data.metadata.collectionName), 'json', data, (out) => {
     setInputObject(out)
     console.log(out)
-    !data._id && out._id && route('/edit/' + data.metadata.collectionName + '/' + out._id)
+    !data._id && out._id && route('/admin/edit/' + data.metadata.collectionName + '/' + out._id)
   })
 }
 

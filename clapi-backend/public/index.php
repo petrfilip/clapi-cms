@@ -32,14 +32,13 @@ AppFactory::setContainer($containerBuilder->build());
 
 $app = AppFactory::create();
 
-$app->add(JwtMiddleware::class);
 $app->add(CorsMiddleware::class);
 
 
 $app->addBodyParsingMiddleware();
 $app->addErrorMiddleware(true, true, true);
 $app->addRoutingMiddleware();
-
+$app->setBasePath("/backend/public");
 
 $container = $app->getContainer();
 $app->add(new ServerTimingMiddleware($container->get(ServerTimings::class)));
@@ -99,7 +98,7 @@ $app->post('/user', function (Request $request, Response $response, $args) {
     unset($savedUser["password"]);
     $response->getBody()->write(json_encode($savedUser));
     return $response;
-});
+})->addMiddleware(new JwtMiddleware());
 
 /* update user*/
 
@@ -112,11 +111,28 @@ $app->put('/user', function (Request $request, Response $response, $args) {
 
 
 /* DOCUMENT API */
+$app->post('/query', function (Request $request, Response $response, $args) {
+    $params = $request->getQueryParams();
+    $queryParams = $request->getParsedBody();
+    $loadedData = DatabaseManager::findBy($queryParams["collection"], $queryParams["query"]);
+
+    $payload = json_encode($loadedData);
+    $response->getBody()->write($payload);
+    return $response;
+});
+
+
+
 $app->get('/collection/{collection}', function (Request $request, Response $response, $args) {
     $params = $request->getQueryParams();
+    $queryParams = $request->getParsedBody();
+    $loadedData = DatabaseManager::findBy($args["collection"], $queryParams["query"]);
+
+
+
+
 //    $timingFetchCollection = $this->get("Fetzi\ServerTiming\ServerTimings")->create('fetchData');
 //    $timingFetchCollection->start();
-    $loadedData = DatabaseManager::findBy($args["collection"], $params);
 //    $timingFetchCollection->stop();
 
     $payload = json_encode($loadedData);
@@ -138,7 +154,6 @@ $app->get('/collection/type-definition/{collectionName}', function (Request $req
 });
 
 $app->get('/collection/{collection}/{id}', function (Request $request, Response $response, $args) {
-    $collectionStore = DatabaseManager::getDataStore($args["collection"]);
     $loadedData = DatabaseManager::getById($args["collection"], $args["id"]);
 
     if (is_array($loadedData) && count($loadedData)) {
@@ -164,7 +179,8 @@ $app->post('/collection/type-definition', function (Request $request, Response $
         $response->getBody()->write(json_encode($inserted));
         return $response;
     }
-});
+})->addMiddleware(new JwtMiddleware());
+
 
 $app->put('/collection/type-definition', function (Request $request, Response $response, $args) {
     $data = $request->getParsedBody();
@@ -172,7 +188,8 @@ $app->put('/collection/type-definition', function (Request $request, Response $r
     $updated = DatabaseManager::updateVersionedRecord("type-definition", $data, $userId);
     $response->getBody()->write(json_encode($updated));
     return $response;
-});
+})->addMiddleware(new JwtMiddleware());
+
 
 $app->options('{route:.*}', function (Request $request, Response $response, $args) {
     return $response;
@@ -184,7 +201,8 @@ $app->post('/collection/{collection}', function (Request $request, Response $res
     $inserted = DatabaseManager::insertNewVersionedRecord($args["collection"], $data, $userId);
     $response->getBody()->write(json_encode($inserted));
     return $response;
-});
+})->addMiddleware(new JwtMiddleware());
+
 
 
 $app->put('/collection/{collection}', function (Request $request, Response $response, $args) {
@@ -193,7 +211,8 @@ $app->put('/collection/{collection}', function (Request $request, Response $resp
     $updated = DatabaseManager::updateVersionedRecord($args["collection"], $inputJson, $userId);
     $response->getBody()->write(json_encode($updated));
     return $response;
-});
+})->addMiddleware(new JwtMiddleware());
+
 
 /* MEDIA API */
 
@@ -210,6 +229,27 @@ $app->get('/media/download/{id:[0-9]+}', function (Request $request, Response $r
         return $response->withBody($stream)
             ->withHeader('X-Filename', $loadedItem["originName"])
             ->withHeader('Content-Disposition', 'attachment; ' . $loadedItem["originName"] . ';')
+            ->withHeader('Content-Type', mime_content_type($path))
+            ->withHeader('Content-Length', filesize($path))
+            ->withHeader('Expires', '0')
+            ->withHeader('Cache-Control', 'must-revalidate, post-check=0, pre-check=0');
+    } else {
+        return $response->withStatus(404);
+    }
+});
+
+$app->get('/media/show/{id:[0-9]+}', function (Request $request, Response $response, $args) {
+    $loadedItem = DatabaseManager::getById("media", $args["id"]);
+
+    if (count($loadedItem)) {
+
+        $path = __DIR__ . $loadedItem["publicPath"];
+        $fh = fopen($path, 'rb');
+        $stream = new Stream($fh); // create a stream instance for the response body
+
+        return $response->withBody($stream)
+            ->withHeader('X-Filename', $loadedItem["originName"])
+            ->withHeader('Content-Disposition', 'inline; ' . $loadedItem["originName"] . ';')
             ->withHeader('Content-Type', mime_content_type($path))
             ->withHeader('Content-Length', filesize($path))
             ->withHeader('Expires', '0')
@@ -315,7 +355,8 @@ $app->post('/media/directory', function (Request $request, Response $response, $
     } else {
         return $response->withStatus(503);
     }
-});
+})->addMiddleware(new JwtMiddleware());
+
 
 /* upload files*/
 
@@ -337,7 +378,8 @@ $app->post('/media/file', function (Request $request, Response $response, $args)
     $inserted = DatabaseManager::insertNewVersionedRecords("media", $uploaded, $userId);
     $response->getBody()->write(json_encode($inserted));
     return $response;
-});
+})->addMiddleware(new JwtMiddleware());
+
 
 $app->put('/media/file', function (Request $request, Response $response, $args) {
     $inputJson = $request->getParsedBody();
@@ -345,7 +387,8 @@ $app->put('/media/file', function (Request $request, Response $response, $args) 
     $inserted = DatabaseManager::updateVersionedRecord("media", $inputJson, $userId);
     $response->getBody()->write(json_encode($inserted));
     return $response;
-});
+})->addMiddleware(new JwtMiddleware());
+
 
 
 $app->run();

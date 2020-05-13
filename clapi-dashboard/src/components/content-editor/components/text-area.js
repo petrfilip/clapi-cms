@@ -8,6 +8,7 @@ function generateRandomString() {
 }
 
 const TextArea = (props) => {
+  console.log(props)
   const editorId = generateRandomString() + '-editor'
   useEffect(() => {
     const pell = init({
@@ -35,6 +36,15 @@ const TextArea = (props) => {
       },
     })
     pell.content.innerHTML = props.initialValue || ''
+
+    pell.addEventListener('paste', function (e) {
+      e.preventDefault()
+
+      if (e.clipboardData) {
+        const content = e.clipboardData.getData('text/plain')
+        document.execCommand('insertText', false, content)
+      }
+    })
   }, [])
 
   return (

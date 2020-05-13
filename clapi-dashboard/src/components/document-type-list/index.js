@@ -7,7 +7,7 @@ import Table from '../table'
 import { useContext } from 'preact/hooks'
 
 const onRowClick = (item) => {
-  route('/edit/' + item.metadata.collectionName + '/')
+  route('/admin/edit/' + item.metadata.collectionName + '/')
 }
 
 const headers = [{ key: 'metadata.collectionName', title: 'Collection' }]

@@ -53,13 +53,13 @@ const App = (props) => {
   }
 
   if (!UserManager.getUserDetails()) {
-    route('/login')
+    route('/admin/login')
   }
 
   const theme = {
     primary: '#0072BB',
     secondary: '#FFF',
-    lightgray: '#F4F3EE',
+    lightgray: '#eeeeee',
     gray: '#e2e2e2',
     darkgray: '#aaa',
     white: 'white',
@@ -74,15 +74,15 @@ const App = (props) => {
           <AppModalContext.Provider value={modalContextValue}>
             <PageLayout>
               <Router onChange={handleRoute}>
-                <HomePage path="/" />
-                <LoginPage path="/login" />
-                <LogoutPage path="/logout" />
-                <EditContentPage path="/edit/:collection/:id*" />
-                <MediaPage path="/media/edit/:id" />
-                <MediaPage path="/media/:location*" />
-                <DefinitionEditorPage path="/definition-editor/:typeDefinition*" />
-                <SettingsPage path="/settings" />
-                <NotFoundPage path="/:notFound*" />
+                <HomePage path="/admin/" />
+                <LoginPage path="/admin/login" />
+                <LogoutPage path="/admin/logout" />
+                <EditContentPage path="/admin/edit/:collection/:id*" />
+                <MediaPage path="/admin/media/edit/:id" />
+                <MediaPage path="/admin/media/:location*" />
+                <DefinitionEditorPage path="/admin/definition-editor/:typeDefinition*" />
+                <SettingsPage path="/admin/settings" />
+                <NotFoundPage path="/admin/:notFound*" />
               </Router>
             </PageLayout>
 
@@ -99,8 +99,7 @@ const GlobalStyle = createGlobalStyle`
      padding: 0;
      overflow: hidden;
      height: 100%;
-     background-color: #F4F3EE;
-     font-family: "Roboto", sans-serif;
+     background-color: #eeeeee;
     
    }
 `

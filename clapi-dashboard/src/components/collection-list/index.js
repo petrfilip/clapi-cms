@@ -13,7 +13,8 @@ const headers = [
 
 const CollectionList = (props) => {
   const onRowClick = (rowItem) =>
-    (props.onRowClick && props.onRowClick(rowItem)) || route(`/edit/${rowItem.metadata.collectionName}/${rowItem._id}`)
+    (props.onRowClick && props.onRowClick(rowItem)) ||
+    route(`/admin/edit/${rowItem.metadata.collectionName}/${rowItem._id}`)
 
   return (
     <DataLoader uri={api.fetchCollection('type-definition')}>

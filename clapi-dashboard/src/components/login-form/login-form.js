@@ -19,12 +19,12 @@ const LoginForm = () => {
   const onFormSubmit = () => {
     DataManager.saveOrUpdate(api.fetchLogin(), 'json', { email, password }, (userInfo) => {
       UserManager.setUserDetails(userInfo)
-      route('/')
+      route('/admin/')
     })
   }
 
   if (UserManager.getUserDetails()) {
-    route('/')
+    route('/admin/')
   }
 
   return (

@@ -1,4 +1,6 @@
-export const apiUrl = 'http://localhost:8888/'
+const full = location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '')
+
+export const apiUrl = full + '/backend/public/'
 const debug = '?XDEBUG_SESSION_START=PHPSTORM'
 
 export const fetchCollection = (collectionName) => {

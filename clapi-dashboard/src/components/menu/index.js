@@ -11,19 +11,19 @@ import { route } from 'preact-router'
 function getNavForLoggedUser() {
   return (
     <>
-      <Link activeClassName={style.active} href="/">
+      <Link activeClassName={style.active} href="/admin/">
         Home
       </Link>
-      <Link activeClassName={style.active} href="/media">
+      <Link activeClassName={style.active} href="/admin/media">
         Media
       </Link>
-      <Link activeClassName={style.active} href="/definition-editor">
+      <Link activeClassName={style.active} href="/admin/definition-editor">
         Definition editor
       </Link>
-      <Link activeClassName={style.active} href="/settings">
+      <Link activeClassName={style.active} href="/admin/settings">
         Settings
       </Link>
-      <Link activeClassName={style.active} href="/logout">
+      <Link activeClassName={style.active} href="/admin/logout">
         Logout
       </Link>
     </>
@@ -35,7 +35,7 @@ const Menu = () => {
 
   const menuWithBackButton = (
     <>
-      <a onClick={() => route('/')}>Home</a>
+      <a onClick={() => route('/admin/')}>Home</a>
       {menu}
     </>
   )

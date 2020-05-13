@@ -7,7 +7,7 @@ import Table from '../table'
 const headers = [{ key: 'metadata.collectionName', title: 'Collection' }]
 
 const onRowClick = (rowItem) => {
-  route('/definition-editor/' + rowItem.metadata.collectionName)
+  route('/admin/definition-editor/' + rowItem.metadata.collectionName)
 }
 
 const TypeDefinitionList = () => {

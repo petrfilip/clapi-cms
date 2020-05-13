@@ -44,7 +44,7 @@ const TypeDefinitionCreateForm = ({ typeDefinition }) => {
           DataManager.saveOrUpdate(api.fetchCollection('type-definition'), 'json', toSave, (data) => {
             console.log(data)
             setActionSidebar(null)
-            route('/definition-editor/' + slugify(collectionName))
+            route('/admin/definition-editor/' + slugify(collectionName))
           })
         }}
       >

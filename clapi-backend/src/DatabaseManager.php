@@ -18,15 +18,12 @@ final class DatabaseManager
         return SleekDB::store($storeName, DATABASE_ROOT);
     }
 
-    static public function findBy($collectionName, $params)
+    static public function findBy($collectionName, $queries)
     {
         $collectionStore = DatabaseManager::getDataStore($collectionName);
 
-        foreach ($params as $condition) {
+        foreach ($queries as $condition) {
 
-            if (!is_array($condition)) {
-                continue;
-            }
 
             switch ($condition["type"]) {
                 case "where":

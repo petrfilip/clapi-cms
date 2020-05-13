@@ -35,12 +35,14 @@
     "pell": "^1.0.6",
     "preact": "^10.4.0",
     "preact-render-to-string": "^5.1.4",
-    "prop-types": "^15.7.2",
     "preact-router": "^3.2.1",
+    "prop-types": "^15.7.2",
     "query-string": "^6.12.1",
+    "react-html-parser": "^2.0.2",
     "styled-components": "^5.1.0",
     "styled-flex-component": "^3.0.0",
-    "styled-reset": "^4.1.4"
+    "styled-reset": "^4.1.4",
+    "react-select": "^3.1.0"
   },
   "alias": {
     "react": "preact/compat",

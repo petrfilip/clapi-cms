@@ -1,8 +1,5 @@
 import React from 'preact/compat'
 import styled from 'styled-components'
-import { useContext } from 'preact/hooks'
-import { LayoutContext } from '../layout/layout-context'
-import CollectionVersionList from '../collection-version-list/collection-version-list'
 
 const ContentEditorContentTabMenu = ({ tabs, onTabClick }) => {
   return (

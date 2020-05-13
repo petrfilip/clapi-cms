@@ -1,6 +1,9 @@
 # Redirect to front controller
+Order allow,deny
+Allow from all
+
 RewriteEngine On
-# RewriteBase /
+RewriteBase /backend/public/
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^ index.php [QSA,L]

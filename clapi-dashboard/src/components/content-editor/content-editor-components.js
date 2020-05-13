@@ -1,3 +1,4 @@
+import UidInput from './components/uid-input'
 import SimpleText from './components/simple-text'
 import TextArea from './components/text-area'
 import Block from './components/block'
@@ -30,7 +31,29 @@ const isRequired = {
   },
 }
 
+const selectInputOptions = {
+  type: 'Group',
+  config: {
+    label: 'selectOption',
+    fields: {
+      key: {
+        type: 'SimpleText',
+        config: {
+          label: 'label',
+        },
+      },
+      value: {
+        type: 'SimpleText',
+        config: {
+          label: 'value',
+        },
+      },
+    },
+  },
+}
+
 export const ContentEditorComponents = {
+  Uid: { component: UidInput, config: { placeholder } },
   SimpleText: { component: SimpleText, config: { placeholder, isRequired } },
   TextArea: { component: TextArea, config: { placeholder, isRequired } },
   Block: { component: Block, config: { placeholder, isRequired } },
@@ -42,7 +65,7 @@ export const ContentEditorComponents = {
   DatePicker: { component: DatePicker, config: { placeholder, isRequired } },
   GeoPicker: { component: GeoPicker, config: { placeholder, isRequired } },
   BooleanInput: { component: BooleanInput, config: { placeholder, isRequired } },
-  SelectInput: { component: SelectInput, config: { placeholder, isRequired } },
+  SelectInput: { component: SelectInput, config: { placeholder, options: selectInputOptions, isRequired } },
   NumberInput: { component: NumberInput, config: { placeholder, isRequired } },
   ColorPicker: { component: ColorPicker, config: { placeholder, isRequired } },
   CheckboxInput: { component: CheckboxInput, config: { placeholder, isRequired } },
