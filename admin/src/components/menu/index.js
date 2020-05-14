@@ -35,7 +35,7 @@ const Menu = () => {
 
   const menuWithBackButton = (
     <>
-      <a onClick={() => route('/admin/')}>Home</a>
+      <a onClick={() => route('/admin/entries')}>Home</a>
       {menu}
     </>
   )
