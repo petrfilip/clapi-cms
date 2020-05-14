@@ -4,6 +4,7 @@ use App\DatabaseManager;
 use App\ErrorUtils;
 use App\Middleware\CorsMiddleware;
 use App\Middleware\JwtMiddleware;
+use App\Model\ApplicationRequirementsDto;
 use App\Utils;
 use Fetzi\ServerTiming\ServerTimingMiddleware;
 use Fetzi\ServerTiming\ServerTimings;
@@ -14,18 +15,27 @@ use DI\ContainerBuilder;
 use Slim\Factory\AppFactory;
 use Slim\Psr7\Stream;
 
-require __DIR__ . '/../vendor/autoload.php';
-require './../src/Middleware/CorsMiddleware.php';
-require './../src/Middleware/JwtMiddleware.php';
-require './../src/Model/ApplicationError.php';
-require './../src/ErrorUtils.php';
-require './../src/DatabaseManager.php';
-require './../src/Utils.php';
-require './../src/MIME.php';
+
 define("DATABASE_ROOT", __DIR__ . "/../database");
 define("MEDIA_STORAGE", "/media-storage");
 define("MEDIA_STORAGE_ROOT", __DIR__ . MEDIA_STORAGE);
-define("JWT_KEY", "example_key");
+define("CONFIG_FILE", __DIR__ . './../config.php');
+if (file_exists(CONFIG_FILE)) {
+    // the file contain user defined constant
+
+}
+require CONFIG_FILE;
+
+require __DIR__ . '/../vendor/autoload.php';
+require __DIR__ . './../src/Middleware/CorsMiddleware.php';
+require __DIR__ . './../src/Middleware/JwtMiddleware.php';
+require __DIR__ . './../src/Model/ApplicationError.php';
+require __DIR__ . './../src/Model/ApplicationRequirementsDto.php';
+require __DIR__ . './../src/ErrorUtils.php';
+require __DIR__ . './../src/DatabaseManager.php';
+require __DIR__ . './../src/Utils.php';
+require __DIR__ . './../src/MIME.php';
+
 
 $containerBuilder = new ContainerBuilder();
 AppFactory::setContainer($containerBuilder->build());
@@ -38,17 +48,101 @@ $app->add(CorsMiddleware::class);
 $app->addBodyParsingMiddleware();
 $app->addErrorMiddleware(true, true, true);
 $app->addRoutingMiddleware();
-$app->setBasePath("/backend/public");
+$app->setBasePath("/api/public");
 
 $container = $app->getContainer();
 $app->add(new ServerTimingMiddleware($container->get(ServerTimings::class)));
 
 
-
 $app->get('/', function (Request $request, Response $response, $args) {
-    $response->getBody()->write("test");
+    $response->getBody()->write(phpinfo());
     return $response;
 });
+
+$app->get('/init-requirements', function (Request $request, Response $response, $args) {
+
+    //$loadedModules = phpinfo();
+    //$isModRewriteLoaded = (strpos($loadedModules, 'mod_rewrite') !== false);
+    chmod(MEDIA_STORAGE_ROOT, 0777);
+    chmod(DATABASE_ROOT, 0777);
+    chmod(CONFIG_FILE, 0777);
+    // PHP | CURRENT VERSION | REQUIRED VERSION | STATUS
+    $requirements = [
+        new ApplicationRequirementsDto("PHP", "phpversion()", "7.2", "todo description"),
+        new ApplicationRequirementsDto("mod rewrite", "isModRewriteLoaded", "TRUE", "todo description"),
+        new ApplicationRequirementsDto("gd library", extension_loaded('gd') ? "true" : "false", "true", "todo description"),
+        new ApplicationRequirementsDto("upload_max_filesize", ini_get('post_max_size'), "todo", "todo description"),
+        new ApplicationRequirementsDto("memory_limit", ini_get('memory_limit'), "todo", "todo description"),
+        new ApplicationRequirementsDto("max_execution_time", ini_get('max_execution_time'), "todo", "todo description"),
+        new ApplicationRequirementsDto("chmod media", is_writable(MEDIA_STORAGE_ROOT) ? "true" : "false", "TRUE", "todo description"),
+        new ApplicationRequirementsDto("chmod database", is_writable(DATABASE_ROOT) ? "true" : "false", "TRUE", "todo description"),
+        new ApplicationRequirementsDto("chmod config", is_writable(CONFIG_FILE) ? "true" : "false", "TRUE", "todo description"),
+    ];
+
+    $response->getBody()->write(json_encode($requirements));
+    return $response;
+});
+
+$app->post('/init', function (Request $request, Response $response, $args) {
+
+    if (isApplicationInitialized()) {
+        return $response->withStatus(204);
+    }
+
+    $inputJson = $request->getParsedBody();
+    if ($inputJson == null) {
+        return $response->withStatus(424);
+    }
+
+
+    /* create config file with configuration*/
+    $inputJson = $request->getParsedBody();
+
+    if (!filter_var($inputJson["email"], FILTER_VALIDATE_EMAIL)) {
+        $response->getBody()->write("INVALID EMAIL");
+        return $response;
+    }
+
+    if (!isPasswordValid($inputJson["password"])) {
+        $response->getBody()->write("INVALID PASSWORD");
+        return $response;
+    }
+
+
+    $configFile = fopen(CONFIG_FILE, "w") or die("Unable to open file!");
+    $txt = '<?php ';
+    fwrite($configFile, $txt);
+    $txt = 'define("JWT_KEY", "' . $inputJson["password"] . '");';
+    fwrite($configFile, $txt);
+    fclose($configFile);
+
+    /* create first user */
+    $user = new stdClass();
+    $user->email = $inputJson["email"];
+    $user->password = password_hash($inputJson["password"], PASSWORD_BCRYPT);
+
+    $savedUser = DatabaseManager::insertNewVersionedRecord("user", $user, 0);
+    unset($savedUser["password"]);
+    $response->getBody()->write(json_encode($savedUser));
+    return $response;
+});
+
+function isPasswordValid($password)
+{
+    return strlen($password) > 3;
+//    $uppercase = preg_match('@[A-Z]@', $password);
+//    $lowercase = preg_match('@[a-z]@', $password);
+//    $number = preg_match('@[0-9]@', $password);
+//    $specialChars = preg_match('@[^\w]@', $password);
+//
+//    return (!$uppercase || !$lowercase || !$number || !$specialChars || strlen($password) < 8);
+}
+
+function isApplicationInitialized()
+{
+    return defined("JWT_KEY");
+}
+
 
 $app->post('/login', function (Request $request, Response $response, $args) {
     $inputJson = $request->getParsedBody();
@@ -58,7 +152,7 @@ $app->post('/login', function (Request $request, Response $response, $args) {
     $loadedUser = $userStore->where("email", "=", $inputJson["email"])->fetch();
     if (!password_verify($inputJson["password"], $loadedUser[0]["password"])) {
         $response->getBody()->write(json_encode(ErrorUtils::error(ErrorUtils::BAD_LOGIN)));
-        return $response->withStatus(404);
+        return $response->withStatus(403);
     }
 
 
@@ -86,7 +180,6 @@ $app->post('/login', function (Request $request, Response $response, $args) {
 /* add user */
 $app->post('/user', function (Request $request, Response $response, $args) {
     $inputJson = $request->getParsedBody();
-    $userStore = DatabaseManager::getDataStore("user");
     $userId = $request->getAttribute("userId");
 
 
@@ -122,13 +215,10 @@ $app->post('/query', function (Request $request, Response $response, $args) {
 });
 
 
-
 $app->get('/collection/{collection}', function (Request $request, Response $response, $args) {
     $params = $request->getQueryParams();
     $queryParams = $request->getParsedBody();
     $loadedData = DatabaseManager::findBy($args["collection"], $queryParams["query"]);
-
-
 
 
 //    $timingFetchCollection = $this->get("Fetzi\ServerTiming\ServerTimings")->create('fetchData');
@@ -202,7 +292,6 @@ $app->post('/collection/{collection}', function (Request $request, Response $res
     $response->getBody()->write(json_encode($inserted));
     return $response;
 })->addMiddleware(new JwtMiddleware());
-
 
 
 $app->put('/collection/{collection}', function (Request $request, Response $response, $args) {
@@ -388,7 +477,6 @@ $app->put('/media/file', function (Request $request, Response $response, $args) 
     $response->getBody()->write(json_encode($inserted));
     return $response;
 })->addMiddleware(new JwtMiddleware());
-
 
 
 $app->run();

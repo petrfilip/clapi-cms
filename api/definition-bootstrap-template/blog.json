@@ -1,0 +1,200 @@
+{
+  "metadata": {
+    "collectionName": "article"
+  },
+  "data": {
+    "main": {
+      "name": "Main",
+      "config": {
+        "content": [
+          {
+            "metadata": {
+              "snippetName": "Paragraph with heading",
+              "snippetKey": "paragraph"
+            },
+            "config": {
+              "title": {
+                "type": "SimpleText",
+                "config": {
+                  "label": "Title"
+                }
+              },
+              "text": {
+                "type": "TextArea",
+                "config": {
+                  "label": "Text"
+                }
+              }
+            }
+          },
+          {
+            "metadata": {
+              "snippetName": "Image",
+              "snippetKey": "image"
+            },
+            "config": {
+              "caption": {
+                "type": "SimpleText",
+                "config": {
+                  "label": "Image description"
+                }
+              },
+              "image": {
+                "type": "ImageSelect",
+                "config": {
+                  "label": "Image"
+                }
+              }
+            }
+          },
+          {
+            "metadata": {
+              "snippetName": "Image Gallery",
+              "snippetKey": "image_gallery"
+            },
+            "config": {
+              "gallery_caption": {
+                "type": "SimpleText",
+                "config": {
+                  "label": "Title"
+                }
+              },
+              "image_gallery": {
+                "type": "Group",
+                "config": {
+                  "label": "Image Gallery",
+                  "fields": {
+                    "caption": {
+                      "type": "SimpleText",
+                      "config": {
+                        "label": "Caption"
+                      }
+                    },
+                    "image": {
+                      "type": "ImageSelect",
+                      "config": {
+                        "label": "Image"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "metadata": {
+              "snippetName": "Paragraph without heading",
+              "snippetKey": "text"
+            },
+            "config": {
+              "text": {
+                "type": "TextArea",
+                "config": {
+                  "label": "Text"
+                }
+              }
+            }
+          },
+          {
+            "metadata": {
+              "snippetName": "Alert",
+              "snippetKey": "alert"
+            },
+            "config": {
+              "type": {
+                "type": "SelectInput",
+                "config": {
+                  "label": "Alert type",
+                  "options": [
+                    {
+                      "label": "Info",
+                      "value": "info"
+                    },
+                    {
+                      "label": "Success",
+                      "value": "success"
+                    },
+                    {
+                      "label": "Warning",
+                      "value": "warning"
+                    },
+                    {
+                      "label": "Danger",
+                      "value": "danger"
+                    }
+                  ]
+                }
+              },
+              "text": {
+                "type": "SimpleText",
+                "config": {
+                  "label": "Text"
+                }
+              }
+            }
+          }
+        ],
+        "uid": {
+          "type": "SimpleText",
+          "config": {
+            "label": "uid",
+            "placeholder": "uid"
+          }
+        },
+        "title": {
+          "type": "SimpleText",
+          "config": {
+            "label": "Title"
+          }
+        },
+        "caption": {
+          "type": "TextArea",
+          "config": {
+            "label": "Short Description"
+          }
+        },
+        "article_image": {
+          "type": "ImageSelect",
+          "config": {
+            "label": "Article image"
+          }
+        }
+      }
+    },
+    "seo": {
+      "name": "SEO",
+      "config": {
+        "title": {
+          "type": "SimpleText",
+          "config": {
+            "label": "Title"
+          }
+        },
+        "content": [
+          {
+            "metadata": {
+              "snippetName": "Testovac\u00ed snippet",
+              "snippetKey": "testovaci_snippet"
+            },
+            "config": {
+              "test_text": {
+                "type": "SimpleText",
+                "config": {
+                  "label": "test text"
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  },
+  "sys": {
+    "version": 14,
+    "created": "2020-05-04 14:18:32",
+    "updated": "2020-05-10 18:15:17",
+    "createBy": 20,
+    "updatedBy": 20
+  },
+  "_id": 1
+}

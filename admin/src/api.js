@@ -1,6 +1,14 @@
-const full = location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '')
 
-export const apiUrl = full + '/backend/public/'
+//single server option
+let full = null
+
+if (location.hostname === "0.0.0.0" || location.hostname === "localhost") {
+   full = location.protocol + '//' + location.hostname+":8888";
+} else {
+   full = location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '')
+}
+
+export const apiUrl = full + '/api/public/'
 const debug = '?XDEBUG_SESSION_START=PHPSTORM'
 
 export const fetchCollection = (collectionName) => {
@@ -40,4 +48,12 @@ export const fetchMediaList = (location) => {
 
 export const fetchLogin = () => {
   return [apiUrl, 'login', debug].join('')
+}
+
+export const fetchInit = () => {
+  return [apiUrl, 'init', debug].join('')
+}
+
+export const fetchInitRequirements = () => {
+  return [apiUrl, 'init-requirements', debug].join('')
 }

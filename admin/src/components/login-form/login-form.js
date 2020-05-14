@@ -1,6 +1,6 @@
 import DataManager from '../data-loader/data-manager'
 import * as api from '../../api'
-import { useState } from 'preact/hooks'
+import { useEffect, useState } from 'preact/hooks'
 import UserManager from '../user-manager'
 import { route } from 'preact-router'
 import Button from '../elementary/button'
@@ -11,6 +11,7 @@ import ComponentEditWrapper from '../content-editor/components/component-edit-wr
 import React from 'preact/compat'
 import styled from 'styled-components'
 import { Center } from '../layout/center'
+import ApplicationManager from '../application-manager/application-manager'
 
 const LoginForm = () => {
   const [email, setEmail] = useState('')
@@ -19,12 +20,12 @@ const LoginForm = () => {
   const onFormSubmit = () => {
     DataManager.saveOrUpdate(api.fetchLogin(), 'json', { email, password }, (userInfo) => {
       UserManager.setUserDetails(userInfo)
-      route('/admin/')
+      route('/admin/entries')
     })
   }
 
   if (UserManager.getUserDetails()) {
-    route('/admin/')
+    route('/admin/entries')
   }
 
   return (

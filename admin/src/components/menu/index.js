@@ -11,7 +11,7 @@ import { route } from 'preact-router'
 function getNavForLoggedUser() {
   return (
     <>
-      <Link activeClassName={style.active} href="/admin/">
+      <Link activeClassName={style.active} href="/admin/entries">
         Home
       </Link>
       <Link activeClassName={style.active} href="/admin/media">

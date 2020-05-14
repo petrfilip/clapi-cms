@@ -127,6 +127,7 @@ export default class DataManager {
         )
     }
 
+
     static fetchBinaryData = async (uri, params) => {
         const headers = new Headers()
         UserManager.getUserDetails() &&
@@ -158,5 +159,19 @@ export default class DataManager {
                 link.click()
                 link.parentNode.removeChild(link)
             })
+    }
+
+    static postRequest = (uri) => {
+        const headers = new Headers()
+        UserManager.getUserDetails() &&
+        headers.set(
+          'authorization',
+          'Bearer ' + UserManager.getUserDetails().token
+        )
+
+        return fetch(uri, {
+            headers,
+            method: 'post'
+        })
     }
 }
