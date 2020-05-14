@@ -6,7 +6,11 @@ cd build/
 
 rm -r api/public/media-storage/*
 rm -r api/database/*
+echo "" > api/config.php
 
+chmod 777 api/public/media-storage
+chmod 777 api/database
+chmod 777 api/config.php
 
 # build php app
 EXPECTED_CHECKSUM="$(wget -q -O - https://composer.github.io/installer.sig)"
