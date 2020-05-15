@@ -43,7 +43,7 @@ const PageLayout = (props) => {
     <LayoutContext.Provider value={menuValue}>
       <Parent>
         <Top>
-          <Menu />
+          <Menu currentUrl={props.currentUrl} />
         </Top>
         <Content>
           <TwoColumnsLayout>{props.children}</TwoColumnsLayout>

@@ -4,46 +4,60 @@ import UserManager from '../user-manager'
 
 import React from 'preact/compat'
 import styled from 'styled-components'
-import { useContext } from 'preact/hooks'
+import { useContext, useEffect, useState } from 'preact/hooks'
 import { LayoutContext } from '../layout/layout-context'
 import { route } from 'preact-router'
+import { deviceSize } from '../responsive/responsive'
 
-function getNavForLoggedUser() {
+function getNavForLoggedUser(closeMenu) {
   return (
     <>
-      <Link activeClassName={style.active} href="/admin/entries">
+      <StyleLink onClick={() => closeMenu()} activeClassName={style.active} href="/admin/entries">
         Home
-      </Link>
-      <Link activeClassName={style.active} href="/admin/media">
+      </StyleLink>
+      <StyleLink onClick={() => closeMenu()} activeClassName={style.active} href="/admin/media">
         Media
-      </Link>
-      <Link activeClassName={style.active} href="/admin/definition-editor">
+      </StyleLink>
+      <StyleLink onClick={() => closeMenu()} activeClassName={style.active} href="/admin/definition-editor">
         Definition editor
-      </Link>
-      <Link activeClassName={style.active} href="/admin/settings">
+      </StyleLink>
+      <StyleLink onClick={() => closeMenu()} activeClassName={style.active} href="/admin/settings">
         Settings
-      </Link>
-      <Link activeClassName={style.active} href="/admin/logout">
+      </StyleLink>
+      <StyleLink onClick={() => closeMenu()} activeClassName={style.active} href="/admin/logout">
         Logout
-      </Link>
+      </StyleLink>
     </>
   )
 }
 
-const Menu = () => {
+const Menu = ({ currentUrl }) => {
   const { menu } = useContext(LayoutContext)
+  const [isOpen, setIsOpen] = useState(false)
 
   const menuWithBackButton = (
     <>
-      <a onClick={() => route('/admin/entries')}>Home</a>
+      <StyleLink onClick={() => route('/admin/entries')}>Home</StyleLink>
       {menu}
     </>
   )
 
+  const toggleOpen = (isOpen) => {
+    setIsOpen(!isOpen)
+  }
+
+  const closeMenu = () => {
+    setIsOpen(false)
+  }
+
   return (
     <Header>
       <Title>Clapi CMS </Title>
-      <Navigation>{(menu && menuWithBackButton) || (UserManager.getUserDetails() && getNavForLoggedUser())}</Navigation>
+      <ResponsiveMenuHamburger onClick={() => toggleOpen(isOpen)}>Menu</ResponsiveMenuHamburger>
+
+      <Navigation isOpen={isOpen}>
+        {(menu && menuWithBackButton) || (UserManager.getUserDetails() && getNavForLoggedUser(closeMenu))}
+      </Navigation>
     </Header>
   )
 }
@@ -52,6 +66,7 @@ const Header = styled.header`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
 
   & > * {
   }
@@ -60,17 +75,42 @@ const Header = styled.header`
 const Title = styled.h1`
   margin: 10px;
 `
+const ResponsiveMenuHamburger = styled.div`
+  display: none;
+
+  @media (max-width: ${deviceSize.tablet}) {
+    display: block;
+  }
+`
 
 const Navigation = styled.nav`
+  z-index: 99;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  & > a {
-    color: white;
-    text-decoration: none;
-    border-bottom: 2px solid white;
-    padding: 10px;
-    margin: 10px;
+
+  @media (max-width: ${deviceSize.tablet}) {
+    display: ${(props) => (props.isOpen ? 'block' : 'none')};
+    flex-wrap: wrap;
+    background-color: #0072bb;
+    color: #888888;
+    width: 100%;
+  }
+`
+
+const StyleLink = styled(Link)`
+  display: block;
+  color: white;
+  text-decoration: none;
+  border-bottom: 2px solid white;
+  padding: 10px;
+  margin: 10px;
+
+  @media (max-width: ${deviceSize.tablet}) {
+    :hover {
+      background-color: white;
+      color: black;
+    }
   }
 `
 

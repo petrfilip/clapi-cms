@@ -13,7 +13,7 @@ export const FilePreview = ({ file }) => {
     return hasPreview ? (
         <img
             className={style.filePreview}
-            src={api.apiUrl + file.publicPath}
+            src={api.apiUrl + "media/show/" + file._id}
             alt={file.originName}
         />
     ) : (

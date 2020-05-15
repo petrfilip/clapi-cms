@@ -1,11 +1,13 @@
 import React from 'react'
-import Select from 'react-select'
-import { useState } from 'preact/hooks'
+import Creatable from 'react-select/creatable'
+import { slugify } from '../../../utils/string-utils'
 
-const SelectInput = ({ id, initialValue, config, onInputChangeCallback }) => {
-  console.log(config)
-  function handleChange(selected) {
-    onInputChangeCallback(id, selected.value)
+const TagInput = ({ id, initialValue, config, onInputChangeCallback }) => {
+  function handleChange(data) {
+    const newData = data.map((item) => {
+      return { label: item.label, value: slugify(item.value) }
+    })
+    onInputChangeCallback(id, newData)
   }
 
   function findByValue(options, value) {
@@ -13,10 +15,11 @@ const SelectInput = ({ id, initialValue, config, onInputChangeCallback }) => {
   }
 
   return (
-    <Select
-      options={(config && config.options) || []}
+    <Creatable
+      defaultValue={initialValue || []}
       value={findByValue((config && config.options) || [], initialValue)}
       onChange={handleChange}
+      isMulti={true}
       styles={customStyles}
     />
   )
@@ -58,4 +61,4 @@ const customStyles = {
   }),
 }
 
-export default SelectInput
+export default TagInput

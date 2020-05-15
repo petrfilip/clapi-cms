@@ -7,6 +7,14 @@ import React from 'preact/compat'
 import styled from 'styled-components'
 import { LayoutContext } from '../../layout/layout-context'
 
+function resolvePreview(input) {
+  if (input) {
+    return (input.data.main && input.data.main.title) || (input.data.main && input.data.main.uid) || input.data._id
+  } else {
+    return ''
+  }
+}
+
 const DocumentLink = (props) => {
   const onDocumentSelected = (item) => {
     props.onInputChangeCallback(props.id, {
@@ -35,7 +43,7 @@ const DocumentLink = (props) => {
             >
               Select
             </Button>
-            <PreviewContainer>{data && data._id}</PreviewContainer>
+            <PreviewContainer>{resolvePreview(data)}</PreviewContainer>
             <Button onClick={() => onDocumentSelected({})}>Remove</Button>
           </>
         )}

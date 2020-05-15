@@ -56,6 +56,4 @@ const ContentEditorChoices = ({ initialData, config, onChangeCallback }) => {
   )
 }
 
-function addInput() {}
-
 export default ContentEditorChoices

@@ -22,8 +22,7 @@ import { createGlobalStyle, ThemeProvider } from 'styled-components'
 import reset from 'styled-reset'
 import SettingsPage from './routes/settings-page/settings-page'
 import InitPage from './routes/init-page'
-import ApplicationManager
-  from './components/application-manager/application-manager'
+import ApplicationManager from './components/application-manager/application-manager'
 import DataManager from './components/data-loader/data-manager'
 import * as api from './api'
 
@@ -48,8 +47,7 @@ const App = (props) => {
   }
 
   const removeMessage = (indexToRemove) => {
-    const newMessages = flashMessages.filter(
-      (item, messageIndex) => messageIndex !== indexToRemove)
+    const newMessages = flashMessages.filter((item, messageIndex) => messageIndex !== indexToRemove)
     setFlashMessages(newMessages)
   }
 
@@ -59,12 +57,9 @@ const App = (props) => {
   }
 
   console.log(!!UserManager.getUserDetails(), ApplicationManager.isApplicationInitialized())
-  if (!UserManager.getUserDetails()
-    && !ApplicationManager.isApplicationInitialized()) {
+  if (!UserManager.getUserDetails() && !ApplicationManager.isApplicationInitialized()) {
     // check if application is initialized
-    DataManager.postRequest(api.fetchInit())
-    .then((response) => {
-
+    DataManager.postRequest(api.fetchInit()).then((response) => {
       if (response.status === 424) {
         route('/admin/init')
         ApplicationManager.setIsApplicationInitialized(false)
@@ -72,9 +67,7 @@ const App = (props) => {
         ApplicationManager.setIsApplicationInitialized(true)
       }
     })
-
-  } else if (!UserManager.getUserDetails()
-    && ApplicationManager.isApplicationInitialized()) {
+  } else if (!UserManager.getUserDetails() && ApplicationManager.isApplicationInitialized()) {
     route('/admin/login')
   }
 
@@ -90,23 +83,22 @@ const App = (props) => {
   return (
     <LanguageContext.Provider value={'en'}>
       <ThemeProvider theme={theme}>
-        <GlobalStyle/>
+        <GlobalStyle />
         <FlashMessageContext.Provider value={flashMessageContextValue}>
-          <FlashMessages messages={flashMessages}/>
+          <FlashMessages messages={flashMessages} />
           <AppModalContext.Provider value={modalContextValue}>
-            <PageLayout>
+            <PageLayout currentUrl={currentUrl}>
               <Router onChange={handleRoute}>
-                <InitPage path="/admin/init"/>
-                <LoginPage path="/admin/login"/>
-                <LogoutPage path="/admin/logout"/>
-                <HomePage path="/admin/entries"/>
-                <SettingsPage path="/admin/settings"/>
-                <EditContentPage path="/admin/edit/:collection/:id*"/>
-                <MediaPage path="/admin/media/edit/:id"/>
-                <MediaPage path="/admin/media/:location*"/>
-                <DefinitionEditorPage
-                  path="/admin/definition-editor/:typeDefinition*"/>
-                <NotFoundPage path="/admin/:notFound*"/>
+                <InitPage path="/admin/init" />
+                <LoginPage path="/admin/login" />
+                <LogoutPage path="/admin/logout" />
+                <HomePage path="/admin/entries" />
+                <SettingsPage path="/admin/settings" />
+                <EditContentPage path="/admin/edit/:collection/:id*" />
+                <MediaPage path="/admin/media/edit/:id" />
+                <MediaPage path="/admin/media/:location*" />
+                <DefinitionEditorPage path="/admin/definition-editor/:typeDefinition*" />
+                <NotFoundPage path="/admin/:notFound*" />
               </Router>
             </PageLayout>
 

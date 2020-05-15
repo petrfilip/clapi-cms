@@ -16,6 +16,7 @@ import CheckboxInput from './components/checkbox-input'
 import RadioInput from './components/radio-input'
 import ImageSelect from './components/image-select'
 import FileSelect from './components/file-select'
+import TagInput from './components/tag-input'
 
 const placeholder = {
   type: 'SimpleText',
@@ -67,6 +68,7 @@ export const ContentEditorComponents = {
   BooleanInput: { component: BooleanInput, config: { placeholder, isRequired } },
   SelectInput: { component: SelectInput, config: { placeholder, options: selectInputOptions, isRequired } },
   NumberInput: { component: NumberInput, config: { placeholder, isRequired } },
+  TagInput: { component: TagInput, config: { placeholder, isRequired } },
   ColorPicker: { component: ColorPicker, config: { placeholder, isRequired } },
   CheckboxInput: { component: CheckboxInput, config: { placeholder, isRequired } },
   RadioInput: { component: RadioInput, config: { placeholder, isRequired } },

@@ -11,6 +11,7 @@ import { LayoutContext } from '../../layout/layout-context'
 
 const ImageSelect = (props) => {
   const onMediaSelected = (item) => {
+    props.onChangeObjectCallback(item)
     props.onInputChangeCallback(props.id, item._id)
   }
 
@@ -25,6 +26,7 @@ const ImageSelect = (props) => {
               onClick={() => {
                 setActionSidebar(
                   <FileManager
+                    location={props.config.location || '/'}
                     routeAllowed={false}
                     selectedItem={data}
                     fileListMode={Mode.SELECT}

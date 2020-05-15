@@ -20,7 +20,7 @@ const saveOrUpdate = (data, setInputObject) => {
   })
 }
 
-function renderForm(props, inputObject, setInputObject) {
+function renderForm(props, inputObject, setInputObject, onChangeObjectCallback) {
   function onContentChange(data) {
     const copyObject = Object.assign({}, inputObject)
     copyObject.content = data
@@ -34,8 +34,8 @@ function renderForm(props, inputObject, setInputObject) {
       }}
     >
       {/*<h2>{inputObject.metadata.collectionName}</h2>*/}
-      {renderInputs(props.config, { inputObject, setInputObject })}
-      {props.config.content && props.config.content.length && (
+      {renderInputs(props.config, { inputObject, setInputObject, onChangeObjectCallback })}
+      {props.config.content && props.config.content.length !== 0 && (
         <ContentEditorChoices
           initialData={inputObject.content || []}
           config={props.config.content || []}
@@ -53,8 +53,16 @@ function checkVersion(props, inputObject) {
 const ContentEditor = (props) => {
   const [inputObject, setInputObject] = useState(props.values || {})
   const [currentConfigTab, setCurrentConfigTab] = useState('main')
+  const [lastVisitedDirectory, setLastVisitedDirectory] = useState('/')
 
   const { setMenu, setSidebar, setActionSidebar } = useContext(LayoutContext)
+
+  const onChangeObjectCallback = (data) => {
+    if (data.config.type === 'ImageSelect') {
+      setLastVisitedDirectory(data.item.path)
+    }
+    console.log('changeCallback', data)
+  }
 
   useEffect(() => {
     setMenu(
@@ -107,13 +115,21 @@ const ContentEditor = (props) => {
   const config = props.config[currentConfigTab]
   const data = inputObject.data[currentConfigTab]
 
-  if (!data.content) {
+  Object.keys(config.config).forEach((key) => {
+    if (config.config[key].type === 'ImageSelect') {
+      // todo more file-manager based components
+      console.log(lastVisitedDirectory)
+      config.config[key].config.location = lastVisitedDirectory
+    }
+  })
+
+  if (data && !data.content) {
     data.content = []
   }
   return (
     <>
       <ContentEditorContentTabMenu tabs={getTabs()} onTabClick={onTabClick} />
-      <Center>{renderForm(config, data, onUpdate)}</Center>
+      <Center>{renderForm(config, data, onUpdate, onChangeObjectCallback)}</Center>
     </>
   )
 }

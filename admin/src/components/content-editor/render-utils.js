@@ -8,6 +8,10 @@ export const renderInputs = (config, editor) => {
       return
     }
 
+    newProps.onChangeObjectCallback = (object) => {
+      return editor.onChangeObjectCallback({ config: newProps, item: object })
+    }
+
     newProps.onInputChangeCallback = (id, value) => {
       editor.setInputObject((currentState) => {
         currentState[id] = value
