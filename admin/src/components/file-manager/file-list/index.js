@@ -5,25 +5,13 @@ import { useState } from 'preact/hooks'
 import * as api from '../../../api'
 import { FilePreview } from '../file-preview/file-preview'
 import { route } from 'preact-router'
+import FileContextMenu from '../file-context-menu/file-context-menu'
+import { formatBytes } from '../../../utils/string-utils'
 
 export const Mode = {
   SELECT: 'SELECT',
   MULTI_SELECT: 'MULTI_SELECT',
   EDIT: 'EDIT',
-}
-
-function formatBytes(bytes, decimals = 2) {
-  if (bytes === 0) {
-    return '0 Bytes'
-  }
-
-  const k = 1024
-  const dm = decimals < 0 ? 0 : decimals
-  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
-
-  const i = Math.floor(Math.log(bytes) / Math.log(k))
-
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i]
 }
 
 const FileList = (props) => {
@@ -49,12 +37,10 @@ const FileList = (props) => {
               <div className={style.bold}>{file.originName}</div>
               <div className={style.small}>{file.attributes.type}</div>
               <div className={style.small}>{formatBytes(file.attributes.size, 2)}</div>
-              <div className={style.downloadIcon}>
-                <img src={downloadIcon} alt={'download file'} />
-              </div>
             </div>
             <div>
               <FilePreview file={file} />
+              <FileContextMenu file={file} config={props.configContextMenu} />
             </div>
           </div>
         )

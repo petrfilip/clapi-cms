@@ -1,4 +1,4 @@
-import { h, React, useRef } from 'preact'
+import { React } from 'preact'
 import { useEffect, useState } from 'preact/hooks'
 import FileList from './file-list'
 import DirectoryList from './directory-list'
@@ -9,6 +9,7 @@ import PropTypes from 'prop-types'
 import * as api from '../../api'
 import DataManager from '../data-loader/data-manager'
 import Loader from '../loader'
+import downloadIcon from './file-list/download.svg'
 
 function normalizeLocation(location) {
   return location || '/'
@@ -62,12 +63,28 @@ const FileManager = (props) => {
     setData(addedFilesData)
   }
 
+  const onDeleteFile = (file) => {
+    const newData = Object.assign({}, data)
+    newData.files = data.files.filter((item) => item._id !== file._id)
+    DataManager.deleteRequest(api.fetchMedia(file._id))
+    setData(newData)
+  }
+
+  const configContextMenu = [
+    {
+      icon: downloadIcon,
+      alt: 'Download',
+      onClick: (item) => alert('Download clicked: ' + item._id),
+    },
+    {
+      icon: downloadIcon,
+      alt: 'Delete',
+      onClick: (item) => onDeleteFile(item),
+    },
+  ]
+
   useEffect(() => {
-    console.log('location changed')
     props.routeAllowed && detectRouteChange(location, props.location, setLocation)
-    return () => {
-      console.log('location finished')
-    }
   }, [props.location, location])
 
   return (
@@ -89,6 +106,7 @@ const FileManager = (props) => {
             fileListMode={props.fileListMode}
             onMediaClick={props.onMediaClick}
             files={(data && data.files) || []}
+            configContextMenu={configContextMenu}
           />
         </>
       )}

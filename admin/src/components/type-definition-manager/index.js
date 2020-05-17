@@ -11,6 +11,8 @@ import { addToObject, removeFromObject } from '../../utils/object-utils'
 import TypeDefinitionBuilderActionMenu from './type-definition-builder-action-menu'
 import TypeDefinitionBuilderTabMenu from './type-definition-builder-tab-menu'
 import { slugify } from '../../utils/string-utils'
+import { StyledLink } from '../menu/menu-link'
+import { route } from 'preact-router'
 
 const saveOrUpdate = (data, setTypeDefinition) => {
   DataManager.saveOrUpdate(api.fetchCollection('type-definition'), 'json', data, (callbackData) => {
@@ -54,7 +56,18 @@ const TypeDefinitionEditor = (props) => {
   }
 
   useEffect(() => {
-    setMenu(<Button onClick={saveOrUpdateAction}>update definition</Button>)
+    setMenu(
+      <>
+        <StyledLink
+          onClick={(ev) => {
+            route('/admin/entries')
+          }}
+        >
+          Home
+        </StyledLink>
+        <Button onClick={saveOrUpdateAction}>update definition</Button>
+      </>
+    )
     typeDefinition.data[currentConfigTab].config = typeDefinitionConfig
     setTypeDefinition(typeDefinition)
     return () => {

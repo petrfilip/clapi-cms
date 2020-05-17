@@ -8,25 +8,26 @@ import { useContext, useEffect, useState } from 'preact/hooks'
 import { LayoutContext } from '../layout/layout-context'
 import { route } from 'preact-router'
 import { deviceSize } from '../responsive/responsive'
+import { StyledLink } from './menu-link'
 
 function getNavForLoggedUser(closeMenu) {
   return (
     <>
-      <StyleLink onClick={() => closeMenu()} activeClassName={style.active} href="/admin/entries">
+      <StyledLink onClick={() => closeMenu()} activeClassName={style.active} href="/admin/entries">
         Home
-      </StyleLink>
-      <StyleLink onClick={() => closeMenu()} activeClassName={style.active} href="/admin/media">
+      </StyledLink>
+      <StyledLink onClick={() => closeMenu()} activeClassName={style.active} href="/admin/media">
         Media
-      </StyleLink>
-      <StyleLink onClick={() => closeMenu()} activeClassName={style.active} href="/admin/definition-editor">
+      </StyledLink>
+      <StyledLink onClick={() => closeMenu()} activeClassName={style.active} href="/admin/definition-editor">
         Definition editor
-      </StyleLink>
-      <StyleLink onClick={() => closeMenu()} activeClassName={style.active} href="/admin/settings">
+      </StyledLink>
+      <StyledLink onClick={() => closeMenu()} activeClassName={style.active} href="/admin/settings">
         Settings
-      </StyleLink>
-      <StyleLink onClick={() => closeMenu()} activeClassName={style.active} href="/admin/logout">
+      </StyledLink>
+      <StyledLink onClick={() => closeMenu()} activeClassName={style.active} href="/admin/logout">
         Logout
-      </StyleLink>
+      </StyledLink>
     </>
   )
 }
@@ -35,12 +36,7 @@ const Menu = ({ currentUrl }) => {
   const { menu } = useContext(LayoutContext)
   const [isOpen, setIsOpen] = useState(false)
 
-  const menuWithBackButton = (
-    <>
-      <StyleLink onClick={() => route('/admin/entries')}>Home</StyleLink>
-      {menu}
-    </>
-  )
+  const menuWithBackButton = <>{menu}</>
 
   const toggleOpen = (isOpen) => {
     setIsOpen(!isOpen)
@@ -84,7 +80,7 @@ const ResponsiveMenuHamburger = styled.div`
 `
 
 const Navigation = styled.nav`
-  z-index: 99;
+  z-index: 199;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -95,22 +91,6 @@ const Navigation = styled.nav`
     background-color: #0072bb;
     color: #888888;
     width: 100%;
-  }
-`
-
-const StyleLink = styled(Link)`
-  display: block;
-  color: white;
-  text-decoration: none;
-  border-bottom: 2px solid white;
-  padding: 10px;
-  margin: 10px;
-
-  @media (max-width: ${deviceSize.tablet}) {
-    :hover {
-      background-color: white;
-      color: black;
-    }
   }
 `
 

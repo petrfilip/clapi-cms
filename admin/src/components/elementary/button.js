@@ -6,6 +6,7 @@ const Button = (props) => {
 }
 
 const StyledButton = styled.button`
+  cursor: pointer;
   color: black;
   padding: 5px 32px;
   text-align: center;
@@ -17,6 +18,10 @@ const StyledButton = styled.button`
 
   :disabled {
     opacity: 0.5;
+  }
+
+  :hover {
+    background-color: ${(props) => props.theme.darkgray};
   }
 `
 

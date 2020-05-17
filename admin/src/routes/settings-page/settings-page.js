@@ -3,7 +3,7 @@ import * as api from '../../api'
 import Table from '../../components/table'
 import React from 'preact/compat'
 
-const headers = [
+const columns = [
   { key: 'key', title: 'Key' },
   { key: 'current', title: 'Current' },
   { key: 'required', title: 'Required' },
@@ -16,9 +16,7 @@ const SettingsPage = () => {
     <div>
       <h1>Users</h1>
       <h1>Requirements</h1>
-      <DataLoader uri={api.fetchInitRequirements()}>
-        {(data) => <Table headers={headers} rows={data}  />}
-      </DataLoader>
+      <DataLoader uri={api.fetchInitRequirements()}>{(data) => <Table columns={columns} rows={data} />}</DataLoader>
     </div>
   )
 }

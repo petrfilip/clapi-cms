@@ -98,6 +98,15 @@ final class DatabaseManager
         }
     }
 
+    static public function deleteById($collectionName, $id)
+    {
+        $collectionStore = DatabaseManager::getDataStore($collectionName);
+        $isDeleted = $collectionStore->where("_id", "=", $id)->delete();
+        if (!$isDeleted) {
+            throw new Exception('Unable to delete data.');
+        }
+    }
+
     static public function createAuditVersion($collectionStoreName, $data)
     {
         unset($data["_id"]);
@@ -124,6 +133,27 @@ final class DatabaseManager
             DatabaseManager::createAuditVersion($collectionName, $loadVersion);
         }
         return $data;
+    }
+
+    static public function safeDeleteVersionedRecord($collectionName, $id, $userId, $createAudit = true)
+    {
+        $collectionStore = DatabaseManager::getDataStore($collectionName);
+        if (empty($id)) {
+            throw new Exception("Missing ID");
+        }
+
+        $loadVersion = DatabaseManager::getById($collectionName, $id);
+
+        $loadVersion["sys"]["version"] = $loadVersion["sys"]["version"] + 1;
+        $loadVersion["sys"]["updated"] = Utils::getCurrentDateTime();
+        $loadVersion["sys"]["updatedBy"] = $userId;
+        $loadVersion["sys"]["deleted"] = true;
+        DatabaseManager::deleteById($collectionName, $loadVersion["_id"]);
+
+        if ($createAudit) {
+            DatabaseManager::createAuditVersion($collectionName, $loadVersion);
+        }
+        return $loadVersion;
     }
 
     static public function insertNewVersionedRecord($collectionName, $data, $userId)

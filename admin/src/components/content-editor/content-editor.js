@@ -11,11 +11,11 @@ import { renderInputs } from './render-utils'
 import ContentEditorChoices from './content-editor-choices'
 import ContentEditorContentTabMenu from './content-editor-content-tab-menu'
 import ContentEditorTabMenu from './content-editor-tab-menu'
+import { StyledLink } from '../menu/menu-link'
 
 const saveOrUpdate = (data, setInputObject) => {
   DataManager.saveOrUpdate(api.fetchCollection(data.metadata.collectionName), 'json', data, (out) => {
     setInputObject(out)
-    console.log(out)
     !data._id && out._id && route('/admin/edit/' + data.metadata.collectionName + '/' + out._id)
   })
 }
@@ -50,10 +50,16 @@ function checkVersion(props, inputObject) {
   return props.values.sys && props.values.sys.version && inputObject.sys.version < props.values.sys.version
 }
 
+function preventLeaveHandler(ev) {
+  ev.preventDefault()
+  return (ev.returnValue = 'Are you sure you want to close?')
+}
+
 const ContentEditor = (props) => {
   const [inputObject, setInputObject] = useState(props.values || {})
   const [currentConfigTab, setCurrentConfigTab] = useState('main')
   const [lastVisitedDirectory, setLastVisitedDirectory] = useState('/')
+  const [changesSaved, setChangesSaved] = useState(false)
 
   const { setMenu, setSidebar, setActionSidebar } = useContext(LayoutContext)
 
@@ -66,14 +72,25 @@ const ContentEditor = (props) => {
 
   useEffect(() => {
     setMenu(
-      <Button
-        type="submit"
-        onClick={() => {
-          saveOrUpdate(inputObject, setInputObject)
-        }}
-      >
-        Save
-      </Button>
+      <>
+        <StyledLink
+          onClick={(ev) => {
+            route('/admin/entries')
+          }}
+        >
+          Home
+        </StyledLink>
+
+        <Button
+          type="submit"
+          onClick={() => {
+            setChangesSaved(true)
+            saveOrUpdate(inputObject, setInputObject)
+          }}
+        >
+          Save
+        </Button>
+      </>
     )
     setSidebar(
       <>
@@ -91,6 +108,13 @@ const ContentEditor = (props) => {
     }
   }, [inputObject, currentConfigTab])
 
+  useEffect(() => {
+    window.addEventListener('beforeunload', preventLeaveHandler)
+    return () => {
+      window.removeEventListener('beforeunload', preventLeaveHandler)
+    }
+  }, [])
+
   // checkVersion(props, inputObject) && setInputObject(props.values) //todo make it works
 
   const onUpdate = (newData) => {
@@ -100,6 +124,7 @@ const ContentEditor = (props) => {
     } else {
       inputObject.data[currentConfigTab] = newData
     }
+    changesSaved && setChangesSaved(false)
     setInputObject(Object.assign({}, inputObject))
   }
   const onTabClick = (tabKey) => {

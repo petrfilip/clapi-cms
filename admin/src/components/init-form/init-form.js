@@ -12,7 +12,7 @@ import Table from '../table'
 import ApplicationManager from '../application-manager/application-manager'
 import DataLoader from '../data-loader'
 
-const headers = [
+const columns = [
   { key: 'key', title: 'Key' },
   { key: 'current', title: 'Current' },
   { key: 'required', title: 'Required' },
@@ -26,37 +26,34 @@ const InitForm = () => {
 
   const onFormSubmit = () => {
     DataManager.saveOrUpdate(api.fetchInit(), 'json', { email, password }, (userInfo) => {
-      ApplicationManager.setIsApplicationInitialized(true);
+      ApplicationManager.setIsApplicationInitialized(true)
       route('/admin/login')
     })
   }
 
+  return (
+    <>
+      <DataLoader uri={api.fetchInitRequirements()}>{(data) => <Table columns={columns} rows={data} />}</DataLoader>
 
-  return <>
-    <DataLoader uri={api.fetchInitRequirements()}>
-      {(data) => <Table headers={headers} rows={data}  />}
-    </DataLoader>
+      {!UserManager.getUserDetails() && (
+        <Form>
+          <h1>INIT APPLICATION</h1>
 
-  {
-    !UserManager.getUserDetails() && (
-      <Form>
-        <h1>INIT APPLICATION</h1>
+          <Input onInput={(e) => setEmail(e.target.value)} />
+          <Input type={'password'} onInput={(e) => setPassword(e.target.value)} />
 
-        <Input onInput={(e) => setEmail(e.target.value)}/>
-        <Input type={'password'} onInput={(e) => setPassword(e.target.value)}/>
-
-        <Button
-          onClick={(e) => {
-            e.preventDefault()
-            onFormSubmit()
-          }}
-        >
-          Login
-        </Button>
-      </Form>
-    )
-  }
-  </>
+          <Button
+            onClick={(e) => {
+              e.preventDefault()
+              onFormSubmit()
+            }}
+          >
+            Login
+          </Button>
+        </Form>
+      )}
+    </>
+  )
 }
 
 const Form = styled.form`

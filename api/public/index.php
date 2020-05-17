@@ -17,6 +17,7 @@ use Slim\Psr7\Stream;
 
 
 define("DATABASE_ROOT", __DIR__ . "/../database");
+define("MEDIA_STORAGE_TRASH", "/trash");
 define("MEDIA_STORAGE", "/media-storage");
 define("MEDIA_STORAGE_ROOT", __DIR__ . MEDIA_STORAGE);
 define("CONFIG_FILE", __DIR__ . './../config.php');
@@ -129,6 +130,7 @@ $app->post('/init', function (Request $request, Response $response, $args) {
 
 function isPasswordValid($password)
 {
+    //todo
     return strlen($password) > 3;
 //    $uppercase = preg_match('@[A-Z]@', $password);
 //    $lowercase = preg_match('@[a-z]@', $password);
@@ -156,7 +158,7 @@ $app->post('/login', function (Request $request, Response $response, $args) {
     }
 
 
-    // create token
+    // todo improve create token
     $payload = array( //todo fix the payload
         "user_id" => $loadedUser[0]["_id"],
         "user_email" => $loadedUser[0]["email"],
@@ -205,7 +207,6 @@ $app->put('/user', function (Request $request, Response $response, $args) {
 
 /* DOCUMENT API */
 $app->post('/query', function (Request $request, Response $response, $args) {
-    $params = $request->getQueryParams();
     $queryParams = $request->getParsedBody();
     $loadedData = DatabaseManager::findBy($queryParams["collection"], $queryParams["query"]);
 
@@ -298,6 +299,13 @@ $app->put('/collection/{collection}', function (Request $request, Response $resp
     $inputJson = $request->getParsedBody();
     $userId = $request->getAttribute("userId");
     $updated = DatabaseManager::updateVersionedRecord($args["collection"], $inputJson, $userId);
+    $response->getBody()->write(json_encode($updated));
+    return $response;
+})->addMiddleware(new JwtMiddleware());
+
+$app->delete('/collection/{collection}/{id}', function (Request $request, Response $response, $args) {
+    $userId = $request->getAttribute("userId");
+    $updated = DatabaseManager::safeDeleteVersionedRecord($args["collection"], $args["id"], $userId);
     $response->getBody()->write(json_encode($updated));
     return $response;
 })->addMiddleware(new JwtMiddleware());
@@ -446,11 +454,15 @@ $app->post('/media/directory', function (Request $request, Response $response, $
     }
 })->addMiddleware(new JwtMiddleware());
 
+$app->put('/media/directory', function (Request $request, Response $response, $args) {
+//todo rename folder, find all files and directories containing old name and rename it
+})->addMiddleware(new JwtMiddleware());
+
 
 /* upload files*/
 
 $app->post('/media/file', function (Request $request, Response $response, $args) {
-
+    // todo handle file with same name
     $uploadedFiles = $request->getUploadedFiles();
     if (!count($uploadedFiles)) {
         $response->getBody()->write(json_encode(ErrorUtils::error(ErrorUtils::NO_CONTENT_TO_UPLOAD)));
@@ -478,5 +490,40 @@ $app->put('/media/file', function (Request $request, Response $response, $args) 
     return $response;
 })->addMiddleware(new JwtMiddleware());
 
+$app->delete('/media/{id}', function (Request $request, Response $response, $args) {
+
+    $userId = $request->getAttribute("userId");
+    //load from db
+    $loaded = DatabaseManager::getById("media", $args["id"]);
+
+    if (!folder_exist(MEDIA_STORAGE_ROOT . MEDIA_STORAGE_TRASH)) {
+        mkdir(MEDIA_STORAGE_ROOT . MEDIA_STORAGE_TRASH);
+    }
+
+
+    //check type (file/folder)
+
+    //if dir, then go deep and delete (no trash)
+    //if file, then move to trash
+
+
+    rename(__DIR__ . $loaded["publicPath"], MEDIA_STORAGE_ROOT . MEDIA_STORAGE_TRASH . '/' . $loaded["slugName"]);
+
+    DatabaseManager::deleteById("media", $args["id"], $userId);
+    unset($loaded["_id"]);
+
+    $inserted = DatabaseManager::insertNewVersionedRecord("trash-media", $loaded, $userId);
+    $response->getBody()->write(json_encode($inserted));
+    return $response;
+})->addMiddleware(new JwtMiddleware());
+
+//todo empty media trash & flush caches
 
 $app->run();
+
+function folder_exist($folder)
+{
+    $path = realpath($folder);
+
+    return ($path !== false and is_dir($path)) ? $path : false;
+}

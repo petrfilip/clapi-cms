@@ -10,7 +10,7 @@ const onRowClick = (item) => {
   route('/admin/edit/' + item.metadata.collectionName + '/')
 }
 
-const headers = [{ key: 'metadata.collectionName', title: 'Collection' }]
+const columns = [{ key: 'metadata.collectionName', title: 'Collection' }]
 
 const DocumentTypeList = () => {
   const { setActionSidebar } = useContext(LayoutContext)
@@ -19,7 +19,7 @@ const DocumentTypeList = () => {
     <DataLoader uri={api.fetchCollection('type-definition')}>
       {(data) => (
         <Table
-          headers={headers}
+          columns={columns}
           rows={data}
           onRowClick={(rowItem) => {
             onRowClick(rowItem)

@@ -1,11 +1,10 @@
-
 //single server option
 let full = null
 
-if (location.hostname === "0.0.0.0" || location.hostname === "localhost") {
-   full = location.protocol + '//' + location.hostname+":8888";
+if (location.hostname === '0.0.0.0' || location.hostname === 'localhost') {
+  full = location.protocol + '//' + location.hostname + ':8888'
 } else {
-   full = location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '')
+  full = location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '')
 }
 
 export const apiUrl = full + '/api/public/'
@@ -13,6 +12,9 @@ const debug = '?XDEBUG_SESSION_START=PHPSTORM'
 
 export const fetchCollection = (collectionName) => {
   return [apiUrl, 'collection/', collectionName, debug].join('')
+}
+export const deleteFromCollection = (collectionName, id) => {
+  return [apiUrl, 'collection/', collectionName, '/', id, debug].join('')
 }
 export const fetchCollectionRevisions = (collectionName) => {
   return [apiUrl, 'collection/', collectionName, '-archiving', debug].join('')

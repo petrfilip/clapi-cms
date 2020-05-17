@@ -14,6 +14,7 @@ const SimpleText = (props) => (
     maxLength={props.maxLength || (props.config && props.config.maxLength) || 999}
     placeholder={(props.config && props.config.placeholder) || props.placeholder || ''}
     disabled={props.disabled || (props.config && props.config.disabled) || false}
+    required={(props.config && props.config.isRequired) || false}
     onInput={(event) =>
       (props.onInput && props.onInput(event)) ||
       (props.onInputChangeCallback && props.onInputChangeCallback(props.id, event.target.value))
