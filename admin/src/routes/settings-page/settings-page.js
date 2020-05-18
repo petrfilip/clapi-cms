@@ -3,6 +3,7 @@ import * as api from '../../api'
 import Table from '../../components/table'
 import React from 'preact/compat'
 import ImageConfiguration from '../../components/configuration-manager/image-configuration'
+import Tab from '../../components/tab/tab'
 
 const columns = [
   { key: 'key', title: 'Key' },
@@ -12,16 +13,20 @@ const columns = [
   { key: 'description', title: 'Description' },
 ]
 
-const SettingsPage = () => {
-  return (
-    <div>
-      <h1>Image config</h1>
-      <ImageConfiguration />
-      <h1>Users</h1>
-      <h1>Requirements</h1>
+const data = [
+  { id: '1', tabTitle: 'Image config', tabContent: <ImageConfiguration /> },
+  { id: '2', tabTitle: 'Users', tabContent: 'TODO' },
+  {
+    id: '3',
+    tabTitle: 'System Requirements',
+    tabContent: (
       <DataLoader uri={api.fetchInitRequirements()}>{(data) => <Table columns={columns} rows={data} />}</DataLoader>
-    </div>
-  )
+    ),
+  },
+]
+
+const SettingsPage = () => {
+  return <Tab config={data} />
 }
 
 export default SettingsPage
