@@ -1,3 +1,11 @@
+export const SystemImageSize = {
+  ICON: 'system-icon',
+  SMALL: 'system-small',
+  MEDIUM: 'system-medium',
+  LARGE: 'system-large',
+  XLARGE: 'system-xlarge',
+}
+
 export const deviceSize = {
   mobileS: '320px',
   mobileM: '375px',

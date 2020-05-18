@@ -5,19 +5,24 @@ use App\ErrorUtils;
 use App\Middleware\CorsMiddleware;
 use App\Middleware\JwtMiddleware;
 use App\Model\ApplicationRequirementsDto;
+use App\SlimGlideResponseFactory;
+use App\SystemImageProfiles;
 use App\Utils;
+use DI\ContainerBuilder;
 use Fetzi\ServerTiming\ServerTimingMiddleware;
 use Fetzi\ServerTiming\ServerTimings;
 use Firebase\JWT\JWT;
+use League\Glide\Responses\PsrResponseFactory;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use DI\ContainerBuilder;
 use Slim\Factory\AppFactory;
 use Slim\Psr7\Stream;
 
+define("SYSTEM_COLLECTIONS", ["type-definition", "type-definition-archiving", "media", "media-trash", "user", "config"]);
 
 define("DATABASE_ROOT", __DIR__ . "/../database");
 define("MEDIA_STORAGE_TRASH", "/trash");
+define("MEDIA_STORAGE_THUMBNAIL_DIRECTORY", "/generated-thumbnail");
 define("MEDIA_STORAGE", "/media-storage");
 define("MEDIA_STORAGE_ROOT", __DIR__ . MEDIA_STORAGE);
 define("CONFIG_FILE", __DIR__ . './../config.php');
@@ -36,6 +41,7 @@ require __DIR__ . './../src/ErrorUtils.php';
 require __DIR__ . './../src/DatabaseManager.php';
 require __DIR__ . './../src/Utils.php';
 require __DIR__ . './../src/MIME.php';
+require __DIR__ . './../src/SystemImageProfiles.php';
 
 
 $containerBuilder = new ContainerBuilder();
@@ -93,6 +99,15 @@ $app->post('/init', function (Request $request, Response $response, $args) {
     $inputJson = $request->getParsedBody();
     if ($inputJson == null) {
         return $response->withStatus(424);
+    }
+
+    /* init required directories */
+    if (!folder_exist(MEDIA_STORAGE_ROOT . MEDIA_STORAGE_THUMBNAIL_DIRECTORY)) {
+        mkdir(MEDIA_STORAGE_ROOT . MEDIA_STORAGE_THUMBNAIL_DIRECTORY);
+    }
+
+    if (!folder_exist(MEDIA_STORAGE_ROOT . MEDIA_STORAGE_TRASH)) {
+        mkdir(MEDIA_STORAGE_ROOT . MEDIA_STORAGE_TRASH);
     }
 
 
@@ -203,6 +218,41 @@ $app->put('/user', function (Request $request, Response $response, $args) {
     $response->getBody()->write(json_encode($inputJson));
     return $response;
 });
+
+/* configurations */
+$app->get('/config', function (Request $request, Response $response, $args) {
+
+    $saved = DatabaseManager::findBy("config", []);
+    $response->getBody()->write(json_encode($saved));
+    return $response;
+})->addMiddleware(new JwtMiddleware());
+
+$app->get('/config/{configName}', function (Request $request, Response $response, $args) {
+    $configCondition = ["type" => "where", "key" => "configName", "operator" => "=", "value" => $args["configName"]];
+    $saved = DatabaseManager::findBy("config", $configCondition);
+    if (!count($saved)) {
+
+    }
+
+    $response->getBody()->write(json_encode($saved[0]));
+    return $response;
+})->addMiddleware(new JwtMiddleware());
+
+$app->post('/config', function (Request $request, Response $response, $args) {
+    $data = $request->getParsedBody();
+    $userId = $request->getAttribute("userId");
+    $saved = DatabaseManager::insertNewVersionedRecord("config", $data, $userId);
+    $response->getBody()->write(json_encode($saved));
+    return $response;
+})->addMiddleware(new JwtMiddleware());
+
+$app->put('/config', function (Request $request, Response $response, $args) {
+    $data = $request->getParsedBody();
+    $userId = $request->getAttribute("userId");
+    $updated = DatabaseManager::updateVersionedRecord("config", $data, $userId);
+    $response->getBody()->write(json_encode($updated));
+    return $response;
+})->addMiddleware(new JwtMiddleware());
 
 
 /* DOCUMENT API */
@@ -325,7 +375,7 @@ $app->get('/media/download/{id:[0-9]+}', function (Request $request, Response $r
 
         return $response->withBody($stream)
             ->withHeader('X-Filename', $loadedItem["originName"])
-            ->withHeader('Content-Disposition', 'attachment; ' . $loadedItem["originName"] . ';')
+            ->withHeader('Content-Disposition', 'attachment;filename=' . $loadedItem["originName"] . ';')
             ->withHeader('Content-Type', mime_content_type($path))
             ->withHeader('Content-Length', filesize($path))
             ->withHeader('Expires', '0')
@@ -346,7 +396,7 @@ $app->get('/media/show/{id:[0-9]+}', function (Request $request, Response $respo
 
         return $response->withBody($stream)
             ->withHeader('X-Filename', $loadedItem["originName"])
-            ->withHeader('Content-Disposition', 'inline; ' . $loadedItem["originName"] . ';')
+            ->withHeader('Content-Disposition', 'inline;filename=' . $loadedItem["originName"] . ';')
             ->withHeader('Content-Type', mime_content_type($path))
             ->withHeader('Content-Length', filesize($path))
             ->withHeader('Expires', '0')
@@ -354,6 +404,73 @@ $app->get('/media/show/{id:[0-9]+}', function (Request $request, Response $respo
     } else {
         return $response->withStatus(404);
     }
+});
+
+function findProfileByName($profileName, $profiles)
+{
+    foreach ($profiles as $profile) {
+        if ($profile["name"] === $profileName) {
+            return $profile;
+        }
+    }
+    return null;
+}
+
+function findImageProfile($profile)
+{
+    /* system profiles */
+    $systemProfile = SystemImageProfiles::getByName($profile);
+    if ($systemProfile != null) {
+        return $systemProfile;
+    }
+
+    /* user defined profiles*/
+    $imageConfigCondition = ["type" => "where", "key" => "configName", "operator" => "=", "value" => "imageConfiguration"];
+    $imageConfiguration = DatabaseManager::findOneBy("config", $imageConfigCondition);
+    $loadedProfiles = $imageConfiguration["profiles"];
+    $profile = findProfileByName($profile, $loadedProfiles);
+
+    if ($profile == null) {
+        throw new Exception("Unable to find requested image profile");
+    }
+    return $profile;
+}
+
+$app->get('/media/show/{id:[0-9]+}/{profile}', function (Request $request, Response $response, $args) {
+    $loadedItem = DatabaseManager::getById("media", $args["id"]);
+
+    if ($loadedItem == null) {
+        return $response->withStatus(404);
+    }
+
+    $format = findImageProfile($args["profile"]);
+    if ($format == null) {
+        throw new \http\Exception\RuntimeException("Format is not supported");
+    }
+
+    $server = League\Glide\ServerFactory::create([
+        'source' => __DIR__,
+        'cache' => MEDIA_STORAGE_ROOT . MEDIA_STORAGE_THUMBNAIL_DIRECTORY,
+        'response' => new PsrResponseFactory($response, function ($stream) {
+            return new Stream($stream);
+        }),
+    ]);
+
+    $imageParams = [
+        'w' => $format["width"],
+        'h' => $format["height"],
+        'fit' => $format['fit'],
+        'q' => $format['quality'],
+        'fm' => $format['fm']
+    ];
+    $newResponse = $server->getImageResponse($loadedItem["publicPath"], $imageParams);
+    return $newResponse
+        ->withHeader('X-Filename', $loadedItem["originName"])
+        ->withHeader('Content-Disposition', 'inline;filename=' . $loadedItem["originName"] . ';')
+        ->withHeader('Expires', '0')
+        ->withHeader('Cache-Control', 'must-revalidate, post-check=0, pre-check=0');
+
+
 });
 
 
@@ -495,10 +612,6 @@ $app->delete('/media/{id}', function (Request $request, Response $response, $arg
     $userId = $request->getAttribute("userId");
     //load from db
     $loaded = DatabaseManager::getById("media", $args["id"]);
-
-    if (!folder_exist(MEDIA_STORAGE_ROOT . MEDIA_STORAGE_TRASH)) {
-        mkdir(MEDIA_STORAGE_ROOT . MEDIA_STORAGE_TRASH);
-    }
 
 
     //check type (file/folder)

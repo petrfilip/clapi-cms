@@ -1,12 +1,11 @@
-import { h, React } from 'preact'
+import { React } from 'preact'
 import style from './style.css'
-import downloadIcon from './download.svg'
 import { useState } from 'preact/hooks'
-import * as api from '../../../api'
 import { FilePreview } from '../file-preview/file-preview'
 import { route } from 'preact-router'
 import FileContextMenu from '../file-context-menu/file-context-menu'
 import { formatBytes } from '../../../utils/string-utils'
+import { SystemImageSize } from '../../responsive/responsive'
 
 export const Mode = {
   SELECT: 'SELECT',
@@ -39,7 +38,7 @@ const FileList = (props) => {
               <div className={style.small}>{formatBytes(file.attributes.size, 2)}</div>
             </div>
             <div>
-              <FilePreview file={file} />
+              <FilePreview file={file} size={SystemImageSize.SMALL} />
               <FileContextMenu visible={mode === Mode.EDIT} file={file} config={props.configContextMenu} />
             </div>
           </div>

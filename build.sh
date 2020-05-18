@@ -1,5 +1,6 @@
 #!/bin/sh
 
+rm -r build
 mkdir build
 cp -r api/ build/
 cd build/

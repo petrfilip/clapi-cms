@@ -98,6 +98,13 @@ class MIME
     );
 
 
+
+    static public function getExtensionByMimeType($mimeType)
+    {
+        return array_search($mimeType, self::$types);
+    }
+
+
     /**
      * Return group from suffix or type
      */

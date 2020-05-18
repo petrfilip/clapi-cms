@@ -18,7 +18,7 @@ final class DatabaseManager
         return SleekDB::store($storeName, DATABASE_ROOT);
     }
 
-    static public function findBy($collectionName, $queries)
+    static public function findBy($collectionName, $queries = [])
     {
         $collectionStore = DatabaseManager::getDataStore($collectionName);
 
@@ -68,7 +68,13 @@ final class DatabaseManager
             }
         }
         $collectionStore->limit(1);
-        return $collectionStore->fetch();
+        $loadedArray = $collectionStore->fetch();
+
+        if (count($loadedArray)) {
+            return $loadedArray[0];
+        } else {
+            return null;
+        }
     }
 
     static public function createWhere($key, $operator, $value)

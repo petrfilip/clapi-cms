@@ -59,3 +59,11 @@ export const fetchInit = () => {
 export const fetchInitRequirements = () => {
   return [apiUrl, 'init-requirements', debug].join('')
 }
+
+export const fetchConfiguration = () => {
+  return [apiUrl, 'config', debug].join('')
+}
+
+export const getConfiguration = (configName) => {
+  return [apiUrl, 'config/', 'configName', debug].join('')
+}
