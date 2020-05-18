@@ -3,13 +3,15 @@ import downloadIcon from '../file-list/download.svg'
 import styled from 'styled-components'
 import React from 'preact/compat'
 
-const FileContextMenu = ({ file, config }) => {
+const FileContextMenu = ({ file, config, visible }) => {
   return (
-    <Menu onClick={(e) => e.stopPropagation()}>
-      {config.map((item) => (
-        <MenuItem src={item.icon} alt={item.alt} onClick={(e) => item.onClick(file)} />
-      ))}
-    </Menu>
+    visible && (
+      <Menu onClick={(e) => e.stopPropagation()}>
+        {config.map((item) => (
+          <MenuItem src={item.icon} alt={item.alt} onClick={(e) => item.onClick(file)} />
+        ))}
+      </Menu>
+    )
   )
 }
 

@@ -11,7 +11,7 @@ import { LayoutContext } from '../../layout/layout-context'
 
 const ImageSelect = (props) => {
   const onMediaSelected = (item) => {
-    props.onChangeObjectCallback(item)
+    props.onChangeObjectCallback && props.onChangeObjectCallback(item)
     props.onInputChangeCallback(props.id, item._id)
   }
 

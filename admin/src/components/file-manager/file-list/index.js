@@ -40,7 +40,7 @@ const FileList = (props) => {
             </div>
             <div>
               <FilePreview file={file} />
-              <FileContextMenu file={file} config={props.configContextMenu} />
+              <FileContextMenu visible={mode === Mode.EDIT} file={file} config={props.configContextMenu} />
             </div>
           </div>
         )

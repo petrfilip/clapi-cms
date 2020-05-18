@@ -9,7 +9,7 @@ export const renderInputs = (config, editor) => {
     }
 
     newProps.onChangeObjectCallback = (object) => {
-      return editor.onChangeObjectCallback({ config: newProps, item: object })
+      return editor.onChangeObjectCallback && editor.onChangeObjectCallback({ config: newProps, item: object })
     }
 
     newProps.onInputChangeCallback = (id, value) => {
