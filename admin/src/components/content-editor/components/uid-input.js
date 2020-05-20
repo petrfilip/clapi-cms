@@ -1,11 +1,13 @@
 import { React } from 'preact'
-import Input from '../../elementary/input'
 import SimpleText from './simple-text'
-import { slugify } from '../../../utils/string-utils'
-import { useState } from 'preact/hooks'
+import { slugifyContent } from '../../../utils/string-utils'
 
+//todo need to be improved
 const UidInput = (props) => {
-  return <SimpleText />
+  const newProps = props
+  const newValue = slugifyContent(props.initialValue || '')
+
+  return <SimpleText {...newProps} initialValue={newValue} />
 }
 
 export default UidInput

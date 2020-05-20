@@ -56,7 +56,6 @@ const App = (props) => {
     removeMessage: removeMessage,
   }
 
-  console.log(!!UserManager.getUserDetails(), ApplicationManager.isApplicationInitialized())
   if (!UserManager.getUserDetails() && !ApplicationManager.isApplicationInitialized()) {
     // check if application is initialized
     DataManager.postRequest(api.fetchInit()).then((response) => {
@@ -78,6 +77,10 @@ const App = (props) => {
     gray: '#e2e2e2',
     darkgray: '#aaa',
     white: 'white',
+  }
+
+  if (currentUrl === '/admin/') {
+    route('/admin/entries')
   }
 
   return (

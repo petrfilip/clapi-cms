@@ -10,6 +10,18 @@ export const slugify = (text) => {
     .replace(/\_\_+/g, '_') // Replace multiple _ with single _
 }
 
+export const slugifyContent = (text) => {
+  return text
+    .toString() // Cast to string
+    .toLowerCase() // Convert the string to lowercase letters
+    .normalize('NFD') // The normalize() method returns the Unicode Normalization Form of a given string.
+    .trimStart() // Remove whitespace from both sides of a string
+    .replace(/\s+/g, '_') // Replace spaces with -
+    .replace(/[^\w\-]+/g, '-') // Remove all non-word chars
+    .replace(/\_+/g, '-') // Replace  - with single _
+    .replace(/\-\-+/g, '-') // Replace multiple _ with single _
+}
+
 export const formatBytes = (bytes, decimals = 2) => {
   if (bytes === 0) {
     return '0 Bytes'

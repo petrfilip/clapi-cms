@@ -14,6 +14,7 @@ const columns = [
 ]
 
 const data = [
+  { id: '0', tabTitle: 'System information', tabContent: 'TODO clear cache' },
   { id: '1', tabTitle: 'Image config', tabContent: <ImageConfiguration /> },
   { id: '2', tabTitle: 'Users', tabContent: 'TODO' },
   {
