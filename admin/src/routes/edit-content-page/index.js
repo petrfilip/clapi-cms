@@ -2,8 +2,11 @@ import { React } from 'preact'
 import ContentEditor from '../../components/content-editor/content-editor'
 import DataLoader from '../../components/data-loader'
 import * as api from '../../api'
+import { useDocumentTitle } from '../../components/layout/window-title'
 
 const EditContentPage = ({ collection, id }) => {
+  useDocumentTitle(collection + ' :: Content Editor')
+
   return (
     <DataLoader skipLoader={true} uri={api.fetchTypeDefinition(collection)}>
       {(data) => {

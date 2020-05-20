@@ -4,6 +4,7 @@ import Table from '../../components/table'
 import React from 'preact/compat'
 import ImageConfiguration from '../../components/configuration-manager/image-configuration'
 import Tab from '../../components/tab/tab'
+import { useDocumentTitle } from '../../components/layout/window-title'
 
 const columns = [
   { key: 'key', title: 'Key' },
@@ -27,6 +28,8 @@ const data = [
 ]
 
 const SettingsPage = () => {
+  useDocumentTitle('Settings')
+
   return <Tab config={data} />
 }
 
