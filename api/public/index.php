@@ -27,8 +27,8 @@ define("MEDIA_STORAGE", "/media-storage");
 define("MEDIA_STORAGE_ROOT", __DIR__ . MEDIA_STORAGE);
 define("CONFIG_FILE", __DIR__ . './../config.php');
 
-putenv('TMPDIR='.MEDIA_STORAGE_ROOT."/tmp");
-ini_set('upload_tmp_dir',MEDIA_STORAGE_ROOT."/tmp");
+putenv('TMPDIR=' . MEDIA_STORAGE_ROOT . "/tmp");
+ini_set('upload_tmp_dir', MEDIA_STORAGE_ROOT . "/tmp");
 
 require CONFIG_FILE;
 
@@ -177,14 +177,18 @@ $app->post('/login', function (Request $request, Response $response, $args) {
     }
 
 
-    // todo improve create token
-    $payload = array( //todo fix the payload
+
+    $issuedAt = time();
+    $expire = $issuedAt + 2592000; // 60 seconds * 60 minutes * 24 hours * 30 days //todo is it ok?
+    $actual_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]";
+
+    $payload = array(
         "user_id" => $loadedUser[0]["_id"],
         "user_email" => $loadedUser[0]["email"],
-        "iss" => "http://example.org",
-        "aud" => "http://example.com",
-        "iat" => 1356999524,
-        "nbf" => 1357000000
+        "iss" => $actual_link,
+        "aud" => $actual_link,
+        "iat" => $issuedAt,
+        "exp" => $expire
     );
     $jwt = JWT::encode($payload, JWT_KEY);
 
@@ -193,6 +197,8 @@ $app->post('/login', function (Request $request, Response $response, $args) {
     $output = new stdClass();
     $output->token = $jwt;
     $output->email = $inputJson["email"];
+
+    // log the event
 
     $response->getBody()->write(json_encode($output));
     return $response;

@@ -34,6 +34,14 @@ final class JwtMiddleware implements MiddlewareInterface
             return new Response(401);
         }
 
+        if ($tokenData->exp < time()) {
+            return new Response(403);
+        }
+
+        $actual_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]";
+        if ($tokenData->iss !== $actual_link) {
+            return new Response(403);
+        }
 
         $request = $request->withAttribute("userId", $tokenData->user_id);
         return $handler->handle($request);
