@@ -26,10 +26,10 @@ define("MEDIA_STORAGE_THUMBNAIL_DIRECTORY", "/generated-thumbnail");
 define("MEDIA_STORAGE", "/media-storage");
 define("MEDIA_STORAGE_ROOT", __DIR__ . MEDIA_STORAGE);
 define("CONFIG_FILE", __DIR__ . './../config.php');
-if (file_exists(CONFIG_FILE)) {
-    // the file contain user defined constant
 
-}
+putenv('TMPDIR='.MEDIA_STORAGE_ROOT."/tmp");
+ini_set('upload_tmp_dir',MEDIA_STORAGE_ROOT."/tmp");
+
 require CONFIG_FILE;
 
 require __DIR__ . '/../vendor/autoload.php';
@@ -78,7 +78,11 @@ $app->get('/init-requirements', function (Request $request, Response $response, 
         new ApplicationRequirementsDto("PHP", "phpversion()", "7.2", "todo description"),
         new ApplicationRequirementsDto("mod rewrite", "isModRewriteLoaded", "TRUE", "todo description"),
         new ApplicationRequirementsDto("gd library", extension_loaded('gd') ? "true" : "false", "true", "todo description"),
-        new ApplicationRequirementsDto("upload_max_filesize", ini_get('post_max_size'), "todo", "todo description"),
+        new ApplicationRequirementsDto("file_uploads", ini_get('file_uploads'), "todo", "todo description"),
+        new ApplicationRequirementsDto("upload_max_filesize", ini_get('upload_max_filesize'), "todo", "todo description"),
+        new ApplicationRequirementsDto("max_file_uploads", ini_get('max_file_uploads'), "todo", "todo description"),
+        new ApplicationRequirementsDto("post_max_size", ini_get('post_max_size'), "todo", "todo description"),
+        new ApplicationRequirementsDto("upload_tmp_dir", ini_get('upload_tmp_dir'), "todo", "todo description"),
         new ApplicationRequirementsDto("memory_limit", ini_get('memory_limit'), "todo", "todo description"),
         new ApplicationRequirementsDto("max_execution_time", ini_get('max_execution_time'), "todo", "todo description"),
         new ApplicationRequirementsDto("chmod media", is_writable(MEDIA_STORAGE_ROOT) ? "true" : "false", "TRUE", "todo description"),
@@ -194,7 +198,14 @@ $app->post('/login', function (Request $request, Response $response, $args) {
     return $response;
 });
 
-/* add user */
+/* USERS */
+
+$app->get('/user', function (Request $request, Response $response, $args) {
+    $saved = DatabaseManager::findBy("USER", []);
+    $response->getBody()->write(json_encode($saved));
+    return $response;
+})->addMiddleware(new JwtMiddleware());
+
 $app->post('/user', function (Request $request, Response $response, $args) {
     $inputJson = $request->getParsedBody();
     $userId = $request->getAttribute("userId");
