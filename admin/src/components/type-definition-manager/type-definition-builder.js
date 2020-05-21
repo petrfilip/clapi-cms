@@ -24,7 +24,7 @@ function getDropContainer(index, setActionSidebar, onNewDefinition) {
   )
 }
 
-function getActionButtons(onRemoveDefinition, key, setActionSidebar, index, item, onNewDefinition) {
+function getActionButtons(onRemoveDefinition, key, setActionSidebar, index, item, onNewDefinition, onUpdateDefinition) {
   return (
     <ActionButtons>
       <ActionButton onClick={() => onRemoveDefinition(key)}>D</ActionButton>
@@ -42,7 +42,33 @@ function getActionButtons(onRemoveDefinition, key, setActionSidebar, index, item
       >
         S
       </ActionButton>
-      <ActionButton>O</ActionButton>
+      <ActionButton
+        disabled={index === 1}
+        onClick={() => {
+          const move = {
+            apiKey: key,
+            position: index - 1,
+            value: item,
+          }
+
+          onUpdateDefinition(move)
+        }}
+      >
+        U
+      </ActionButton>
+      {/*<ActionButton*/}
+      {/*  onClick={() => {*/}
+      {/*    const move = {*/}
+      {/*      apiKey: key,*/}
+      {/*      position: index + 1,*/}
+      {/*      value: item,*/}
+      {/*    }*/}
+
+      {/*    onUpdateDefinition(move)*/}
+      {/*  }}*/}
+      {/*>*/}
+      {/*  D*/}
+      {/*</ActionButton>*/}
     </ActionButtons>
   )
 }
@@ -68,7 +94,7 @@ function getComponentPlaceholder(
           }}
         />
       )}
-      {getActionButtons(onRemoveDefinition, key, setActionSidebar, index, item, onNewDefinition)}
+      {getActionButtons(onRemoveDefinition, key, setActionSidebar, index, item, onNewDefinition, onUpdateDefinition)}
     </ComponentPlaceholder>
   )
 }
@@ -160,8 +186,8 @@ const ActionButtons = styled.div`
   border: 1px solid black;
 `
 
-const ActionButton = styled.span`
-  width: 10px;
+const ActionButton = styled.button`
+  width: 20px;
   margin: 4px;
   text-align: center;
   font-size: 10px;
