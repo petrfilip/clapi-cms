@@ -1,11 +1,14 @@
 import { useContext } from 'preact/hooks'
 import TypeDefinitionInputSettings from './type-definition-input-settings'
-import React from 'preact/compat'
 import styled from 'styled-components'
 import TypeDefinitionGroupBuilder from './type-definition-group-builder'
 import TypeDefinitionDropArea from './type-definition-drop-area'
 import { LayoutContext } from '../layout/layout-context'
 import TypeDefinitionBuilderBlockComponent from './type-definition-builder-block-component'
+import React, { Component } from 'react'
+import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc'
+import arrayMove from 'array-move'
+import { getPropertyOnIndex } from '../../utils/object-utils'
 
 function getDropContainer(index, setActionSidebar, onNewDefinition) {
   return (
@@ -32,7 +35,12 @@ function getActionButtons(onRemoveDefinition, key, setActionSidebar, index, item
         onClick={() =>
           setActionSidebar(
             <TypeDefinitionInputSettings
-              values={{ position: index, fieldName: item.config.label, apiKey: key, specificSettings: item.config }}
+              values={{
+                position: index,
+                fieldName: item.config.label,
+                apiKey: key,
+                specificSettings: item.config,
+              }}
               position={index}
               onConfirm={onNewDefinition}
               componentKey={item.type}
@@ -42,19 +50,8 @@ function getActionButtons(onRemoveDefinition, key, setActionSidebar, index, item
       >
         S
       </ActionButton>
-      <ActionButton
-        disabled={index === 1}
-        onClick={() => {
-          const move = {
-            apiKey: key,
-            position: index - 1,
-            value: item,
-          }
-
-          onUpdateDefinition(move)
-        }}
-      >
-        U
+      <ActionButton>
+        <DragHandle />
       </ActionButton>
       {/*<ActionButton*/}
       {/*  onClick={() => {*/}
@@ -99,6 +96,8 @@ function getComponentPlaceholder(
   )
 }
 
+const DragHandle = SortableHandle(() => <span>::</span>)
+
 function getTypeDefinitionBuilderContainer(
   typeDefinitionConfig,
   setActionSidebar,
@@ -110,27 +109,48 @@ function getTypeDefinitionBuilderContainer(
   //const configToRender = Object.assign({}, typeDefinitionConfig)
   //delete configToRender.content
   const configToRender = typeDefinitionConfig
+  const SortableItem = SortableElement(({ value }) => (
+    <div>
+      {getDropContainer(value.index, setActionSidebar, onNewDefinition)}
+      {getComponentPlaceholder(
+        value.type,
+        typeDefinitionConfig[value.type],
+        value.index,
+        onRemoveDefinition,
+        setActionSidebar,
+        onNewDefinition,
+        onUpdateDefinition
+      )}
+    </div>
+  ))
+
+  const SortableList = SortableContainer(({ items }) => {
+    return (
+      <div>
+        {items.map((value, index) => (
+          <SortableItem key={`item-${index}`} index={index} value={{ type: value, index }} />
+        ))}
+      </div>
+    )
+  })
+  const onSortEnd = ({ oldIndex, newIndex }) => {
+    if (oldIndex === newIndex) {
+      return
+    }
+    const propName = getPropertyOnIndex(configToRender, oldIndex)
+    const move = {
+      apiKey: propName,
+      position: newIndex,
+      value: configToRender[propName],
+    }
+
+    onUpdateDefinition(move)
+  }
+
   return (
     <>
-      {Object.keys(configToRender).map((item, index) => {
-        if (!configToRender[item].type) {
-          return
-        }
-        return (
-          <>
-            {getDropContainer(index, setActionSidebar, onNewDefinition)}
-            {getComponentPlaceholder(
-              item,
-              typeDefinitionConfig[item],
-              index,
-              onRemoveDefinition,
-              setActionSidebar,
-              onNewDefinition,
-              onUpdateDefinition
-            )}
-          </>
-        )
-      })}
+      <SortableList items={Object.keys(configToRender)} onSortEnd={onSortEnd} useDragHandle />
+
       {getDropContainer(Object.keys(typeDefinitionConfig).length, setActionSidebar, onNewDefinition)}
       <TypeDefinitionBuilderBlockComponent
         initialData={typeDefinitionConfig.content || []}
@@ -186,7 +206,8 @@ const ActionButtons = styled.div`
   border: 1px solid black;
 `
 
-const ActionButton = styled.button`
+const ActionButton = styled.div`
+  display: inline-block;
   width: 20px;
   margin: 4px;
   text-align: center;

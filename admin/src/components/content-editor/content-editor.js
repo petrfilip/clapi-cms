@@ -140,13 +140,13 @@ const ContentEditor = (props) => {
   const config = props.config[currentConfigTab]
   const data = inputObject.data[currentConfigTab]
 
-  Object.keys(config.config).forEach((key) => {
-    if (config.config[key].type === 'ImageSelect') {
-      // todo more file-manager based components
-      console.log(lastVisitedDirectory)
-      config.config[key].config.location = lastVisitedDirectory
-    }
-  })
+  useEffect(() => {
+    Object.keys(config.config).forEach((key) => {
+      if (config.config[key].type === 'ImageSelect') {
+        config.config[key].config.location = lastVisitedDirectory
+      }
+    })
+  }, [lastVisitedDirectory])
 
   if (data && !data.content) {
     data.content = []

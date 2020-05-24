@@ -2,11 +2,15 @@ import React from 'preact/compat'
 import styled from 'styled-components'
 //todo will be replaced with react-select
 
-const Select = ({ options, onInput }) => {
+const Select = ({ options, onInput, defaultValue }) => {
   return (
     <StyledSelect onInput={onInput}>
       {options.map((option) => {
-        return <option value={option.value}>{option.label}</option>
+        return (
+          <option value={option.value} selected={option.value === defaultValue}>
+            {option.label}
+          </option>
+        )
       })}
     </StyledSelect>
   )
