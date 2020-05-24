@@ -20,7 +20,7 @@ export const renderInputs = (config, editor) => {
     }
     newProps.initialValue = editor.inputObject && editor.inputObject[key]
     newProps.id = key
-    newProps.index = index
+    newProps.index = config.index || index
     return h(ComponentEditWrapper, newProps)
   })
 }

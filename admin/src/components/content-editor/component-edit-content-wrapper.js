@@ -2,22 +2,31 @@ import React from 'preact/compat'
 import styled from 'styled-components'
 import Select from '../elementary/select'
 import { renderInputs } from './render-utils'
+import { SortableHandle } from 'react-sortable-hoc'
 
-const ComponentEditContentWrapper = ({ options, config, item, onTypeChange, onChangeCallback }) => {
+function getOnInput(onChangeCallback, onTypeChange) {
+  return (e) => {
+    onChangeCallback({})
+    onTypeChange(e.target.value)
+  }
+}
+
+function typeSelect(options, item, onChangeCallback, onTypeChange) {
+  return (
+    options.length > 1 && (
+      <Select defaultValue={item.type} options={options} onInput={getOnInput(onChangeCallback, onTypeChange)} />
+    )
+  )
+}
+const DragHandle = SortableHandle(() => <span>::</span>)
+
+const ComponentEditContentWrapper = ({ index, options, config, item, onTypeChange, onChangeCallback }) => {
   const itemConfiguration = config && config.find((it) => it.metadata.snippetKey === item.type).config
-
+  itemConfiguration.index = index
   return (
     <ComponentWrapper>
-      {(options.length > 1 && (
-        <Select
-          options={options}
-          onInput={(e) => {
-            onChangeCallback({})
-            onTypeChange(e.target.value)
-          }}
-        />
-      )) ||
-        options[0].label}
+      <DragHandle />
+      {typeSelect(options, item, onChangeCallback, onTypeChange)}
       <InputWrapper>
         {renderInputs(itemConfiguration, { inputObject: item.value || {}, setInputObject: onChangeCallback })}
       </InputWrapper>

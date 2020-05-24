@@ -1,6 +1,20 @@
+export function move(array, from, to) {
+  const elm = array.splice(from, 1)[0]
+  array.splice(to, 0, elm)
+  return array
+}
+
 export const moveTo = (obj, key, value, index) => {
   removeFromObject(obj, key)
   addToObject(obj, key, value, index)
+}
+
+export const getIndexOfProperty = (obj, propertyName) => {
+  return Object.keys(obj).find((key, index) => (key === propertyName ? index : false))
+}
+
+export const getPropertyOnIndex = (obj, index) => {
+  return Object.keys(obj).find((key, i) => (i === index ? key : false))
 }
 
 export const addToObject = function (obj, key, value, index) {
