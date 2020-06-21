@@ -45,8 +45,7 @@
     "shortid": "^2.2.15",
     "styled-components": "^5.1.0",
     "styled-flex-component": "^3.0.0",
-    "styled-reset": "^4.1.4",
-    "preact-richtextarea": "^1.2.1"
+    "styled-reset": "^4.1.4"
   },
   "alias": {
     "react": "preact/compat",

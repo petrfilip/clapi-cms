@@ -1,6 +1,6 @@
-import { React } from 'preact'
-import RichTextArea from 'preact-richtextarea'
+import React from 'preact/compat'
 import { useRef } from 'preact/hooks'
+import ClapiRichTextArea from '../../rich-text-area/clapi-rich-text-area'
 
 function getOnInput(props) {
   return (event) => {
@@ -13,7 +13,7 @@ const TextArea = (props) => {
   const inputRef = useRef(null)
 
   return (
-    <RichTextArea
+    <ClapiRichTextArea
       ref={inputRef}
       onpaste={(e) => {
         e.preventDefault()
