@@ -5,7 +5,7 @@ import { useRef } from 'preact/hooks'
 function getOnInput(props) {
   return (event) => {
     ;(props.onInput && props.onInput(event)) ||
-      (props.onInputChangeCallback && props.onInputChangeCallback(props.id, value))
+      (props.onInputChangeCallback && props.onInputChangeCallback(props.id, event.value))
   }
 }
 
